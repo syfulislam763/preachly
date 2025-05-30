@@ -23,13 +23,13 @@ const FinishAuthentication = ({ navigation }) => {
         </Text>
       </View>
         <Image
-            source={require('../../../assets/img/Preachly1.png')}
+            source={require('../../../assets/img/Preachly.png')}
             style={{
                 height:'100%', 
                 width:'100%', 
                 objectFit:'contain',
                 position:'absolute',
-                top: (height*19)/100,
+                top: (height*16)/100,
                 left:0,
                 right:0,
                 zIndex: 1

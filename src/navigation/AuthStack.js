@@ -10,6 +10,8 @@ import CreatePassword from '../screens/auth/CreatePassword';
 import FinishAuthentication from '../screens/auth/FinishAuthentication';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import { backNavigationStyle, commonNavigationOptions } from '../components/Constant';
+import BackButton from '../components/BackButton';
 
 
 const Stack = createNativeStackNavigator();
@@ -43,125 +45,30 @@ export default function AuthStack() {
           borderBottomWidth: 0,
           backgroundColor: '#fff',
         },
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButtonContainer}
-          >
-            <Ionicons name="arrow-back" size={20} color="#0b172A" />
-          </TouchableOpacity>
-        ),
+        headerLeft: () => <BackButton navigation={navigation}/>,
       })} 
       name="SignUp" 
       component={SignUpScreen} 
       />
 
       <Stack.Screen 
-          options={({ navigation }) => ({
-            title: "",
-            headerTitleAlign: "center",
-            headerShadowVisible: false,
-            headerTitleStyle: {
-              fontFamily: 'NunitoSemiBold',
-              color: '#0b172A',
-            },
-            headerStyle: {
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0,
-              backgroundColor: '#fff',
-            },
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={styles.backButtonContainer}
-              >
-                <Ionicons name="arrow-back" size={20} color="#0b172A" />
-              </TouchableOpacity>
-            ),
-          })}
+          options={commonNavigationOptions}
         name="ConfirmationEmail" 
         component={ConfirmationEmail} 
       />
         <Stack.Screen
-          options={({ navigation }) => ({
-          title: "",
-          headerTitleAlign: "center",
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'NunitoSemiBold',
-            color: '#0b172A',
-          },
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            backgroundColor: '#fff',
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButtonContainer}
-            >
-              <Ionicons name="arrow-back" size={20} color="#0b172A" />
-            </TouchableOpacity>
-          ),
-        })} 
+          options={commonNavigationOptions} 
         name="ConfirmationCode" 
         component={ConfirmationCode} 
       />
 
        <Stack.Screen 
-       options={({ navigation }) => ({
-          title: "",
-          headerTitleAlign: "center",
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'NunitoSemiBold',
-            color: '#0b172A',
-          },
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            backgroundColor: '#fff',
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButtonContainer}
-            >
-              <Ionicons name="arrow-back" size={20} color="#0b172A" />
-            </TouchableOpacity>
-          ),
-        })} 
+       options={commonNavigationOptions} 
       name="CreatePassword" 
       component={CreatePassword} 
       />
       <Stack.Screen 
-      options={({ navigation }) => ({
-          title: "",
-          headerTitleAlign: "center",
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'NunitoSemiBold',
-            color: '#0b172A',
-          },
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            backgroundColor: '#fff',
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButtonContainer}
-            >
-              <Ionicons name="arrow-back" size={20} color="#0b172A" />
-            </TouchableOpacity>
-          ),
-        })} 
+      options={commonNavigationOptions} 
       name="FinishAuthentication" 
       component={FinishAuthentication} 
       />
@@ -182,14 +89,7 @@ export default function AuthStack() {
             borderBottomWidth: 0,
             backgroundColor: '#fff',
           },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButtonContainer}
-            >
-              <Ionicons name="arrow-back" size={20} color="#0b172A" />
-            </TouchableOpacity>
-          ),
+          headerLeft: () => <BackButton navigation={navigation}/>,
         })}   
       name="SignIn" 
       component={SignInScreen} 
@@ -197,17 +97,3 @@ export default function AuthStack() {
     </Stack.Navigator>
   );
 }
-
-
-const styles = StyleSheet.create({
-  backButtonContainer: {
-    backgroundColor: '#EDF3F3',
-    height:40,
-    width:40,
-    padding: 8,
-    marginLeft: 5,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})

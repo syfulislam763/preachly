@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
 
-export default function PersonalizationScreen({navigation}) {
+export default function PersonalizationScreen2({navigation}) {
 
 
   return (
@@ -48,7 +48,7 @@ export default function PersonalizationScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 20, paddingBottom:27},
+  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 20},
   title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 40, paddingBottom: 30},
   text: {fontFamily:'NunitoBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50},
   img: { height:130,width: 180, objectFit:'contain'},
