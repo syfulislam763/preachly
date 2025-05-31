@@ -11,7 +11,7 @@ export default function RootNavigator() {
 
   if (!isAuthenticated) return <AuthStack />;
   if (!isPersonalized) return <PersonalizationStack />;
-  if (!isSubscribed) return <SubscriptionScreen />;
+  // if (!isSubscribed) return <SubscriptionScreen />;
 
   return <MainTabs />;
 }

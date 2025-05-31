@@ -27,6 +27,7 @@ import CommonButton from '../../components/CommonButton';
 export default function SignInScreen ({ navigation }) {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
+  console.log(Platform.OS)
 
   return (
     <KeyboardAvoidingView
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     }
   },
   buttonContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
     paddingBottom: Platform.OS === 'ios' ? 30 : 90,
   },
   forgotPass:{

@@ -13,20 +13,7 @@ import QuestionSlider from '../../components/QuestionSlider';
 export default function PersonalizationScreen1({navigation}) {
     const [selectedIndex, setSelectedIndex] = useState(null);
 
-    // const data = [
-    //     {
-    //     title: 'Practical and Everyday',
-    //     description: 'Grounded and solution-oriented, focusing on how faith applies to daily life',
-    //     quote: 'Sometimes life feels messy, but God uses even our mistakes to shape us and teach us how to walk in His ways',
-    //     icon: require("../../../assets/img/24-leaf.png")
-    //     },
-    //     {
-    //     title: 'Practical and Logical ',
-    //     description: 'Grounded and solution-oriented, focusing on how faith applies to daily life',
-    //     quote: 'Sometimes life feels messy, but God uses even our mistakes to shape us and teach us how to walk in His ways',
-    //     icon: require("../../../assets/img/24-sunset.png")
-    //     },
-    // ];
+    
 
   return (
     <View style={styles.container}>

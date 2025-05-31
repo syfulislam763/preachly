@@ -83,7 +83,7 @@ const SelectableCard = ({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 18,
     padding: 14,
     marginVertical: 8,
     backgroundColor: '#FFFFFF',

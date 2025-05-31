@@ -9,7 +9,7 @@ import {
   Image
 } from 'react-native';
 
-const CustomSelect = ({ items = [{label:'Denomination',value:0}], onSelect, placeholder = "Denomination" }) => {
+const CustomSelect = ({ items = [{label:'Default Title',value:0}], onSelect, placeholder = "Denomination" }) => {
   const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState(false);
 

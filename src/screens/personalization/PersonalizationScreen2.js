@@ -5,53 +5,46 @@ import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
+import QuestionSlider from '../../components/QuestionSlider';
 
 export default function PersonalizationScreen2({navigation}) {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       
       <View>
-        <View style={{marginTop:"10%"}}>
-          <ProgressBar progress={14.28} />
+        <View style={{}}>
+          <ProgressBar progress={14.28*3} />
         </View>
 
-        <Text style={styles.title}>Your Journey Matters. Let's discover how Preachly can empower your faith</Text>
+        <Text style={styles.title}>What brings you to Preachly</Text>
 
-        <Text style={styles.text}>When it comes to your faith, what do you need most right now?</Text>
+        <Text style={styles.text}>We'll personalize recommendations based on your goals</Text>
 
 
-        <View style={styles.imageContainer}>
-            <Image 
-              source={require("../../../assets/img/Selector1.png")}
-              style={styles.img}
-            />
-            <Image 
-              source={require("../../../assets/img/Selector.png")}
-              style={styles.img}
-            />
-        </View>
+      <QuestionSlider/>
+        
+
+       
       </View>
 
       <CommonButton
-          btnText={"Continue"}
+          btnText={"Next Question"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization1"}
+          route={"Personalization3"}
           txtColor={primaryText}
           bold='bold'
           opacity={1}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 20},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 40, paddingBottom: 30},
-  text: {fontFamily:'NunitoBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50},
-  img: { height:130,width: 180, objectFit:'contain'},
-  imageContainer: {display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}
-
+  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', paddingHorizontal: 20, paddingBottom: 60, paddingTop:10},
+  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 35, paddingBottom: 25, paddingHorizontal: 70},
+  text: {fontFamily:'NunitoSemiBold', fontSize:16, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50, paddingHorizontal: 40},
+  
 })

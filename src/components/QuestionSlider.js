@@ -104,7 +104,6 @@ export default function QuestionSlider() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     backgroundColor: 'white',
   },
   questionBox: {
@@ -114,9 +113,9 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   questionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#131c2a',
+    fontSize: 16,
+    fontFamily:'NunitoBold',
+    color: '#0B172A',
   },
   radioRow: {
     flexDirection: 'row',
@@ -134,15 +133,16 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   radioInner: {
-    height: 16,
-    width: 16,
-    borderRadius: 8,
+    height: 19,
+    width: 19,
+    borderRadius: 50,
     backgroundColor: '#0b5c53',
   },
   optionText: {
     flex: 1,
     fontSize: 16,
-    color: '#131c2a',
+    color: '#0B172A',
+    fontFamily:'NunitoSemiBold'
   },
   navigation: {
     marginTop: 30,
