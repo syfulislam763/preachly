@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
   planContainer: {
     borderWidth: 1.5,
     borderColor: '#B0CFCB',
-    borderRadius: 25,
-    padding: 16,
+    borderRadius: 20,
+    padding: 10,
     marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',

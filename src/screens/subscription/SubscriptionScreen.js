@@ -9,7 +9,7 @@ import CommonButton from '../../components/CommonButton';
 import Divider from '../../components/Divider'
 import PlanSelector from '../../components/SubscriptionPlan';
 import CustomHeader from '../../components/CustomNavigation';
-
+import ParagraphIcon from '../../components/ParagraphIcon';
 
 
 const window = Dimensions.get("window")
@@ -37,9 +37,25 @@ export default function SubscriptionScreen({ navigation }) {
 
 
         <View style={styles.content}>
-            
+
+            <ParagraphIcon
+              icon={require("../../../assets/img/24-sunset.png")}
+              text={"Build Confidence in Conversations About Faith"}
+            />
+            <ParagraphIcon
+              icon={require("../../../assets/img/bird.png")}
+              text={"Clarity and Ease When You Need It Most"}
+            />
+            <ParagraphIcon
+              icon={require("../../../assets/img/piramid.png")}
+              text={"Inspire and Strengthen Your Walk with God"}
+            />
+
+            <View style={{height:20}}></View>
 
             <PlanSelector/>
+
+            <View style={{height:30}}></View>
 
             <CommonButton
                 btnText={"Try Free & Subscribe"}
@@ -50,7 +66,7 @@ export default function SubscriptionScreen({ navigation }) {
                 opacity={1}
             />
 
-            <Text style={styles.footerText}>By singing up, you agree to the app's <Text style={styles.footerHighlighter}>Terms of Use</Text> and <Text style={styles.footerHighlighter}>Privacy Policy</Text></Text>
+            <Text style={styles.footerText}>Cancel anytime. Subscription auto-renews.By subscribing, you agree to <Text style={styles.footerHighlighter}>Privacy Policy</Text> </Text>
 
 
         </View>
@@ -64,7 +80,7 @@ export default function SubscriptionScreen({ navigation }) {
 const styles = StyleSheet.create({
   footerHighlighter:{color:'black', textDecorationLine:'underline', fontFamily: 'NunitoExtraBold'},
 
-  footerText:{fontSize:16, color:'#90B2B2', paddingRight:50, paddingLeft:50, paddingTop:30, paddingBottom:30, textAlign:'center', fontFamily:'NunitoSemiBold'},
+  footerText:{fontSize:16, color:'#90B2B2', paddingHorizontal: 16, paddingVertical:20, textAlign:'center', fontFamily:'NunitoSemiBold'},
 
   googleAppleAuth:{
       display:"flex",

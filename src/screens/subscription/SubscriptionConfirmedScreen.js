@@ -3,6 +3,7 @@ import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, 
 import CommonButton from '../../components/CommonButton';
 import { deepGreen , primaryText} from '../../components/Constant';
 import { useAuth } from '../../context/AuthContext';
+import ParagraphIcon from '../../components/ParagraphIcon';
 
 
 const { width, height } = Dimensions.get('window');
@@ -17,10 +18,27 @@ const SubscriptionConfirmedScreen = ({ navigation }) => {
     
       <View style={styles.textContainer}>
         <Text style={styles.successText}>Subscription Confirmed!</Text>
-        <Text style={styles.welcomeTitle}>Welcome to Preachly</Text>
+      
         <Text style={styles.subtitle}>
-          Let's tailor your experience to help you grow in faith and confidence.
+            Words have power-now you have even more at your fingertips
         </Text>
+
+        <View>
+          <ParagraphIcon
+              icon={require("../../../assets/img/infinity.png")}
+              text={"Unlimited access to Inspired Answers"}
+          />
+          <ParagraphIcon
+              icon={require("../../../assets/img/bulb.png")}
+              text={"Save and revisit key insights"}
+          />
+          <ParagraphIcon
+              icon={require("../../../assets/img/message.png")}
+              text={"Speak boldly with scriptural wisdom"}
+          />
+        </View>
+
+
       </View>
         <Image
             source={require('../../../assets/img/bg_large1.png')}
@@ -29,7 +47,7 @@ const SubscriptionConfirmedScreen = ({ navigation }) => {
                 width:'100%', 
                 objectFit:'contain',
                 position:'absolute',
-                top: (height*16)/100,
+                top: (height*20)/100,
                 left:0,
                 right:0,
                 zIndex: 1
