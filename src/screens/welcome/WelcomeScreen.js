@@ -5,7 +5,8 @@ import {
 } from 'react-native-safe-area-context';
 import ImageSlider from '../../components/Slider';
 import FooterBar from '../../components/FooterBar';
-import MyCarousel from '../../components/MyCarousel';
+
+import CustomCarousel from '../../components/CustomCarousel';
 
 export default function WelcomeScreen({ navigation }) {
   return (
@@ -13,7 +14,7 @@ export default function WelcomeScreen({ navigation }) {
 
       
       {/* <ImageSlider /> */}
-      <MyCarousel/>
+      <CustomCarousel/>
 
       <View style={styles.btnContainer}>
         <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('AuthHome')}> 

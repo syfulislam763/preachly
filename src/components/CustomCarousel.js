@@ -35,7 +35,7 @@ const images = [
 
 const totalImages = imageData.length;
 
-const Carousel = () => {
+const CustomCarousel = () => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -131,7 +131,6 @@ const Carousel = () => {
             extrapolate: 'clamp',
           });
 
-          // Only show caption for center item
           const captionOpacity = scrollX.interpolate({
             inputRange,
             outputRange: [0, 1, 0],
@@ -140,7 +139,7 @@ const Carousel = () => {
 
           return (
             <View style={{ alignItems: '' }}>
-              {/* Full-width caption container positioned absolutely */}
+            
               <View style={styles.fullWidthCaptionWrapper}>
                 <Animated.View style={[styles.fullWidthCaptionContainer, { opacity: captionOpacity }]}>
                   <Text style={styles.title}>{item.title}</Text>
@@ -148,7 +147,6 @@ const Carousel = () => {
                 </Animated.View>
               </View>
               
-              {/* Image container with all original animations */}
               <Animated.View 
                 style={[
                   styles.slideContainer, 
@@ -205,7 +203,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1,
   },
-  // Full-width caption container
   fullWidthCaptionContainer: {
     width: width,
     paddingHorizontal: 20,
@@ -253,4 +250,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Carousel;
+export default CustomCarousel;

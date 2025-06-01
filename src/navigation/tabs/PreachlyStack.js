@@ -6,7 +6,11 @@ const Stack = createNativeStackNavigator();
 
 export default function PreachlyStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator 
+      screenOptions={{
+        headerShown:false
+      }}
+    >
       <Stack.Screen name="PreachlyMain" component={PreachlyScreen} />
     </Stack.Navigator>
   );

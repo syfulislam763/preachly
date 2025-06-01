@@ -6,7 +6,11 @@ const Stack = createNativeStackNavigator();
 
 export default function HistoryStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator 
+      screenOptions={{
+        headerShown:false
+      }}
+    >
       <Stack.Screen name="HistoryStack" component={HistoryScreen} />
     </Stack.Navigator>
   );
