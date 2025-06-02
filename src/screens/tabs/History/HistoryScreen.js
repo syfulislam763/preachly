@@ -1,8 +1,317 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Image
+} from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import HistoryNotFound from './HistoryNotFound';
 
-export default function HistoryScreen() {
-  return (
-    <View><Text>History</Text></View>
+const star = require("../../../../assets/img/VectorStar.png")
+const bookmark = require("../../../../assets/img/24-bookmark.png")
+const bookmark1 = require("../../../../assets/img/Bookmark1.png")
+const trash = require("../../../../assets/img/Trash.png")
+
+const FILTERS = [{img:'', txt:'All chats'}, {img:star,txt:'Favorites'}, {img:bookmark, txt: 'Answers'}];
+
+const initialData = [
+  {
+    id: '1',
+    title: 'Finding Faith and Connection with Christ',
+    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
+    replies: 3,
+    timeAgo: '1 hour ago',
+    isFavorite: false,
+    type: 'chat',
+  },
+  {
+    id: '2',
+    title: 'The Power of Community in Spiritual Growth',
+    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
+    replies: 5,
+    timeAgo: '2 hour ago',
+    isFavorite: true,
+    type: 'chat',
+  },
+  {
+    id: '3',
+    title: 'Overcoming Doubt Through Scripture',
+    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
+    replies: 8,
+    timeAgo: '3 hour ago',
+    isFavorite: false,
+    type: 'chat',
+  },
+   {
+    id: '4',
+    title: 'Finding Faith and Connection with Christ',
+    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
+    replies: 3,
+    timeAgo: '1 hour ago',
+    isFavorite: false,
+    type: 'chat',
+  },
+  {
+    id: '5',
+    title: 'The Power of Community in Spiritual Growth',
+    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
+    replies: 5,
+    timeAgo: '2 hour ago',
+    isFavorite: true,
+    type: 'chat',
+  },
+  {
+    id: '6',
+    title: 'Overcoming Doubt Through Scripture',
+    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
+    replies: 8,
+    timeAgo: '3 hour ago',
+    isFavorite: false,
+    type: 'chat',
+  },
+   {
+    id: '7',
+    title: 'Finding Faith and Connection with Christ',
+    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
+    replies: 3,
+    timeAgo: '1 hour ago',
+    isFavorite: false,
+    type: 'answer',
+  },
+  {
+    id: '8',
+    title: 'The Power of Community in Spiritual Growth',
+    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
+    replies: 5,
+    timeAgo: '2 hour ago',
+    isFavorite: true,
+    type: 'answer',
+  },
+  {
+    id: '9',
+    title: 'Overcoming Doubt Through Scripture',
+    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
+    replies: 8,
+    timeAgo: '3 hour ago',
+    isFavorite: false,
+    type: 'answer',
+  },
+];
+
+const HistoryScreen = ({navigation}) => {
+  const [selectedFilter, setSelectedFilter] = useState('All chats');
+  const [searchText, setSearchText] = useState('');
+  const [data, setData] = useState(initialData);
+
+  const handleDelete = (id) => {
+    setData((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const toggleFavorite = (id) => {
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
+      )
+    );
+  };
+
+  const filteredData = data
+    .filter((item) => {
+      if (selectedFilter === 'Favorites') return item.isFavorite;
+      if (selectedFilter === 'Answers') return item.type === 'answer';
+      return true;
+    })
+    .filter((item) =>
+      item.title.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+  const renderRightActions = (progress, dragX, itemId) => (
+    <TouchableOpacity
+      onPress={() => handleDelete(itemId)}
+      style={styles.deleteButton}
+    >
+      {/* <MaterialIcons name="delete" size={24} color="#fff" /> */}
+      <Image 
+        source={trash}
+        style={{
+          width:20,
+          height:20,
+          objectFit:'contain'
+        }}
+      />
+    </TouchableOpacity>
   );
-}
+
+  const renderItem = ({ item }) => (
+    <Swipeable renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.id)}>
+      <View style={styles.itemContainer}>
+        <View style={{ flex: 1 }}>
+          {(item?.type != "answer") && <Text style={styles.itemTitle}>{item.title}</Text>}
+          <Text style={styles.itemSnippet}>{item.snippet}</Text>
+          <View style={styles.metaRow}>
+            <MaterialCommunityIcons name="reply" size={16} color="#966F44" />
+            <Text style={styles.metaText}>{item.replies} replies</Text>
+            <MaterialIcons name="access-time" size={16} color="#966F44" style={{ marginLeft: 10 }} />
+            <Text style={styles.metaText}>{item.timeAgo}</Text>
+          </View>
+        </View>
+        {(item?.type==="answer")? <Image
+          source={bookmark1}
+          style={{
+            height:20,
+            width:20,
+            objectFit:'contain',
+            marginRight:10
+          }}
+        /> : <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+          <MaterialIcons
+            name={item.isFavorite ? 'star' : 'star-border'}
+            size={24}
+            color={item.isFavorite ? '#f4c10f' : '#aaa'}
+          />
+        </TouchableOpacity>}
+      </View>
+    </Swipeable>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.header}>History</Text>
+
+      <View style={styles.searchBar}>
+        <MaterialIcons name="search" size={30} color="#005A55" style={{ marginRight: 8 }} />
+        <TextInput
+          placeholder="Ask or search for answers..."
+          style={styles.searchInput}
+          value={searchText}
+          placeholderTextColor={"#607373"}
+          onChangeText={setSearchText}
+        />
+      </View>
+
+      <View style={styles.filterContainer}>
+        {FILTERS.map((filter) => (
+          <TouchableOpacity
+            key={filter.txt}
+            style={[
+              styles.filterButton,
+              selectedFilter === filter.txt && styles.activeFilterButton,
+            ]}
+            onPress={() => setSelectedFilter(filter.txt)}
+          >
+            
+            {filter?.img?<Image
+              source={filter.img}
+              style={{
+                height:20,
+                width:20,
+                objectFit:'contain',
+                marginRight:10
+              }}
+            />:null}
+            <Text
+              style={[
+                styles.filterText,
+                selectedFilter === filter.txt && styles.activeFilterText,
+              ]}
+            >
+              {filter.txt}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        ListEmptyComponent={() => {
+          if(selectedFilter == 'All chats'){
+            return <HistoryNotFound
+              title={"No Chats Yet"}
+              text={"Ask Preachly for clarity, insight, and scripture-bvacked answers. Your past chats will be saved here for easy reference"}
+            />
+          }else if(selectedFilter == "Favorites"){
+            return  <HistoryNotFound
+              title={"No Favorites Yet"}
+              text={"Looks like you haven't saved any chats yet. When you find a conversation that resonates tap the favorite icon to keep it handy"}
+            />
+          }else {
+            return <HistoryNotFound 
+              title={"No Saved Answers Yet"}
+              text={"Looks like you haven't saved any key answers. When you find an answer worth keeping, tap the bookmark to store it for quick reference"}
+            />
+          }
+           
+        }}
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  header: { fontSize: 32, fontFamily:'DMSerifDisplay', marginBottom: 16,color:'#0B172A' },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#ACC6C5',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginBottom: 16,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+   
+  },
+  filterContainer: { flexDirection: 'row', marginBottom: 16, },
+  filterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#EDF3F3',
+    width: 'auto',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  activeFilterButton: { backgroundColor: '#005A55',  },
+  filterText: { fontSize: 16, fontFamily:'NunitoSemiBold', color:'#0B172A'},
+  activeFilterText: { color: '#fff' },
+  itemContainer: {
+    flexDirection: 'row',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    backgroundColor: '#fff',
+    alignItems: 'flex-start',
+  },
+  itemTitle: { fontSize: 15, marginBottom: 4, fontFamily:'NunitoSemibold', color:'#0B172A' },
+  itemSnippet: { color: '#2B4752', fontSize: 13, marginBottom: 6, fontFamily:'NunitoSemiBold', paddingVertical:10 },
+  metaRow: { flexDirection: 'row', alignItems: 'center' },
+  metaText: { fontSize: 12, color: '#966F44', marginLeft: 4, fontFamily:'NunitoSemiBold' },
+  deleteButton: {
+    backgroundColor: '#e74c3c',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    marginVertical: 4,
+  },
+});
+
+export default HistoryScreen;

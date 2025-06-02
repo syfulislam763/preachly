@@ -59,8 +59,8 @@ const SubscriptionConfirmedScreen = ({ navigation }) => {
                 btnText={"Find Answers"}
                 bgColor={deepGreen}
                 navigation={navigation}
-                route={""}
-                handler={() => completePersonalization()}
+                route={"MainTabs"}
+                // handler={() => completePersonalization()}
                 txtColor={primaryText}
                 bold='bold'
                 opacity={1}

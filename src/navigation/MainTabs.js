@@ -6,35 +6,45 @@ import MessageStack from './tabs/MessageStack';
 import PreachlyStack from './tabs/PreachlyStack';
 import ProfileStack from './tabs/ProfileStack';
 import { Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
-const home = require("../../assets/img/24-house.png")
-const history = require("../../assets/img/24-history.png")
+const homeActive = require("../../assets/img/24-house.png")
+const homeInactive = require("../../assets/img/24-houseInactive.png")
+const historyInactive = require("../../assets/img/24-history.png")
+const historyActive = require("../../assets/img/ClockCounterClockwise.png")
+
+
 const chat = require("../../assets/img/24-chat.png")
-const book = require("../../assets/img/24-Book.png")
-const profile = require("../../assets/img/24-user.png")
+
+const bookInactive = require("../../assets/img/24-Book.png")
+const bookActive = require("../../assets/img/24-BookActive.png")
+
+const profileInactive = require("../../assets/img/24-user.png")
+const profileActive = require("../../assets/img/UserActive.png")
 
 export default function MainTabs() {
+  const navigation = useNavigation()
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarShowLabel: false,
+          tabBarShowLabel: true,
           tabBarIcon: ({ focused, color, size }) => {
             let icon
             if (route.name === 'Home') {
-              icon = focused ? home : home;
+              icon = focused ? homeActive : homeInactive;
             } else if (route.name === 'History') {
-              icon = focused ? history : history;
+              icon = focused ?  historyActive : historyInactive;
             }
             else if(route.name === "Message"){
               icon = focused ? chat : chat;
             }
             else if(route.name === "Preachly"){
-              icon = focused ? book : book;
+              icon = focused ? bookActive : bookInactive;
             }else{
-              icon = focused ? profile : profile;
+              icon = focused ? profileActive : profileInactive;
             }
             return <Image style={{
               height:24,
@@ -66,10 +76,24 @@ export default function MainTabs() {
     >
       <Tab.Screen
         name="Home" 
+        
         component={HomeStack} 
       />
-      <Tab.Screen name="History" component={HistoryStack} />
-      <Tab.Screen name="Message" component={MessageStack} />
+      <Tab.Screen 
+       name="History" 
+       component={HistoryStack} 
+       />
+      <Tab.Screen 
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("MessageScreen")
+          }
+        }}
+        name="Message" 
+        component={MessageStack} 
+        
+      />
       <Tab.Screen name="Preachly" component={PreachlyStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>

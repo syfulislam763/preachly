@@ -23,8 +23,8 @@ const HomepageHeader = () => {
             <Image
                 source={require('../../assets/img/24-calendar.png')} 
                 style={{
-                    height:30,
-                    width:30,
+                    height:26,
+                    width:26,
                     objectFit:'contain'
                 }}
             />
@@ -34,8 +34,8 @@ const HomepageHeader = () => {
             <Image
                 source={require('../../assets/img/Fire.png')} 
                 style={{
-                    height:24,
-                    width:24,
+                    height:18,
+                    width:18,
                     objectFit:'contain'
                 }}
             />
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   countText: {
     color: '#fff',
-    marginLeft: 6,
+    marginLeft: 10,
     fontSize: 12,
     fontWeight: '500',
   },

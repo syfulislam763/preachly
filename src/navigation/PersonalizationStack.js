@@ -14,10 +14,17 @@ import PersonalizationScreen6 from '../screens/personalization/PersonalizationSc
 import Notification from '../screens/personalization/Notification';
 import SubscriptionConfirmedScreen from '../screens/subscription/SubscriptionConfirmedScreen';
 import SubscriptionScreen from '../screens/subscription/SubscriptionScreen';
+import MainTabs from './MainTabs';
+import MessageScreen from '../screens/tabs/Message/MessageScreen';
+import { useAuth } from '../context/AuthContext';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function PersonalizationStack() {
+
+  const {} = useAuth()
+
   return (
     <Stack.Navigator>
 
@@ -110,7 +117,21 @@ export default function PersonalizationStack() {
       />
 
 
+      <Stack.Screen 
+         options={({ navigation }) => ({
+          headerShown:false
+        })} 
+        name="MainTabs" 
+        component={MainTabs} 
+      />
 
+      <Stack.Screen 
+         options={({ navigation }) => ({
+          headerShown:false
+        })} 
+        name="MessageScreen" 
+        component={MessageScreen} 
+      />
 
 
     </Stack.Navigator>

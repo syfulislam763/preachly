@@ -11,7 +11,14 @@ export default function MessageStack() {
         headerShown:false
       }}
     >
-      <Stack.Screen name="MessageMain" component={MessageScreen} />
+      <Stack.Screen 
+        name="MessageScreen" 
+        component={MessageScreen} 
+        options={{
+          presentation: 'modal',
+          headerBackTitleVisible: false
+        }}
+      />
     </Stack.Navigator>
   );
 }
