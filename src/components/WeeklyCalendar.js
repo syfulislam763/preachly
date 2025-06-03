@@ -71,7 +71,7 @@ const WeeklyCalendar = () => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 20,
+    padding: 0,
     backgroundColor: '#fff',
   },
   dayContainer: {

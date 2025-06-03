@@ -2,24 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Pressable } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { deepGreen, lighgreen } from '../../components/Constant';
+import OTPInput from '../../components/OTPInput';
 
 
-const zero = require("../../../assets/img/Button0.png")
-const one = require("../../../assets/img/Button1.png")
-const two = require("../../../assets/img/Button2.png")
-const three = require("../../../assets/img/Button3.png")
-const four = require("../../../assets/img/Button4.png")
-const five = require("../../../assets/img/Button5.png")
-const six = require("../../../assets/img/Button6.png")
-const seven = require("../../../assets/img/Button7.png")
-const eight = require("../../../assets/img/Button8.png")
-const nine = require("../../../assets/img/Button9.png")
-const ten = require("../../../assets/img/Button10.png")
+
 
 
 
 const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
   const [code, setCode] = useState('');
+  const handleOtpChange = (otp) => {
+    console.log('OTP:', otp);
+  };
 
   // Handle keypad press
   const handleKeyPress = (value) => {
@@ -48,9 +42,17 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
           </Text>
           <Text style={styles.email}>{email}</Text>
         </View>
-
+   
         {/* Code Input */}
-        <View style={styles.codeContainer}>
+        <OTPInput 
+          length={4}
+          onChange={(otp) => console.log('OTP changed:', otp)}
+          onComplete={(otp) => navigation.navigate("CreatePassword")}
+          error={false}
+          focusColor="#005A55"
+          errorColor="#B00020"
+        />
+        {/* <View style={styles.codeContainer}>
           {[0, 1, 2, 3].map((i) => (
             <View key={i} style={styles.codeDigit}>
               <Text style={styles.codeText}>
@@ -59,9 +61,10 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
               <View style={code[i]?{...styles.underline, backgroundColor:deepGreen}:styles.underline} />
             </View>
           ))}
-        </View>
+        </View> */}
 
         {/* Resend Link */}
+        <View style={{height:20}}></View>
         <TouchableOpacity style={styles.resendContainer}>
           <Text style={styles.resendText}>
             Didn't get it? <Text style={styles.resendLink}>Resend code</Text>
@@ -72,7 +75,7 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
       </View>
 
       {/* Keypad */}
-      <View style={styles.keypad}>
+      {/* <View style={styles.keypad}>
         {[
           [{img:one,id:1, txt: ""}, {img:two,id:2, txt: "ABC"}, {img:three,id:3, txt:"DEF"}],
           [{img:four,id:4, txt:"GHI"}, {img:five,id:5, txt:"JKL"}, {img:six,id:6, txt:"MNO"}],
@@ -103,7 +106,9 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
             ))}
           </View>
         ))}
-      </View>
+      </View> */}
+
+
     </View>
   );
 };
@@ -163,6 +168,7 @@ const styles = StyleSheet.create({
   resendText: {
     fontSize: 16,
     color: lighgreen,
+    fontFamily:'NunitoSemiBold'
   },
   resendLink: {
     color: '#005A55',

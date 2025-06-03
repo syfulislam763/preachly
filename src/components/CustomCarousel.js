@@ -177,7 +177,7 @@ const CustomCarousel = () => {
               style={[
                 styles.dot,
                 {
-                  width: isSecond ? 30 : 12,
+                  width: isActive ? 25 : 12,
                   backgroundColor: isActive ? deepGreen : lighgreen,
                 },
               ]}
