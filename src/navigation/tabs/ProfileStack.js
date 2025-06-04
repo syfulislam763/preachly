@@ -3,14 +3,28 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../../screens/tabs/Profile/ProfileScreen';
 import ProfileNotification from '../../screens/tabs/Profile/ProfileNotification';
 import Calendar from '../../screens/tabs/Profile/Calendar';
+import Reward from '../../components/Reward';
+import BackButton from '../../components/BackButton';
+import CurrentGoals from '../../screens/tabs/Profile/CurrentGoals'
+import { useNavigation } from '@react-navigation/native';
+import WeeklyCheckIn from '../../screens/tabs/Profile/WeeklyCheckIn'
+import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_'
+
+import RegularCheckIn from '../../screens/tabs/Profile/RegularCheckIn'
+import PorfileFaith from '../../screens/tabs/Profile/ProfileFaith'
+
+
 const Stack = createNativeStackNavigator();
 
 export default function ProfileStack() {
+  const navigation = useNavigation()
+
+
   return (
     <Stack.Navigator 
     >
       <Stack.Screen options={{headerShown:false}} name="ProfileScreen" component={ProfileScreen} />
-      <Stack.Screen options={{
+      <Stack.Screen options={({navigation}) => ({
         title: 'Notifications',
         headerTitleAlign: "center",
         headerShadowVisible: false,
@@ -25,13 +39,18 @@ export default function ProfileStack() {
           borderBottomWidth: 0,
           backgroundColor: '#fff',
         },
-      }} name="ProfileNotification" component={ProfileNotification} />
-      <Stack.Screen options={{
-        title: 'Calendar',
+      })} name="ProfileNotification" component={ProfileNotification} />
+
+      <Stack.Screen options={({navigation}) => ({
+        headerShown:false,
+      })} name="Calendar" component={Calendar} />
+
+      <Stack.Screen options={({navigation}) => ({
+        title: 'Your Current Goals',
         headerTitleAlign: "center",
         headerShadowVisible: false,
         headerTitleStyle: {
-          fontFamily: 'NunitoSemiBold',
+          fontFamily: 'NunitoBold',
           color: '#0b172A',
           fontSize: 18
         },
@@ -41,10 +60,55 @@ export default function ProfileStack() {
           borderBottomWidth: 0,
           backgroundColor: '#fff',
         },
-      }} name="Calendar" component={Calendar} />
+        headerLeft: () => <BackButton navigation={navigation}/>
+      })} name="CurrentGoals" component={CurrentGoals} />
+
+      <Stack.Screen options={({navigation}) => ({
+        title: 'Weekly Check-In',
+        headerTitleAlign: "center",
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: 'NunitoBold',
+          color: '#0b172A',
+          fontSize: 18
+        },
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+          backgroundColor: '#fff',
+        },
+        headerLeft: () => <BackButton navigation={navigation}/>
+      })} name="WeeklyCheckIn" component={WeeklyCheckIn} />
 
 
+      <Stack.Screen 
+        options={({navigation}) => ({
+          headerTitleAlign: "center",
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            fontFamily: 'NunitoBold',
+            color: '#0b172A',
+            fontSize: 18
+          },
+          headerStyle: {
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+            backgroundColor: '#fff',
+          },
+          headerLeft: () => <BackButton navigation={navigation}/>
+      })}
+      
+      name="RegularCheckIn" component={RegularCheckIn} />
 
+
+      <Stack.Screen 
+        options={({navigation}) => ({
+          headerShown:false
+      })}
+      
+      name="PorfileFaith" component={PorfileFaith } />
 
 
     </Stack.Navigator>

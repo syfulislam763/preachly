@@ -91,7 +91,7 @@ const initialData = [
     snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
     replies: 5,
     timeAgo: '2 hour ago',
-    isFavorite: true,
+    isFavorite: false,
     type: 'answer',
   },
   {

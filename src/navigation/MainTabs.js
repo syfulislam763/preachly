@@ -5,7 +5,7 @@ import HistoryStack from './tabs/HistoryStack';
 import MessageStack from './tabs/MessageStack';
 import PreachlyStack from './tabs/PreachlyStack';
 import ProfileStack from './tabs/ProfileStack';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
@@ -23,6 +23,10 @@ const bookActive = require("../../assets/img/24-BookActive.png")
 
 const profileInactive = require("../../assets/img/24-user.png")
 const profileActive = require("../../assets/img/UserActive.png")
+
+const NullComponent = () => {
+  return null
+}
 
 export default function MainTabs() {
   const navigation = useNavigation()
@@ -91,7 +95,7 @@ export default function MainTabs() {
           }
         }}
         name="Message" 
-        component={MessageStack} 
+        component={NullComponent} 
         
       />
       <Tab.Screen name="Preachly" component={PreachlyStack} />

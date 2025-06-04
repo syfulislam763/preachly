@@ -127,7 +127,8 @@ export default function PersonalizationStack() {
 
       <Stack.Screen 
          options={({ navigation }) => ({
-          headerShown:false
+          headerShown:false,
+          presentation:'modal'
         })} 
         name="MessageScreen" 
         component={MessageScreen} 

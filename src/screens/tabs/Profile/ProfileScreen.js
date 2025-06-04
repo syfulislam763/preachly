@@ -88,30 +88,41 @@ const ProfileScreen = () => {
           </View>
         </Pressable>
         <View style={{height:15}}/>
-        <View style={styles.weeklyCheckIn}>
-           <View>
-              <Text style={styles.menuText}>Weekly Check-In</Text>
-               <View style={styles.tooltip}>
-                 <Text style={styles.tooltipText}>Completed</Text>
-                 <Image 
-                  source={require("../../../../assets/img/Check.png")}
-                  style={styles.caretRight}
-                 />
-               </View>
-           </View>
-           <Image
-              source={require("../../../../assets/img/CaretRight.png")}
-              style={styles.caretRight}
-           />
-        </View>
+
+        <Pressable
+          onPress={() => navigation.navigate("WeeklyCheckIn")}
+        >
+          <View style={styles.weeklyCheckIn}>
+            <View>
+                <Text style={styles.menuText}>Weekly Check-In</Text>
+                <View style={styles.tooltip}>
+                  <Text style={styles.tooltipText}>Completed</Text>
+                  <Image 
+                    source={require("../../../../assets/img/Check.png")}
+                    style={styles.caretRight}
+                  />
+                </View>
+            </View>
+            <Image
+                source={require("../../../../assets/img/CaretRight.png")}
+                style={styles.caretRight}
+            />
+          </View>
+        </Pressable>
+
         <View style={{height:15}}/>
-        <View style={styles.weeklyCheckIn}>
-           <Text style={styles.menuText}>Your Current Goals</Text>
-           <Image
-              source={require("../../../../assets/img/CaretRight.png")}
-              style={styles.caretRight}
-           />
-        </View>
+        
+        <Pressable 
+          onPress={() => navigation.navigate("CurrentGoals")}
+        >
+          <View style={styles.weeklyCheckIn}>
+            <Text style={styles.menuText}>Your Current Goals</Text>
+            <Image
+                source={require("../../../../assets/img/CaretRight.png")}
+                style={styles.caretRight}
+            />
+          </View>
+        </Pressable>
 
 
       </View>
