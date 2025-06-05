@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image} from 'react-native';
-import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';

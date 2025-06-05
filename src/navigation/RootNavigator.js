@@ -5,13 +5,12 @@ import PersonalizationStack from './PersonalizationStack';
 import MainTabs from './MainTabs';
 import SubscriptionScreen from '../screens/subscription/SubscriptionScreen';
 import { useAuth } from '../context/AuthContext';
+import PreachlyScreen from '../screens/tabs/Preachly/PreachlyScreen';
 
 export default function RootNavigator() {
   const { isAuthenticated, isPersonalized, isSubscribed } = useAuth();
 
-  if (!isAuthenticated) return <AuthStack />;
-  if (!isPersonalized) return <PersonalizationStack />;
-  // if (!isSubscribed) return <SubscriptionScreen />;
+  return !isAuthenticated?<AuthStack/>:!isPersonalized?<PersonalizationStack/>:<MainTabs/>
 
-  return <MainTabs />;
+
 }

@@ -13,6 +13,8 @@ import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_'
 import RegularCheckIn from '../../screens/tabs/Profile/RegularCheckIn'
 import PorfileFaith from '../../screens/tabs/Profile/ProfileFaith'
 
+import QuestionScreen from '../../screens/tabs/Profile/QuestionScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -109,6 +111,14 @@ export default function ProfileStack() {
       })}
       
       name="PorfileFaith" component={PorfileFaith } />
+
+      <Stack.Screen
+        options={()=>({
+          headerShown:true
+        })}
+        name='QuestionScreen'
+        component={QuestionScreen}
+      />
 
 
     </Stack.Navigator>

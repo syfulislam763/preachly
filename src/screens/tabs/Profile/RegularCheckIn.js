@@ -32,7 +32,7 @@ const RegularCheckIn = ({navigation, route}) => {
             btnText={"Start Check-In"}
             bgColor={deepGreen}
             navigation={navigation}
-            route={"PorfileFaith"}
+            route={"QuestionScreen"}//QuestionScreen,PorfileFaith
             txtColor={primaryText}
             bold='bold'
             opacity={1}
