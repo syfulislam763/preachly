@@ -8,21 +8,22 @@ import {
   Image
 } from 'react-native';
 
-const CustomModal = ({ visible, onClose, title, children }) => {
+const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyle={}, modalContainerStyle={},headerStyle={}, children }) => {
   return (
     <Modal
       transparent
       visible={visible}
-      animationType="fade"
+      animationType={animationType}
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
+      <View style={{...styles.overlay, ...overlayStyle}}>
+        <View style={{...styles.modalContainer, ...modalContainerStyle}}>
             <View style={{
                 display:'flex',
-                flexDirection:'row',
+                flexDirection:'row-reverse',
                 alignItems:'center',
-                justifyContent:'flex-end'
+                justifyContent:'space-between',
+                ...headerStyle
             }}>
                 <Pressable onPress={onClose}>
                     <Image
@@ -35,6 +36,7 @@ const CustomModal = ({ visible, onClose, title, children }) => {
                     
                     />
                 </Pressable>
+                {title && title()}
             </View>
             {children}
         </View>
@@ -51,12 +53,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000088',
     justifyContent: 'center',
     alignItems: 'center',
+    padding:20,
+    // backgroundColor:'#fff'
   },
   modalContainer: {
-    width: '90%',
+    width: '100%',
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 20,
+    paddingVertical: 28,
+    // height:'100%',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

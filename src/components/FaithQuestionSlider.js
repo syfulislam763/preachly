@@ -33,7 +33,8 @@ const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
                     left: left,
                     top: top,
                     height: activeDot[dotNumber]?40:30,
-                    width: activeDot[dotNumber]?40:30
+                    width: activeDot[dotNumber]?40:30,
+                    
                 }}
             >
                 {
@@ -41,9 +42,10 @@ const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
                         ...styles.dot,
                         height: activeDot[dotNumber]?30:20,
                         width: activeDot[dotNumber]?30:20,
+                        padding: activeDot[dotNumber]?5:0
                     }}>
-                        <AntDesign name="left" size={12} color="white" />
-                        <AntDesign name="right" size={12} color="white" />
+                        <AntDesign name="left" size={10} color="white" />
+                        <AntDesign name="right" size={10} color="white" />
                     </View>:
                     <View style={{
                         ...styles.dot,
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
         borderRadius:'50%',
         display:'flex',
         flexDirection:'row',
-        justifyContent:'space-around',
+        justifyContent:'center',
         alignItems:'center'
     }
 })
