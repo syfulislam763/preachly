@@ -1,9 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions,Image, Pressable, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
-
+import useLayoutDimention from '../hooks/useLayoutDimention'
 
 
 
@@ -59,7 +59,10 @@ const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
 }
   
 
-const FaithQuestionSlider = () => {
+function FaithQuestionSlider() {
+
+    const {isSmall,isMedium, height} = useLayoutDimention()
+
     const [progress, setProgress] = useState(0)
     const [activeDot, setActiveDot] = useState({1:false,2:false,3:false,4:false, 5:false})
     const [ans, setAns] = useState("Finding my rhythm")
@@ -96,7 +99,7 @@ const FaithQuestionSlider = () => {
         flex:1,
         backgroundColor:'#fff'
     }}>
-        <View style={styles.slideContainer}>
+        <View style={{...styles.slideContainer, marginTop: isSmall?height*0.05:height*0.1}}>
 
             <View style={styles.cardContainer} >
 
@@ -179,7 +182,9 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
         marginTop: 100 ,
-        position:'relative'
+        position:'relative',
+        backgroundColor:'#fff',
+        height:350
     },
     cardContainer:{
         backgroundColor:'#EDF3F3',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Dimensions } from 'react-native';
 import {
   SafeAreaView
 } from 'react-native-safe-area-context';
@@ -7,8 +7,13 @@ import ImageSlider from '../../components/Slider';
 import FooterBar from '../../components/FooterBar';
 
 import CustomCarousel from '../../components/CustomCarousel';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+const {height, width} = Dimensions.get("window")
 
 export default function WelcomeScreen({ navigation }) {
+  
+  
+
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
 
@@ -26,18 +31,12 @@ export default function WelcomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 50,
-    backgroundColor:'#fff'
-  },
+  
   btnContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '21%',
+    marginTop: height*0.05,
   },
   btn: {
     backgroundColor: '#005A55',

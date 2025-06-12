@@ -5,6 +5,8 @@ import { AuthProvider } from './src/context/AuthContext';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import FontLoader from './src/components/FontLoader';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function App() {
   return (
@@ -12,7 +14,9 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <AuthProvider>
-            <RootNavigator />
+            <SafeAreaView style={{flex:1}} edges={['bottom']}>
+              <RootNavigator />
+            </SafeAreaView>
           </AuthProvider>
         </NavigationContainer>
       </GestureHandlerRootView>

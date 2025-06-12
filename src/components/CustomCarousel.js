@@ -8,6 +8,7 @@ import {
   Text,
 } from 'react-native';
 import { deepGreen, lighgreen } from './Constant';
+import useLayoutDimention from '../hooks/useLayoutDimention';
 
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.75;
@@ -35,7 +36,10 @@ const images = [
 
 const totalImages = imageData.length;
 
-const CustomCarousel = () => {
+function CustomCarousel () {
+
+  const {isSmall, isMedium, isLarge, height} = useLayoutDimention()
+
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -79,7 +83,7 @@ const CustomCarousel = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, marginTop: isSmall?height*0.05:height*0.07}}>
       <Animated.FlatList
         ref={flatListRef}
         data={images}
@@ -160,7 +164,10 @@ const CustomCarousel = () => {
                   }
                 ]}
               >
-                <Image source={item.img} style={styles.image} />
+                <Image source={item.img} style={{
+                  ...styles.image,
+                  height: isSmall?height*0.5: height*0.44
+                }} />
               </Animated.View>
             </View>
           );
@@ -191,7 +198,9 @@ const CustomCarousel = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    marginTop: height*0.05,
+    backgroundColor:'white',
+    // height:'50%'
   },
 
   fullWidthCaptionWrapper: {
@@ -232,8 +241,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   image: {
-    width: '100%',
-    height: 400,
+    width: "100%",
+    height: height*0.4,
     resizeMode: 'cover',
     borderRadius: 12,
   },

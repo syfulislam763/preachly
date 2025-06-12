@@ -56,15 +56,15 @@ const RegularCheckIn = ({navigation, route}) => {
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
             animationType='slide'
-            overlayStyle={{backgroundColor:'red'}}
+            overlayStyle={{backgroundColor:'#fff'}}
             modalContainerStyle={{
                 elevation: 0,
-                backgroundColor:"green",
+                backgroundColor:"#fff",
                 width: "110%",
                 height:window.height
             }}
-            title={() => <Text style={{width:'90%', textAlign:'center', fontWeight:'bold',}}>1/10</Text>}
-            headerStyle={{paddingHorizontal:20}}
+            title={() => <Text style={{fontFamily:'NunitoBold'}}>1/10</Text>}
+            headerStyle={{paddingHorizontal:20, paddingVertical:10}}
         >
             <View style={{paddingVertical:20,paddingHorizontal:20}}>
                 <ProgressBar progress={20}/>
@@ -80,11 +80,11 @@ const RegularCheckIn = ({navigation, route}) => {
             
             <FaithQuestionSlider/>
             
-            <Text style={{paddingHorizontal:60, paddingVertical:30,color:'#80ADAA', fontFamily:'NunitoSemiBold', fontSize:16, textAlign:'center'}}>
+            <Text style={{paddingHorizontal:60, paddingBottom:30,color:'#80ADAA', fontFamily:'NunitoSemiBold', fontSize:16, textAlign:'center'}}>
                 Drag the slider left or right to change the answer
             </Text>
 
-            <View style={{paddingHorizontal:20, paddingVertical:30}}>
+            <View style={{paddingHorizontal:20, paddingVertical:0}}>
                 <CommonButton
                     btnText={"Next"}
                     bgColor={deepGreen}
@@ -106,7 +106,7 @@ const RegularCheckIn = ({navigation, route}) => {
 
 export default RegularCheckIn
 const styles = StyleSheet.create({
-    container:{flex:1, backgroundColor:'#fff', alignItems:'center',  paddingHorizontal:0, paddingVertical:40},
+    container:{flex:1, backgroundColor:'#fff', alignItems:'center',  paddingHorizontal:20, paddingVertical:40},
     title:{
         fontFamily:'DMSerifDisplay',
         fontSize:32,

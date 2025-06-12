@@ -8,13 +8,15 @@ import CustomHeader from '../../../components/CustomNavigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
 import BackButton from '../../../components/BackButton';
+import useLayoutDimention from '../../../hooks/useLayoutDimention';
+import { he } from 'date-fns/locale';
 
-const { width, height } = Dimensions.get('window');
+const { width, height,} = Dimensions.get('window');
 
 const ProfileFaith = ({ navigation }) => {
 
   const {completePersonalization} = useAuth()
-
+  const {height, width, isSmall} = useLayoutDimention()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +40,7 @@ const ProfileFaith = ({ navigation }) => {
                 width:'100%', 
                 objectFit:'contain',
                 position:'absolute',
-                top: (height*17)/100,
+                top: isSmall?height*0.2: height*0.2,
                 left:0,
                 right:0,
                 zIndex: 1
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor:'#fff',
+    position:'relative'
   },
   textContainer: {
     height: height * (1/5),
@@ -77,15 +80,11 @@ const styles = StyleSheet.create({
     marginTop:'8%',
     padding:20
   },
-  imageSection: {
-    height: height * (3/4),
-    width: '100%',
-    backgroundColor: 'green',
-  },
+  
   btnContainer:{
     paddingHorizontal: 20,
     position:'absolute',
-    bottom: (height*13)/100,
+    bottom:30,
     left:0,
     right:0,
     zIndex: 1
@@ -101,6 +100,7 @@ const styles = StyleSheet.create({
     color:"#2B4752",
     fontSize: 17,
     textAlign:'center',
+    paddingHorizontal:20
   },
   button: {
     backgroundColor: '#005A55',

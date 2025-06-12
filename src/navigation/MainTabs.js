@@ -7,6 +7,7 @@ import PreachlyStack from './tabs/PreachlyStack';
 import ProfileStack from './tabs/ProfileStack';
 import { Image, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import useLayoutDimention from '../hooks/useLayoutDimention';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,8 @@ const NullComponent = () => {
 
 export default function MainTabs() {
   const navigation = useNavigation()
+ 
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -62,10 +65,11 @@ export default function MainTabs() {
             backgroundColor: '#fff',
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            height: 100,
-            paddingBottom: 30,
-            paddingTop: 30,
-            position: 'absolute',
+            height: 60,
+            paddingBottom: 20,
+            paddingTop: 10,
+            marginBottom: 0,
+            // position: 'absolute',
             shadowColor: '#000',
             shadowOpacity: 0.1,
             shadowOffset: { width: 0, height: -2 },

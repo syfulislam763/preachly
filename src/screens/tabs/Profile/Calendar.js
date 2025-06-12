@@ -147,10 +147,12 @@ const Calendar = () => {
         {modalVisible && <CustomModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+          headerStyle={{paddingHorizontal:20}}
         >
           <View style={{
             alignItems:'center',
-            paddingVertical: 0
+            paddingVertical: 0,
+            paddingHorizontal:20
           }}>
             <View style={{marginBottom:20}}>
               <Text style={styles.title}>Your streak</Text>

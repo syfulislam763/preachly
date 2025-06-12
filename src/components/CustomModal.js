@@ -11,7 +11,9 @@ import {
 const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyle={}, modalContainerStyle={},headerStyle={}, children }) => {
   return (
     <Modal
-      transparent
+      transparent={false}
+      presentationStyle='overFullScreen'
+      statusBarTranslucent={true}
       visible={visible}
       animationType={animationType}
       onRequestClose={onClose}
@@ -37,6 +39,8 @@ const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyl
                     />
                 </Pressable>
                 {title && title()}
+
+                <View></View>
             </View>
             {children}
         </View>
@@ -54,6 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding:20,
+    height:'100%'
     // backgroundColor:'#fff'
   },
   modalContainer: {
