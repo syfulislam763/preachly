@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {View, Text, Image, StyleSheet} from 'react-native'
 import CommonButton from '../../../components/CommonButton'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,6 +7,19 @@ import { useNavigation } from '@react-navigation/native'
 
 const CurrentGoals = () => {
     const navigation = useNavigation()
+
+    // useLayoutEffect(()=>{
+    //     navigation.getParent()?.setOptions({
+    //         tabBarStyle: {display:'none'}
+    //     })
+    //     return () => {
+    //         navigation.getParent()?.setOptions({
+    //             tabBarStyle: undefined
+    //         })
+    //     }
+    // },[navigation])
+
+
   return (
         <SafeAreaView style={styles.container} >
             <View style={styles.subContainer}>
@@ -59,6 +72,6 @@ const styles = StyleSheet.create({
         display:'flex',
         flexDirection:'column',
         justifyContent: 'space-between',
-        paddingBottom: 100
+        paddingBottom: 20
     }
 })

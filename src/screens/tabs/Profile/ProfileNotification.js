@@ -1,4 +1,5 @@
-import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import React, { useLayoutEffect } from 'react'
 import { View , Text, ScrollView, StyleSheet, FlatList} from 'react-native'
 
 
@@ -30,7 +31,24 @@ const arr = [
     }
 ]
 
-const ProfileNotification = () => {
+function ProfileNotification (){
+
+    const navigation = useNavigation()
+
+    // useLayoutEffect(()=>{
+    //     navigation.getParent()?.setOptions({
+    //         tabBarStyle: {display:'none'}
+    //     })
+
+    //     return () => {
+    //         navigation.getParent()?.setOptions({
+    //             tabBarStyle: undefined
+    //         })
+    //     }
+    // },[navigation])
+
+
+
   return (
     <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -68,5 +86,5 @@ export default ProfileNotification;
 
 
 const styles = StyleSheet.create({
-    container:{flex:1, backgroundColor:'#fff', paddingHorizontal:20,paddingTop: 20, paddingBottom: 100}
+    container:{flex:1, backgroundColor:'#fff', paddingHorizontal:20,paddingTop: 20, paddingBottom: 10}
 })

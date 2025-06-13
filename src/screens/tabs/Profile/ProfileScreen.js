@@ -40,7 +40,9 @@ const ProfileScreen = () => {
                 style={styles.icon}
               />
             </Pressable>
-             <Pressable>
+             <Pressable
+              onPress={() => navigation.navigate("SettingHome")}
+             >
                 <Image 
                   source={require("../../../../assets/img/settingIcon.png")}
                   style={styles.icon}
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     width: 100
   },
   menuText:{
-    fontFamily:'NunitoBold',
+    fontFamily:'NunitoSemiBold',
     color:'#0B172A',
     fontSize: 18
   },

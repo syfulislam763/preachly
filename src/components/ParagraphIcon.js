@@ -1,14 +1,14 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 
-const ParagraphIcon = ({icon, text}) => {
+const ParagraphIcon = ({icon, text, textStyle={}}) => {
   return (
     <View style={styles.container}>
         <Image 
         source={icon}
         style={styles.img}
         />
-        <Text style={styles.text}>{text}</Text>
+        <Text style={{...styles.text, ...textStyle}}>{text}</Text>
     </View>
   )
 }

@@ -6,7 +6,7 @@ import MessageStack from './tabs/MessageStack';
 import PreachlyStack from './tabs/PreachlyStack';
 import ProfileStack from './tabs/ProfileStack';
 import { Image, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 import useLayoutDimention from '../hooks/useLayoutDimention';
 
 const Tab = createBottomTabNavigator();
@@ -35,7 +35,11 @@ export default function MainTabs() {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route }) => { 
+        const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+        const hiddenRoutes = ['WeeklyCheckIn', 'CurrentGoals', 'RegularCheckIn', 'PorfileFaith', 'ProfileNotification', 'SettingHome', 'PersonalInfo', 'ProfileSubscription']
+        const shouldHideTabBar = hiddenRoutes.includes(routeName);
+        return {
           headerShown: false,
           tabBarShowLabel: true,
           tabBarIcon: ({ focused, color, size }) => {
@@ -61,7 +65,7 @@ export default function MainTabs() {
           },
           tabBarActiveTintColor: '#fff',
           tabBarInactiveTintColor: '#fff',
-          tabBarStyle: {
+          tabBarStyle: shouldHideTabBar?{display:'none'} :{
             backgroundColor: '#fff',
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
@@ -79,7 +83,8 @@ export default function MainTabs() {
             fontSize: 12,
             fontWeight: '600',
           },
-        })}
+        }
+      }}
     
     >
       <Tab.Screen

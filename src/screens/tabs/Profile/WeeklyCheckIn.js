@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {View, Text, Image, StyleSheet, Pressable} from 'react-native'
 import CommonButton from '../../../components/CommonButton'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,6 +7,22 @@ import { useNavigation } from '@react-navigation/native'
 
 const WeeklyCheckIn = () => {
     const navigation = useNavigation()
+
+
+    // useLayoutEffect(()=>{
+    //     navigation.getParent()?.setOptions({
+    //         tabBarStyle: {display:'none'}
+    //     })
+    //     return () => {
+    //         navigation.getParent()?.setOptions({
+    //             tabBarStyle: undefined
+    //         })
+    //     }
+    // },[navigation])
+
+
+
+
   return (
         <SafeAreaView style={styles.container} >
             <View style={styles.subContainer}>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const PlanSelector = () => {
+const PlanSelector = ({OtherPlan=null}) => {
   const [selectedPlan, setSelectedPlan] = useState('monthly');
 
   return (
@@ -26,6 +26,8 @@ const PlanSelector = () => {
           </View>
         </View>
       </TouchableOpacity>
+
+      {OtherPlan&& OtherPlan()}
 
       {/* Annual Plan */}
       <TouchableOpacity
