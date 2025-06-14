@@ -8,12 +8,9 @@ import {
   StyleSheet,
   Animated,
   Easing,
-  Keyboard,
-  TouchableWithoutFeedback,
   Platform,
 } from 'react-native';
 import { Audio } from 'expo-av';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function ChatInput() {
@@ -79,6 +76,11 @@ export default function ChatInput() {
     setRecordDuration(status.durationMillis);
     setMode('recorded');
     stopPulse();
+
+    // Auto-play after slight delay
+    setTimeout(() => {
+      playRecording();
+    }, 300);
   };
 
   const playRecording = async () => {
@@ -102,7 +104,6 @@ export default function ChatInput() {
   const sendAudio = () => {
     console.log('Uploading audio file:', recordedURI);
     setMode('uploading');
-
     let progress = 0;
     const interval = setInterval(() => {
       progress += 0.1;
@@ -121,73 +122,63 @@ export default function ChatInput() {
   }, [mode]);
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
-      extraScrollHeight={Platform.OS === 'ios' ? 80 : 0}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {mode === 'uploading' ? (
-            <View style={styles.uploadBarContainer}>
-              <Text style={styles.uploadLabel}>Uploading...</Text>
-              <View style={styles.uploadBar}>
-                <View style={[styles.uploadProgress, { width: `${uploadProgress * 100}%` }]} />
-              </View>
-            </View>
-          ) : mode === 'recorded' ? (
-            <View style={styles.audioPreview}>
-              <TouchableOpacity onPress={playRecording}>
-                <Icon name="play" size={24} />
-              </TouchableOpacity>
-              <Text style={styles.audioText}>{`${Math.floor(recordDuration / 1000)}s`}</Text>
-              <TouchableOpacity onPress={sendAudio}>
-                <Icon name="send" size={24} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={cancelRecording}>
-                <Icon name="close" size={24} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.inputRow}>
-              <TouchableOpacity>
-                <Icon name="plus" size={22} color="#444" />
-              </TouchableOpacity>
-              <TextInput
-                style={styles.input}
-                placeholder="Ask anything – let’s find answers together…"
-                value={text}
-                onChangeText={setText}
-                placeholderTextColor="#999"
-              />
-              <Pressable
-                onPressIn={startRecording}
-                onPressOut={stopRecording}
-                style={[
-                  styles.micButton,
-                  mode === 'recording' && styles.micRecording,
-                ]}
-              >
-                <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                  <Icon name="microphone" size={24} color="white" />
-                </Animated.View>
-              </Pressable>
-            </View>
-          )}
+    <View style={styles.container}>
+      {mode === 'uploading' ? (
+        <View style={styles.uploadBarContainer}>
+          <Text style={styles.uploadLabel}>Uploading...</Text>
+          <View style={styles.uploadBar}>
+            <View style={[styles.uploadProgress, { width: `${uploadProgress * 100}%` }]} />
+          </View>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAwareScrollView>
+      ) : mode === 'recorded' ? (
+        <View style={styles.audioPreview}>
+          <TouchableOpacity onPress={playRecording}>
+            <Icon name="play" size={24} />
+          </TouchableOpacity>
+          <Text style={styles.audioText}>{`${Math.floor(recordDuration / 1000)}s`}</Text>
+          <TouchableOpacity onPress={sendAudio}>
+            <Icon name="send" size={24} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={cancelRecording}>
+            <Icon name="close" size={24} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.inputRow}>
+          <TouchableOpacity>
+            <Icon name="plus" size={22} color="#444" />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Ask anything – let’s find answers together…"
+            value={text}
+            onChangeText={setText}
+            placeholderTextColor="#999"
+            multiline
+          />
+          <Pressable
+            onPressIn={startRecording}
+            onPressOut={stopRecording}
+            style={[
+              styles.micButton,
+              mode === 'recording' && styles.micRecording,
+            ]}
+          >
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+              <Icon name="microphone" size={24} color="white" />
+            </Animated.View>
+          </Pressable>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-  },
   container: {
     padding: 12,
     backgroundColor: 'white',
+    justifyContent: 'flex-end',
   },
   inputRow: {
     flexDirection: 'row',
@@ -195,12 +186,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#eef4f4',
     borderRadius: 24,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
   },
   input: {
     flex: 1,
     paddingHorizontal: 10,
     fontSize: 16,
+    maxHeight: 100,
   },
   micButton: {
     backgroundColor: '#007bff',

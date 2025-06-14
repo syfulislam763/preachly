@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useLayoutEffect } from 'react'
-import { View, Text, StyleSheet, Pressable, Image} from 'react-native'
+import React, { useLayoutEffect, useState } from 'react'
+import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 
@@ -8,6 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const SettingHome = () => {
 
     const navigation = useNavigation()
+
+    const [isOpenModal, setOpenModal] = useState(false)
     
   return (
     <View style={{flex:1, backgroundColor:'#fff', padding:20}}>
@@ -52,7 +54,7 @@ const SettingHome = () => {
         <Pressable 
             onPress={() => {}}
         >
-            <View style={{
+            <Pressable onPress={()=>setOpenModal(true)} style={{
                 display:'flex',
                 flexDirection:'row',
                 alignItems:'center',
@@ -78,14 +80,81 @@ const SettingHome = () => {
                     borderBottomWidth: .6,
                     borderBottomColor: '#D85B4B'
                 }}>Log out</Text>
-            </View>
+            </Pressable>
         </Pressable>
+        
+        <LogoutModal
+            isVisible={isOpenModal}
+            onClose={() => setOpenModal(false)}
+        />
 
     </View>
   )
 }
 
 export default SettingHome;
+
+
+
+const LogoutModal = ({ isVisible, onClose, handleChage }) => (
+  <Modal
+    visible={isVisible}
+    transparent
+    animationType="slide"
+    onRequestClose={onClose}
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalContainer}>
+        
+        
+        <Text
+            style={{
+                color:'#0B172A',
+                fontFamily:'DMSerifDisplay',
+                fontSize:30,
+                textAlign:'center',
+                paddingVertical: 20
+            }}
+        >
+            Log out of the account?
+        </Text>
+
+        <View 
+
+            style={{
+                display:'flex',
+                flexDirection:'row',
+                justifyContent:'space-between',
+                alignItems:'center'
+            }}
+        
+        >
+
+            
+          <TouchableOpacity
+            style={styles.selectBtn}
+            onPress={onClose}
+          >
+            <Text style={styles.selectBtnText}>Cancel</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{...styles.selectBtn, backgroundColor:'#EDF3F3'}}
+            onPress={onClose}
+          >
+            <Text style={{...styles.selectBtnText, color:'#000'}}>Logout</Text>
+          </TouchableOpacity>
+
+
+
+        </View>
+
+
+
+      </View>
+    </View>
+  </Modal>
+);
 
 
 const styles = StyleSheet.create({
@@ -107,5 +176,32 @@ const styles = StyleSheet.create({
     width:20,
     height:20,
     objectFit:"contain"
+  },
+    selectBtn: {
+    backgroundColor: '#005A55',
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 12,
+    width: '48%'
+  },
+  selectBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily:'NunitoSemiBold'
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: '#000000CC',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '50%',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
   },
 });

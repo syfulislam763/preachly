@@ -116,7 +116,7 @@ export default function ProfileStack() {
           borderBottomWidth: 0,
           backgroundColor: '#fff',
         },
-        
+        headerLeft: () => <BackButton navigation={navigation}/>
       })} name="ProfileNotification" component={ProfileNotification} />
 
       <Stack.Screen options={({navigation}) => ({

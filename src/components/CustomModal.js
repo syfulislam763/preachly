@@ -11,7 +11,7 @@ import {
 const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyle={}, modalContainerStyle={},headerStyle={}, children }) => {
   return (
     <Modal
-      transparent={false}
+      transparent={true}
       presentationStyle='overFullScreen'
       statusBarTranslucent={true}
       visible={visible}
@@ -54,7 +54,7 @@ export default CustomModal;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: '#00000088',
+    backgroundColor: '#000000CC',
     justifyContent: 'center',
     alignItems: 'center',
     padding:20,
