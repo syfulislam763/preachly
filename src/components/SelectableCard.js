@@ -45,7 +45,7 @@ const SelectableCard = ({
         {/* <Text style={styles.leafIcon}>🍃</Text> */}
         <Image
             source={icon}
-            style={{...styles.icon, marginRight:10}}
+            style={{...styles.icon, marginRight:15}}
         />
 
         <Text style={styles.title}>{title}</Text>
@@ -72,7 +72,7 @@ const SelectableCard = ({
         <View style={styles.body}>
           <Text style={styles.description}>{description}</Text>
           <Text style={styles.quote}>
-            <Text style={{ fontStyle: 'italic', fontFamily:'NunitoExtraBold' }}>{quote}</Text>
+            <Text style={{ fontFamily:'NunitoExtraBold', color:'#0B172A', fontSize:17, fontStyle: 'italic' }}>{quote}</Text>
           </Text>
         </View>
       )}
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 16,
-    color: '#001F2B',
+    fontSize: 18,
+    color: '#0B172A',
     fontFamily:'NunitoBold'
   },
   arrow: {
@@ -133,13 +133,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   description: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#4C5B5C',
     marginBottom: 8,
     fontFamily:'NunitoSemiBold'
   },
   quote: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#0B172A',
     fontFamily:'NunitoExtraBold'
   },

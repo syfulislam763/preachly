@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius:16,
     borderWidth:1,
     borderColor:'#ACC6C5',
-    maxWidth: '90%',
+    maxWidth: '100%',
     
   },
   botText: { fontSize: 16, color: '#0B172A',fontFamily:'NunitoSemiBold' },

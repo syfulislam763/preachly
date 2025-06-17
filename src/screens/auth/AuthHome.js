@@ -112,13 +112,17 @@ const styles = StyleSheet.create({
   },
   title:{
     textAlign:'center',
-    fontSize: 32,
+    fontSize: 36,
     padding:30,
-    fontFamily: 'DMSerifDisplay'
+    paddingHorizontal:20,
+    fontFamily: 'DMSerifDisplay',
+    color: '#0B172A',
+    lineHeight:45
   },
   subtitle:{
-    fontSize:16,
+    fontSize:18,
     paddingBottom: 50,
-    fontFamily: 'NunitoSemiBold'
+    fontFamily: 'NunitoSemiBold',
+    color:"#2B4752"
   }
 });

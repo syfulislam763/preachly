@@ -32,7 +32,7 @@ export default function PersonalizationScreen({navigation}) {
         </View>
 
 
-        <View style={{paddingTop:25}}>
+        <View style={{paddingTop:30, paddingHorizontal:0}}>
             <WeeklyCalendar/>
         </View>
 
@@ -82,10 +82,10 @@ export default function PersonalizationScreen({navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:30},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 20},
+  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 20, lineHeight:35, color:'#0B172A'},
   subtitle: {fontFamily:'NunitoSemiBold', fontSize: 20, color: deepGreen},
   text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
-  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', },
+  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:14.5, textAlign:'center', flexWrap:'wrap', paddingHorizontal:18 },
   img: {width:'100%',height: 180,objectFit:'contain'},
   caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:25}
 

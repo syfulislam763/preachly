@@ -46,7 +46,7 @@ export default function SignInScreen({ navigation }) {
               value={email}
               onChangeText={(e) => setEmail(e)}
               style={styles.input}
-              placeholderColor='#ACC6C5'
+              placeholderColor='#607373'
             />
           </View>
         </ScrollView>
@@ -82,9 +82,10 @@ const styles = StyleSheet.create({
     fontSize: primaryTitleSize,
     fontFamily:"DMSerifDisplay",
     marginBottom: 16,
+    color: '#0B172A'
   }, 
   text: {
-    fontSize: primaryTextSize,
+    fontSize: 18,
     paddingTop: 10,
     paddingBottom: 40,
     boxSizing: 'border-box',

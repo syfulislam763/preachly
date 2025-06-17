@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: '#607373',
     fontSize: 18,
-    fontFamily:'NunitoSemiBold'
+    fontFamily:'NunitoSemiBold',
+    paddingLeft:5
   },
   selectedText: {
     color: '#333',

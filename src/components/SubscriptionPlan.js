@@ -67,29 +67,30 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   planContainer: {
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#B0CFCB',
     borderRadius: 20,
     padding: 10,
+    paddingHorizontal:15,
     marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
-    width:'100%'
+    width:'100%',
+    
   },
   selectedPlan: {
-    borderColor: '#005F56',
+    borderColor: '#005A55',
   },
   planTitle: {
-    fontWeight: '600',
+    fontFamily:'NunitoSemiBold',
     fontSize: 16,
     color: '#0B1D26',
   },
   subText: {
-    fontSize: 13,
+    fontSize: 16,
     color: '#84B3B2',
-    marginTop: 4,
   },
   rightSection: {
     flexDirection: 'row',
@@ -97,14 +98,14 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   priceText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0B1D26',
+    fontSize: 18,
+    fontFamily:"NunitoSemiBold",
+    color: '#0B172A',
   },
   radioOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 2,
     borderColor: '#46636A',
     justifyContent: 'center',
@@ -112,25 +113,26 @@ const styles = StyleSheet.create({
   },
   radioOuterSelected: {
     borderColor: '#005F56',
+    borderWidth: 1,
   },
   radioInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#005F56',
+    width: 23,
+    height: 23,
+    borderRadius: 23/2,
+    backgroundColor: '#005A55',
   },
   badge: {
     position: 'absolute',
     right: 16,
     top: -10,
-    backgroundColor: '#005F56',
+    backgroundColor: '#005A55',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
   },
   badgeText: {
     color: 'white',
-    fontSize: 11,
-    fontWeight: '600',
+    fontFamily:'NunitoSemiBold',
+    fontSize:14
   },
 });

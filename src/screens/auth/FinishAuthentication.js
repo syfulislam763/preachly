@@ -81,18 +81,21 @@ const styles = StyleSheet.create({
   },
   successText: {
     fontSize: 32,
-    fontFamily:'DMSerifDisplay'
+    fontFamily:'DMSerifDisplay',
+    color:"#0B172A"
   },
   welcomeTitle: {
     fontSize: 32,
-    fontFamily:'DMSerifDisplay'
+    fontFamily:'DMSerifDisplay',
+    color:"#0B172A"
   },
   subtitle: {
     color: '#2B4752',
     textAlign: 'center',
     fontFamily:'NunitoSemiBold',
-    fontSize: 17,
-    padding: 20
+    fontSize: 18,
+    padding: 20,
+    lineHeight:22
   },
   button: {
     backgroundColor: '#005A55',

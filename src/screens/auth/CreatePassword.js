@@ -85,9 +85,10 @@ const styles = StyleSheet.create({
     fontSize: primaryTitleSize,
     fontFamily:'DMSerifDisplay',
     marginBottom: 8,
+    color:'#0B172A'
   }, 
   text: {
-    fontSize: primaryTextSize,
+    fontSize: 17,
     padding: 20,
     boxSizing: 'content-box',
     fontFamily:'NunitoSemiBold',
@@ -101,6 +102,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     padding: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 90,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 30,
   }
 });

@@ -77,26 +77,30 @@ export default function QuestionSlider() {
 
       {questions[currentIndex].options.map(renderRadio)}
 
-      <View style={styles.navigation}>
-        <TouchableOpacity onPress={goPrev} disabled={currentIndex === 0}>
-          <AntDesign name="left" size={24} color={currentIndex === 0 ? '#d3e0dd' : '#a1b7b2'} />
-        </TouchableOpacity>
+      <View style={{
+        alignItems:'center'
+      }}>
+        <View style={styles.navigation}>
+          <TouchableOpacity onPress={goPrev} disabled={currentIndex === 0}>
+            <AntDesign name="left" size={24} color={currentIndex === 0 ? '#d3e0dd' : '#a1b7b2'} />
+          </TouchableOpacity>
 
-        <View style={styles.dots}>
-          {questions.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                currentIndex === index && styles.activeDot,
-              ]}
-            />
-          ))}
+          <View style={styles.dots}>
+            {questions.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  currentIndex === index && styles.activeDot,
+                ]}
+              />
+            ))}
+          </View>
+
+          <TouchableOpacity onPress={goNext} disabled={currentIndex === questions.length - 1}>
+            <AntDesign name="right" size={24} color={currentIndex === questions.length - 1 ? '#d3e0dd' : '#a1b7b2'} />
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity onPress={goNext} disabled={currentIndex === questions.length - 1}>
-          <AntDesign name="right" size={24} color={currentIndex === questions.length - 1 ? '#d3e0dd' : '#a1b7b2'} />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -113,7 +117,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   questionText: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily:'NunitoBold',
     color: '#0B172A',
   },
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '45%'
   },
   dots: {
     flexDirection: 'row',
@@ -159,7 +164,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     backgroundColor: '#c2d8d5',
-    marginHorizontal: 5,
+    marginHorizontal: 2,
   },
   activeDot: {
     backgroundColor: '#0b5c53',

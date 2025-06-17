@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor:'#fff',
     marginTop:'8%',
-    padding:20
+    paddingHorizontal:20
   },
   imageSection: {
     height: height * (3/4),
@@ -95,14 +95,15 @@ const styles = StyleSheet.create({
   btnContainer:{
     paddingHorizontal: 20,
     position:'absolute',
-    bottom: (height*6)/100,
+    bottom: (height*5)/100,
     left:0,
     right:0,
     zIndex: 1
   },
   successText: {
     fontSize: 32,
-    fontFamily:'DMSerifDisplay'
+    fontFamily:'DMSerifDisplay',
+    color:"#0B172A"
   },
   welcomeTitle: {
     fontSize: 32,

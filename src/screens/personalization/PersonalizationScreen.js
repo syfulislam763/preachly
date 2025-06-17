@@ -48,7 +48,7 @@ export default function PersonalizationScreen({navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 20, paddingBottom:27},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 40, paddingBottom: 30},
+  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 40, paddingBottom: 30,color:'#0B172A', lineHeight: 35},
   text: {fontFamily:'NunitoBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50},
   img: { height:130,width: 180, objectFit:'contain'},
   imageContainer: {display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}

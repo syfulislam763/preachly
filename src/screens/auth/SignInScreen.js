@@ -114,6 +114,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     
     textDecorationLine: 'underline',
-    color: '#000'
+    color: '#0B172A'
   }
 });

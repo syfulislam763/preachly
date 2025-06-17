@@ -44,6 +44,6 @@ export default function PersonalizationScreen1({navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex:1,backgroundColor:'#fff',justifyContent:'space-between', padding:10},
-  title: {fontFamily:'DMSerifDisplay', fontSize:32, padding: 42, textAlign:'center'},
+  title: {fontFamily:'DMSerifDisplay', fontSize:32, padding: 42, textAlign:'center', color:'#0B172A', lineHeight:35},
  
 })

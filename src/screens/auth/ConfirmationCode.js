@@ -52,16 +52,7 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
           focusColor="#005A55"
           errorColor="#B00020"
         />
-        {/* <View style={styles.codeContainer}>
-          {[0, 1, 2, 3].map((i) => (
-            <View key={i} style={styles.codeDigit}>
-              <Text style={styles.codeText}>
-                {code[i] || ' '}
-              </Text>
-              <View style={code[i]?{...styles.underline, backgroundColor:deepGreen}:styles.underline} />
-            </View>
-          ))}
-        </View> */}
+        
 
         {/* Resend Link */}
         <View style={{height:20}}></View>
@@ -74,39 +65,6 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
 
       </View>
 
-      {/* Keypad */}
-      {/* <View style={styles.keypad}>
-        {[
-          [{img:one,id:1, txt: ""}, {img:two,id:2, txt: "ABC"}, {img:three,id:3, txt:"DEF"}],
-          [{img:four,id:4, txt:"GHI"}, {img:five,id:5, txt:"JKL"}, {img:six,id:6, txt:"MNO"}],
-          [{img:seven,id:7,txt:"PQRS"}, {img:eight,id:8,txt:"TUV"}, {img:nine,id:9,txt:"WXYZ"}],
-          [{img:ten, id: 10, txt:""}, {img:zero, id:0,txt:""}, {img:ten, id:11,txt:""}]
-        ].map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.keypadRow}>
-            {row.map((obj, index) => (
-              <TouchableOpacity
-                key={index}
-                style={(obj.id == 10 || obj.id == 11)? {...styles.keypadKey, backgroundColor:"#d0d4dc", borderBottomWidth:0} : styles.keypadKey}
-                onPress={() => handleKeyPress(obj.id)}
-              >
-
-                {(obj.id == 10 || obj.id == 11)?<>
-                  <Ionicons name="backspace-outline" size={30} color="black" />
-                </>:
-                <>
-                  {obj.id ==0 ?<Text 
-                    style={styles.number}
-                  >{obj.id}</Text>
-                  : <>
-                    <Text style={styles.number}>{obj.id}</Text>
-                    <Text style={styles.abc}>{obj.txt}</Text>
-                  </>}
-                </>}
-              </TouchableOpacity>
-            ))}
-          </View>
-        ))}
-      </View> */}
 
 
     </View>
@@ -129,7 +87,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily:'DMSerifDisplay',
     fontSize:32,
-
+    color:'#0B172A'
   },
   subtitle: {
     fontSize: 17,
@@ -173,6 +131,9 @@ const styles = StyleSheet.create({
   resendLink: {
     color: '#005A55',
     fontWeight: 'bold',
+    // textDecorationLine:'underline',
+    // textDecorationColor:"red"
+    
   },
   keypad: {
    display:'flex',

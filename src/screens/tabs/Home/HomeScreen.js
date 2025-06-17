@@ -166,21 +166,24 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   questionTitle3:{
-    fontSize: 13,
+    fontSize: 16,
     color: "#fff",
     fontFamily:'NunitoSemiBold',
     textDecorationLine:'underline',
-    textDecorationColor: '#fff'
+    textDecorationColor: '#fff',
+    marginTop:8
   },
   questionTitle2:{
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: 'NunitoSemiBold',
-    color:'#62E2E2'
+    color:'#62E2E2',
+    marginTop:3
   },
   questionTitle1:{
-    fontSize: 16,
+    fontSize: 17,
     fontFamily:'NunitoSemiBold',
-    color:'#fff'
+    color:'#fff',
+    
   },
   messageIcon:{
     height:50,

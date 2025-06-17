@@ -29,8 +29,7 @@ export default function ConfirmationEmail({ navigation }) {
   const [email, setEmail] = useState("");
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <View
       style={styles.container}
     >
       <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
@@ -55,7 +54,7 @@ export default function ConfirmationEmail({ navigation }) {
           />
         </View>
       </Pressable>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -76,16 +75,18 @@ const styles = StyleSheet.create({
     fontSize: primaryTitleSize,
     fontFamily:'DMSerifDisplay',
     marginBottom: 8,
-    flexWrap:'wrap'
+    flexWrap:'wrap',
+    color:'#0B172A'
   }, 
   text: {
-    fontSize: primaryTextSize,
+    fontSize: 17.5,
     paddingTop: 10,
     paddingBottom: 30,
     boxSizing: 'border-box',
     color: '#2B4752',
     textAlign:'center',
-    fontFamily:'NunitoSemiBold'
+    fontFamily:'NunitoSemiBold',
+    lineHeight:20
 
   },
   input: {
@@ -93,6 +94,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     padding: 20,
-    paddingBottom: 50,
+    paddingBottom: 30,
   }
 });

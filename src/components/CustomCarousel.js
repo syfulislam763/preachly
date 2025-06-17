@@ -223,8 +223,8 @@ const styles = StyleSheet.create({
     marginTop: (height*19)/100, 
   },
   title: {
-    color: '#000',
-    fontSize: 32,
+    color: '#0B172A',
+    fontSize: 36,
     fontFamily: 'DMSerifDisplay',
     marginBottom: 8,
     textAlign: 'center',
@@ -232,13 +232,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   description: {
-    fontSize: 17,
+    fontSize: 19,
     textAlign: 'center',
-    fontFamily: 'NunitoBold',
+    fontFamily: 'NunitoSemiBold',
     paddingTop: 10,
     paddingBottom: 10,
     color: '#2B4752',
     width: '100%',
+    lineHeight:24
   },
   image: {
     width: "100%",

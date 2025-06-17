@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
         justifyContent:'flex-start',
         width:'100%',
         paddingVertical:10,
+        paddingRight: 35
     },
     img: {
         height:25,
@@ -33,10 +34,9 @@ const styles = StyleSheet.create({
         marginRight:12
     },
     text: {
-        fontFamily:'NunitoBold',
+        fontFamily:'NunitoSemiBold',
         color:'#2B4752',
-        fontSize: 16,
+        fontSize: 18,
         flexWrap:'wrap',
-        paddingRight: 30
     }
 })

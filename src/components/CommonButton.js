@@ -16,7 +16,7 @@ export default CommonButton
 const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#005A55',
-    padding: 18,
+    padding: 16,
     borderRadius: 25,
     alignItems: 'center',
     width: '100%',

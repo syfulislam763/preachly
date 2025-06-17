@@ -73,29 +73,30 @@ const styles = StyleSheet.create({
   wrapper: {
     padding: 0,
     backgroundColor: '#fff',
+    alignItems:'center'
   },
   dayContainer: {
     alignItems: 'center',
   },
   dayText: {
     color: '#6B8E8E',
-    fontWeight: '500',
+    fontFamily:'NunitoSemiBold',
     fontSize: 14,
     marginBottom: 4,
   },
   selectedDayText: {
-    color: '#004d40',
-    fontWeight: '700',
+    color: '#005A55',
+    fontFamily:'NunitoSemiBold'
   },
   dateCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 42/2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedDateCircle: {
-    backgroundColor: '#004d40',
+    backgroundColor: '#005A55',
   },
   todayDateCircle: {
     borderWidth: 2,
@@ -107,16 +108,19 @@ const styles = StyleSheet.create({
   },
   selectedDateText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontFamily:'NunitoSemiBold'
   },
   todayDateText: {
     color: '#004d40',
-    fontWeight: 'bold',
+    fontFamily:'NunitoSemiBold'
   },
   defaultDateText: {
-    color: '#333',
-    fontWeight: '600',
+    color: '#0B172A',
+    fontFamily:'NunitoSemiBold'
   },
+  dateText:{
+    fontFamily:'NunitoSemiBold'
+  }
 });
 
 export default WeeklyCalendar;

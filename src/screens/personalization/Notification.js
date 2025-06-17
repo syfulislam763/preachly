@@ -24,7 +24,7 @@ export default function Notification({navigation}) {
 
       <View style={{paddingBottom:45}}>
         <CommonButton
-          btnText={"Turn On"}
+          btnText={"Button"}
           bgColor={deepGreen}
           navigation={navigation}
           route={"SubscriptionScreen"}
@@ -39,6 +39,6 @@ export default function Notification({navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex:1,backgroundColor:'#fff',justifyContent:'space-between', padding:10},
-  title: {fontFamily:'DMSerifDisplay', fontSize:32, padding: 20, textAlign:'center'},
-  subtitle: {fontFamily:'NunitoSemiBold', color:'#2B4752', fontSize:18, textAlign:'center', paddingHorizontal:18}
+  title: {fontFamily:'DMSerifDisplay', fontSize:32, padding: 20, textAlign:'center', color:'#0B172A'},
+  subtitle: {fontFamily:'NunitoSemiBold', color:'#2B4752', fontSize:18, textAlign:'center', paddingHorizontal:18, lineHeight: 23}
 })

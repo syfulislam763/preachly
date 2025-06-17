@@ -41,12 +41,13 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#005A55',
     padding: 18,
-    borderRadius: 18,
+    borderRadius: 25,
     alignItems: 'center',
-    width: '80%',
+    width: '90%',
   },
   btnText: {
     fontSize: 16,
+    fontFamily:'NunitoSemiBold',
     color: '#fff',
   }
 })

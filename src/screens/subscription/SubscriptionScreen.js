@@ -31,7 +31,10 @@ export default function SubscriptionScreen({ navigation }) {
               fontFamily:'DMSerifDisplay',
               fontSize:32,
               paddingHorizontal:32,
-              paddingTop:38
+              paddingTop:10,
+              lineHeight:35,
+              color:'#0B172A',
+              textAlign:'center'
             }}>Inspired Answers, When You're Lost for Words</Text>
         </ImageBackground>
 
@@ -91,14 +94,14 @@ const styles = StyleSheet.create({
       boxSizing:'content-box'
   },
   background: {
-    height: (window.height*40)/100,
+    height: window.height*0.28,
     width:'100%'
   },
   content: {
     width:"100%",
     backgroundColor:'#fff',
     position:'absolute',
-    top: (window.height*28.5)/100,
+    top: window.height*0.22,
     left:0,
     right:0,
     justifyContent: 'center',

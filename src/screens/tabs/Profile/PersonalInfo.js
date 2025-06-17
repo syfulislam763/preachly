@@ -134,6 +134,7 @@ const PersonalInfo = () => {
       enableOnAndroid={true}
       extraScrollHeight={190}
       keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
 
     >
 
@@ -169,21 +170,6 @@ const PersonalInfo = () => {
               objectFit: 'contain'
             }}
           />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </View>
       </View>
 
@@ -279,6 +265,20 @@ const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
   >
     <View style={styles.modalOverlay}>
       <View style={styles.modalContainer}>
+        <View style={{
+          alignItems:'center',
+          justifyContent:'center',
+          width:'100%'
+        }}>
+          <View 
+            style={{
+              backgroundColor:'#ACC6C5',
+              height:6,
+              width:50,
+              borderRadius: 2
+            }}
+          />
+        </View>
         <FlatList
           data={options}
           keyExtractor={(item) => item}
@@ -290,8 +290,10 @@ const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
               <Text style={styles.optionText}>{item}</Text>
               <View style={[
                 styles.radioCircle,
-                selectedItem === item && styles.radioSelected,
-              ]} />
+                selectedItem === item && {borderColor:'#005A55'}
+              ]}>
+                <View style={selectedItem === item? styles.radioSelected:{}} />
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -333,7 +335,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0B172A',
     fontFamily:'NunitoBold',
-    flex: 1,
+    flex: 1/2,
   },
   valueContainer: {
     flex: 1,
@@ -344,6 +346,7 @@ const styles = StyleSheet.create({
     color: '#2B4752',
     fontFamily:'NunitoBold',
     textAlign: 'right',
+    
   },
   modalOverlay: {
     flex: 1,
@@ -366,31 +369,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
 
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
+    paddingVertical: 17,
+   
   },
   optionText: {
-
-    fontSize: 16,
-    color: '#333',
+    fontFamily:'NunitoBold',
+    fontSize: 18,
+    color: '#0B172A',
     flex: 1,
   },
   radioCircle: {
+    height: 30,
+    width: 30,
+    borderRadius: 30/2,
+    borderWidth: 2,
+    borderColor: '#3F5862',
+    marginLeft: 10,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  radioSelected: {
+    backgroundColor: '#005A55',
     height: 20,
     width: 20,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#639aa9',
-    marginLeft: 10,
-  },
-  radioSelected: {
-    backgroundColor: '#639aa9',
   },
   selectBtn: {
     backgroundColor: '#96b8b9',
-    paddingVertical: 12,
-    borderRadius: 20,
+    paddingVertical: 20,
+    borderRadius: 27,
     alignItems: 'center',
     marginTop: 12,
   },
@@ -418,7 +425,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0B172A',
     fontFamily:'NunitoBold',
-    flex: 1,
+    flex: 1/3,
   },
   inputField: {
     fontSize: 16,

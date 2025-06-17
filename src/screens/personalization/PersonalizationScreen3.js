@@ -84,7 +84,7 @@ export default function PersonalizationScreen3({navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', paddingHorizontal: 20, paddingBottom: 60, paddingTop:10},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 35, paddingBottom: 25, paddingHorizontal: 15},
-  text: {fontFamily:'NunitoSemiBold', fontSize:16, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50, paddingHorizontal: 10},
+  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 35, paddingBottom: 25, paddingHorizontal: 15, color:'#0B172'},
+  text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50, paddingHorizontal: 0},
   footerText:{color: "#90B2B2", fontFamily:'NunitoSemiBold', fontSize:16, paddingVertical:10, paddingHorizontal: 30, textAlign:'center'}
 })
