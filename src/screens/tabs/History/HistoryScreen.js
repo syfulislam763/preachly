@@ -154,7 +154,7 @@ const HistoryScreen = ({navigation}) => {
       <View style={styles.itemContainer}>
         <View style={{ flex: 1 }}>
           {(item?.type != "answer") && <Text style={styles.itemTitle}>{item.title}</Text>}
-          <Text style={styles.itemSnippet}>{item.snippet}</Text>
+          <Text style={(item?.type != "answer")?{...styles.itemSnippet}:{...styles.itemSnippet, paddingVertical:0}}>{item.snippet}</Text>
           <View style={styles.metaRow}>
             <MaterialCommunityIcons name="reply" size={16} color="#966F44" />
             <Text style={styles.metaText}>{item.replies} replies</Text>
@@ -168,7 +168,7 @@ const HistoryScreen = ({navigation}) => {
             height:20,
             width:20,
             objectFit:'contain',
-            marginRight:10
+            marginTop: (item?.type != "answer")?0:5
           }}
         /> : <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
           <MaterialIcons
@@ -186,7 +186,15 @@ const HistoryScreen = ({navigation}) => {
       <Text style={styles.header}>History</Text>
 
       <View style={styles.searchBar}>
-        <MaterialIcons name="search" size={30} color="#005A55" style={{ marginRight: 8 }} />
+        <Image 
+          source={require("../../../../assets/img/24-search.png")}
+          style={{
+            height:30,
+            width: 30,
+            objectFit:'contain',
+            marginHorizontal: 10
+          }}
+        />
         <TextInput
           placeholder="Ask or search for answers..."
           style={styles.searchInput}

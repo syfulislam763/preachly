@@ -23,8 +23,12 @@ export default function PersonalizationScreen({navigation}) {
         <Text style={styles.title}>Your Daily Dose of Clarity, and Inspired Confidence</Text>
 
 
-        <View style={{paddingHorizontal:20, paddingVertical:0}}>
-            <Text style={styles.text}>Each day you show up strengthen your spiritual foundation. Build your streak, check in weekly, and unlock badges that reflect your growth</Text>
+        <View style={{paddingBottom:30}}>
+            <Text style={styles.text}>Each day you show up strengthen</Text>
+            <Text style={styles.text}> your spiritual foundation. Build your streak, </Text>
+            <Text style={styles.text}>check in weekly, and unlock badges that </Text>
+            <Text style={styles.text}>reflect your growth</Text>
+         
         </View>
 
 
@@ -40,7 +44,7 @@ export default function PersonalizationScreen({navigation}) {
                 style={{paddingHorizontal:10}}
             />
 
-            <Text style={{...styles.semitext, fontSize:14}}>
+            <Text style={{...styles.semitext, fontSize:14, marginLeft:10}}>
              You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day 2</Text> of growing your faith confidence!
         </Text>
 
@@ -61,6 +65,7 @@ export default function PersonalizationScreen({navigation}) {
 
       </View>
 
+      
       <CommonButton
           btnText={"Continue"}
           bgColor={deepGreen}
@@ -70,18 +75,19 @@ export default function PersonalizationScreen({navigation}) {
           bold='bold'
           opacity={1}
       />
+     
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:55},
+  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:30},
   title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 20},
-  subtitle: {fontFamily:'NunitoBold', fontSize: 25, color: deepGreen},
-  text: {fontFamily:'NunitoBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
+  subtitle: {fontFamily:'NunitoSemiBold', fontSize: 20, color: deepGreen},
+  text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
   semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', },
-  img: {width:'100%',height: 200,objectFit:'contain'},
-  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center'}
+  img: {width:'100%',height: 180,objectFit:'contain'},
+  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:25}
 
 
 })

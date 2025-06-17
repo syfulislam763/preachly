@@ -84,7 +84,7 @@ const RegularCheckIn = ({navigation, route}) => {
                 Drag the slider left or right to change the answer
             </Text>
 
-            <View style={{paddingHorizontal:20, paddingVertical:0}}>
+            <View style={{paddingHorizontal:20, paddingBottom:30}}>
                 <CommonButton
                     btnText={"Next"}
                     bgColor={deepGreen}

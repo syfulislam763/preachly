@@ -57,16 +57,14 @@ export default function HomeScreen() {
             
 
           <View style={styles.multiImageContainer}>
-              <View style={{
-                // backgroundColor:'black'
-              }}>
+              <View style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/OpenBook.png")}
                   style={styles.multiImage}
                 />
                 <Text style={styles.multiText}>Explore Scriptures</Text>
               </View>
-              <View>
+              <View style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/BrightsSun.png")}
                   style={styles.multiImage}
@@ -74,7 +72,7 @@ export default function HomeScreen() {
                 <Text style={styles.multiText}>Explore Scriptures</Text>
               </View>
 
-              <View>
+              <View style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/ReligeousBook.png")}
                   style={styles.multiImage}
@@ -118,14 +116,14 @@ export default function HomeScreen() {
               source={require("../../../../assets/img/weekly_checkin_card.png")}
               style={styles.bgProgress}
             />
-            <Image 
+            {/* <Image 
               source={require("../../../../assets/img/weekly_checkin_card.png")}
               style={styles.bgProgress}
             />
             <Image 
               source={require("../../../../assets/img/weekly_checkin_card.png")}
               style={styles.bgProgress}
-            />
+            /> */}
           </View>
           
 
@@ -151,9 +149,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color:'#2B4752'
   },
+  commonMultiImage:{
+    width:"31%"
+  },
   multiImage:{
     height:80,
-    width: 120,
+    width: "100%",
     objectFit:'contain'
   },
   multiImageContainer:{
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     width: '100%',
-    marginTop: 20
+    marginTop: 20,
   },
   questionTitle3:{
     fontSize: 13,

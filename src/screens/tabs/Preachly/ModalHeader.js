@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     padding: 16,
     maxHeight: '100%',
+
   },
   indicator: {
     width: 40,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontFamily:'NunitoBold',
+    fontFamily:'NunitoExtraBold',
     color: '#0B172A',
   },
   closeBtn: {

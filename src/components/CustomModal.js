@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 20,
-    paddingVertical: 28,
+    paddingVertical: 15,
     // height:'100%',
     elevation: 5,
     shadowColor: '#000',
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   closeButton: {
-    marginTop: 15,
+    marginTop: 0,
     backgroundColor: '#007BFF',
     paddingVertical: 10,
     borderRadius: 10,

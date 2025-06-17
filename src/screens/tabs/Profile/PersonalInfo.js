@@ -1,248 +1,433 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  TextInput,
+
   Text,
   TouchableOpacity,
-  Pressable,
+  Modal,
+  FlatList,
   StyleSheet,
-  Animated,
-  Easing,
-  Keyboard,
-  TouchableWithoutFeedback,
+  TextInput,
+
+
+
   Platform,
+  Image,
 } from 'react-native';
-import { Audio } from 'expo-av';
+
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function ChatInput() {
-  const [mode, setMode] = useState('text'); // 'text', 'recording', 'recorded', 'uploading'
-  const [text, setText] = useState('');
-  const [recording, setRecording] = useState(null);
-  const [recordedURI, setRecordedURI] = useState(null);
-  const [recordDuration, setRecordDuration] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const sound = useRef(null);
 
-  const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const startPulse = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1.5,
-          duration: 400,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 400,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import CommonButton from '../../../components/CommonButton';
+import { deepGreen, lightgreen1 } from '../../../components/Constant';
+import { useNavigation } from '@react-navigation/native';
+
+
+const denominationOptions = [
+  'Catholic',
+  'Protestant',
+  'Baptist',
+  'Nondenominational',
+  'Methodist',
+];
+
+const bibleVersion = [
+  'Revised Standard Version Catholic Edition [RSVCE]',
+  'New International Version (NIV)',
+  'Christian Standard Bible (CSB)'
+];
+
+const PersonalInfo = () => {
+  const navigation = useNavigation()
+  const [selectedDenomination, setSelectedDenomination] = useState('Catholic');
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [selectedBibleVersion, setSelectedBibleVersion] = useState('Revised Standard Version Catholic Edition [RSVCE]');
+  const [bibleModalVisible, setBibleModalVisible] = useState(false);
+
+
+
+  const [name, setName] = useState('Alice');
+  const [dob, setDob] = useState('21.12.2001');
+  const [email, setEmail] = useState('example@gmail.com');
+
+
+
+
+
+
+
+
+
+  const [tone, setTone] = useState('Clear and Hopeful');
+  const [faithGoal, setFaithGoal] = useState('Confidence to share my beliefs');
+  const [Answer, setAnswer] = useState('In-Depth answers');
+
+
+
+
+
+
+
+
+  const handleSelect = (option) => {
+    setSelectedDenomination(option);
+    // setModalVisible(false);
+
+
   };
 
-  const stopPulse = () => {
-    scaleAnim.stopAnimation();
-    scaleAnim.setValue(1);
+  const handleSelect1 = (option) => {
+    setSelectedBibleVersion(option);
+    // setBibleModalVisible(false);
+
+
+
+
+
+
+
+
+
+
+
+
   };
 
-  const startRecording = async () => {
-    const permission = await Audio.requestPermissionsAsync();
-    if (!permission.granted) return;
 
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      playsInSilentModeIOS: true,
-    });
 
-    const newRecording = new Audio.Recording();
-    await newRecording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-    await newRecording.startAsync();
 
-    setRecording(newRecording);
-    setMode('recording');
-    startPulse();
-  };
-
-  const stopRecording = async () => {
-    if (!recording) return;
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    const status = await recording.getStatusAsync();
-    setRecording(null);
-    setRecordedURI(uri);
-    setRecordDuration(status.durationMillis);
-    setMode('recorded');
-    stopPulse();
-  };
-
-  const playRecording = async () => {
-    if (!recordedURI) return;
-    if (sound.current) {
-      await sound.current.unloadAsync();
-      sound.current = null;
-    }
-    const { sound: newSound } = await Audio.Sound.createAsync({ uri: recordedURI });
-    sound.current = newSound;
-    await newSound.playAsync();
-  };
-
-  const cancelRecording = () => {
-    setMode('text');
-    setRecording(null);
-    setRecordedURI(null);
-    setRecordDuration(0);
-  };
-
-  const sendAudio = () => {
-    console.log('Uploading audio file:', recordedURI);
-    setMode('uploading');
-
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 0.1;
-      setUploadProgress(progress);
-      if (progress >= 1) {
-        clearInterval(interval);
-        setMode('text');
-        setRecordedURI(null);
-        setRecordDuration(0);
-      }
-    }, 200);
-  };
-
-  useEffect(() => {
-    if (mode !== 'uploading') setUploadProgress(0);
-  }, [mode]);
 
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollContainer}
+      enableOnAndroid={true}
+      extraScrollHeight={190}
       keyboardShouldPersistTaps="handled"
-      extraScrollHeight={Platform.OS === 'ios' ? 80 : 0}
+
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {mode === 'uploading' ? (
-            <View style={styles.uploadBarContainer}>
-              <Text style={styles.uploadLabel}>Uploading...</Text>
-              <View style={styles.uploadBar}>
-                <View style={[styles.uploadProgress, { width: `${uploadProgress * 100}%` }]} />
-              </View>
-            </View>
-          ) : mode === 'recorded' ? (
-            <View style={styles.audioPreview}>
-              <TouchableOpacity onPress={playRecording}>
-                <Icon name="play" size={24} />
-              </TouchableOpacity>
-              <Text style={styles.audioText}>{`${Math.floor(recordDuration / 1000)}s`}</Text>
-              <TouchableOpacity onPress={sendAudio}>
-                <Icon name="send" size={24} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={cancelRecording}>
-                <Icon name="close" size={24} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.inputRow}>
-              <TouchableOpacity>
-                <Icon name="plus" size={22} color="#444" />
-              </TouchableOpacity>
-              <TextInput
-                style={styles.input}
-                placeholder="Ask anything – let’s find answers together…"
-                value={text}
-                onChangeText={setText}
-                placeholderTextColor="#999"
-              />
-              <Pressable
-                onPressIn={startRecording}
-                onPressOut={stopRecording}
-                style={[
-                  styles.micButton,
-                  mode === 'recording' && styles.micRecording,
-                ]}
-              >
-                <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                  <Icon name="microphone" size={24} color="white" />
-                </Animated.View>
-              </Pressable>
-            </View>
-          )}
+
+      <View style={{
+        alignItems:'center',
+        paddingVertical:20
+      }}>
+        <Image 
+          source={require("../../../../assets/img/avatar.png")}
+          style={{
+            height:110,
+            width:110,
+            objectFit:'contain'
+          }}
+        />
+        <View style={{
+          flexDirection:'row',
+          alignItems:'center',
+          marginTop:20,
+          marginBottom: 15
+        }}>
+          <Text style={{
+            fontFamily:'NunitoSemiBold',
+            fontSize:16,
+            color:'#996F44',
+            marginRight:10
+          }}>Change photo</Text>
+          <Image
+            source={require("../../../../assets/img/PencilSimple.png")}
+            style={{
+              height:16,
+              width:16,
+              objectFit: 'contain'
+            }}
+          />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         </View>
-      </TouchableWithoutFeedback>
+      </View>
+
+      <View style={styles.inputFieldCard}>
+        <InfoRow label="Name" value={name} onChange={setName} />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <InfoRow label="Date of birth" value={dob} onChange={setDob} />
+        <InfoRow label="Email" value={email} onChange={setEmail} />
+      </View>
+
+      <View style={styles.card}>
+        <DropdownRow
+          label="Denomination"
+          value={selectedDenomination}
+          onPress={() => setModalVisible(true)}
+        />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <DropdownRow
+          label="Bible"
+          value={selectedBibleVersion}
+          onPress={() => setBibleModalVisible(true)}
+        />
+      </View>
+
+      <View style={styles.inputFieldCard}>
+        <InfoRow label="Tone" value={tone} onChange={setTone} />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <InfoRow label="Faith Goal" value={faithGoal} onChange={setFaithGoal} />
+        <InfoRow label="Answer depth" value={Answer} onChange={setAnswer} />
+      </View>
+
+      <View style={{margin:20}}>
+        <CommonButton
+          btnText={"Edit Info"}
+          bgColor={deepGreen}
+          navigation={navigation}
+          route={""}
+          txtColor={"white"}
+          handler={() => {}}
+          bold='bold'
+          opacity={1}
+        />
+      </View>
+
+      <DorpdownModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        handleChage={handleSelect}
+        options={denominationOptions}
+        selectedItem={selectedDenomination}
+      />
+      <DorpdownModal
+        isVisible={bibleModalVisible}
+        onClose={() => setBibleModalVisible(false)}
+        handleChage={handleSelect1}
+        options={bibleVersion}
+        selectedItem={selectedBibleVersion}
+      />
     </KeyboardAwareScrollView>
   );
-}
+};
+
+const InfoRow = ({ label, value, onChange }) => (
+  <View style={styles.inputFieldRow}>
+    <Text style={styles.inputFieldLabel}>{label}</Text>
+    <TextInput
+      style={styles.inputField}
+      value={value}
+      onChangeText={onChange}
+      placeholder={`Enter ${label.toLowerCase()}`}
+      textAlign="right"
+      editable={true}
+      returnKeyType="done"
+    />
+  </View>
+);
+
+const DropdownRow = ({ label, value, onPress }) => (
+  <TouchableOpacity style={styles.row} onPress={onPress}>
+    <Text style={styles.label}>{label}</Text>
+    <View style={styles.valueContainer}>
+      <Text style={styles.value} numberOfLines={1}>{value}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem }) => (
+  <Modal
+    visible={isVisible}
+    transparent
+    animationType="slide"
+    onRequestClose={onClose}
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalContainer}>
+        <FlatList
+          data={options}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.optionRow}
+              onPress={() => handleChage(item)}
+            >
+              <Text style={styles.optionText}>{item}</Text>
+              <View style={[
+                styles.radioCircle,
+                selectedItem === item && styles.radioSelected,
+              ]} />
+            </TouchableOpacity>
+          )}
+        />
+        <TouchableOpacity
+          style={styles.selectBtn}
+          onPress={onClose}
+        >
+          <Text style={styles.selectBtnText}>Select</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+);
 
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'flex-end',
+    paddingBottom: 10,
+    backgroundColor:'#fff'
   },
-  container: {
-    padding: 12,
-    backgroundColor: 'white',
+  card: {
+    backgroundColor: '#edf4f5',
+    paddingVertical:6,
+    paddingHorizontal:20,
+    borderRadius: 12,
+    marginHorizontal:20,
+    marginVertical:15
   },
-  inputRow: {
+  row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#eef4f4',
-    borderRadius: 24,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  input: {
-    flex: 1,
-    paddingHorizontal: 10,
-    fontSize: 16,
-  },
-  micButton: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 50,
-    marginLeft: 8,
-  },
-  micRecording: {
-    backgroundColor: '#dc3545',
-  },
-  audioPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#e6f2f2',
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-    borderRadius: 24,
     justifyContent: 'space-between',
-  },
-  audioText: {
-    marginHorizontal: 10,
-    fontSize: 16,
-  },
-  uploadBarContainer: {
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 24,
     alignItems: 'center',
+    paddingVertical: 12,
+    // borderBottomWidth: 1,
+    // borderColor: '#dce3e4',
+
   },
-  uploadLabel: {
-    fontSize: 14,
-    marginBottom: 8,
+  label: {
+    fontSize: 16,
+    color: '#0B172A',
+    fontFamily:'NunitoBold',
+    flex: 1,
   },
-  uploadBar: {
-    width: '100%',
-    height: 8,
-    backgroundColor: '#ddd',
-    borderRadius: 8,
-    overflow: 'hidden',
+  valueContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
-  uploadProgress: {
-    height: 8,
-    backgroundColor: '#007bff',
+  value: {
+    fontSize: 16,
+    color: '#2B4752',
+    fontFamily:'NunitoBold',
+    textAlign: 'right',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: '#00000055',
+    justifyContent: 'flex-end',
+
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '50%',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  optionText: {
+
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+  },
+  radioCircle: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#639aa9',
+    marginLeft: 10,
+  },
+  radioSelected: {
+    backgroundColor: '#639aa9',
+  },
+  selectBtn: {
+    backgroundColor: '#96b8b9',
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  selectBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  inputFieldCard: {
+    backgroundColor: '#f0f6f7',
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginHorizontal:20,
+    elevation: 0,
+  },
+  inputFieldRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 8,
+    
+    paddingBottom: 5,
+  },
+  inputFieldLabel: {
+    fontSize: 16,
+    color: '#0B172A',
+    fontFamily:'NunitoBold',
+    flex: 1,
+  },
+  inputField: {
+    fontSize: 16,
+    color: '#2B4752',
+    fontFamily:'NunitoBold',
+    flex: 1,
+    padding: 8,
+    textAlign: 'right',
   },
 });
+
+export default PersonalInfo;

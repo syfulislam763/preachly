@@ -29,17 +29,22 @@ export default function BibleVersionList({onClose}) {
 
     return (
       <TouchableOpacity
-        style={styles.itemContainer}
+        style={{
+          borderBottomWidth:1,
+          borderBottomColor: "#EDF3F3"
+        }}
         onPress={() => setSelectedId(item.id)}
       >
-        <View style={styles.radioCircleWrapper}>
-          <View style={[styles.radioOuter, isSelected && styles.radioOuterSelected]}>
-            {isSelected && <View style={styles.radioInner} />}
+        <View style={styles.itemContainer}>
+          <View style={styles.radioCircleWrapper}>
+            <View style={[styles.radioOuter, isSelected && styles.radioOuterSelected]}>
+              {isSelected && <View style={styles.radioInner} />}
+            </View>
           </View>
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.subtitle}>{item.subtitle}</Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.subtitle}>{item.subtitle}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -49,7 +54,8 @@ export default function BibleVersionList({onClose}) {
     <View>
         <View style={{
             paddingVertical:10,
-            paddingHorizontal:20
+            paddingHorizontal:20,
+            backgroundColor:'#fff'
         }}>
             <ModalHeader
                 title={"Bible Version"}
@@ -70,7 +76,7 @@ export default function BibleVersionList({onClose}) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 0,
     
   },
   itemContainer: {
