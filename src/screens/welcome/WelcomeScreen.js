@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Dimensions, StatusBar } from 'react-native';
 import {
   SafeAreaView
 } from 'react-native-safe-area-context';
@@ -16,7 +16,7 @@ export default function WelcomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
-
+     
       
       {/* <ImageSlider /> */}
       <CustomCarousel/>

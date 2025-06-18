@@ -38,12 +38,13 @@ const totalImages = imageData.length;
 
 function CustomCarousel () {
 
-  const {isSmall, isMedium, isLarge, height} = useLayoutDimention()
+  const {isSmall, isMedium, isLarge, height, width} = useLayoutDimention()
 
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  console.log(height, width, isSmall)
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       const index = viewableItems[0].index;
@@ -166,7 +167,7 @@ function CustomCarousel () {
               >
                 <Image source={item.img} style={{
                   ...styles.image,
-                  height: isSmall?height*0.5: height*0.44
+                  height: isSmall?height*0.45: height*0.44
                 }} />
               </Animated.View>
             </View>

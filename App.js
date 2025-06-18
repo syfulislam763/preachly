@@ -14,7 +14,7 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <AuthProvider>
-            <SafeAreaView style={{flex:1}} edges={['bottom']}>
+            <SafeAreaView style={{flex:1}} edges={['bottom',]}>
               <RootNavigator />
             </SafeAreaView>
           </AuthProvider>
