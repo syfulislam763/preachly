@@ -7,6 +7,7 @@ import {
   Pressable,
   Image
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyle={}, modalContainerStyle={},headerStyle={}, children }) => {
   return (
@@ -18,7 +19,7 @@ const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyl
       animationType={animationType}
       onRequestClose={onClose}
     >
-      <View style={{...styles.overlay, ...overlayStyle}}>
+      <SafeAreaView style={{...styles.overlay, ...overlayStyle}}>
         <View style={{...styles.modalContainer, ...modalContainerStyle}}>
             <View style={{
                 display:'flex',
@@ -44,7 +45,7 @@ const CustomModal = ({animationType="fade", visible, onClose, title, overlayStyl
             </View>
             {children}
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };

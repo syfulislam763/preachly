@@ -15,7 +15,7 @@ export default function WelcomeScreen({ navigation }) {
   
 
   return (
-    <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
+    <SafeAreaView style={{flex:1, backgroundColor:'#fff', justifyContent:'space-between'}}>
      
       
       {/* <ImageSlider /> */}
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: height*0.05,
+    paddingBottom: 10
   },
   btn: {
     backgroundColor: '#005A55',

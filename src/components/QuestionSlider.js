@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // for arrows
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 const questions = [
   {
     id: '1',
@@ -78,7 +78,8 @@ export default function QuestionSlider() {
       {questions[currentIndex].options.map(renderRadio)}
 
       <View style={{
-        alignItems:'center'
+        alignItems:'center',
+        marginBottom: hp("3%")
       }}>
         <View style={styles.navigation}>
           <TouchableOpacity onPress={goPrev} disabled={currentIndex === 0}>

@@ -7,14 +7,17 @@ import {
 import FooterBar from '../../components/FooterBar';
 import CommonButton from '../../components/CommonButton';
 import Divider from '../../components/Divider';
+import { getStyles } from './AuthHomeStyle';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
 
 
 
-const window = Dimensions.get("window")
+
 
 export default function AuthHome({ navigation }) {
   const { login } = useAuth();
-
+  const {isLarge, isMedium, isSmall} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge)
   return (
     <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
         
@@ -50,7 +53,9 @@ export default function AuthHome({ navigation }) {
                 opacity={1}
             />
 
-            <Divider text={"or"}/>
+            <View style={styles.divider}>
+              <Divider text={"or"}/>
+            </View>
 
             <View style={styles.googleAppleAuth}>
                 <Image 
@@ -74,55 +79,3 @@ export default function AuthHome({ navigation }) {
     </View>
   );
 }
-
-
-const styles = StyleSheet.create({
-  footerHighlighter:{color:'black', textDecorationLine:'underline', fontFamily: 'NunitoExtraBold'},
-
-  footerText:{fontSize:16, color:'#90B2B2', paddingRight:50, paddingLeft:50, paddingTop:30, paddingBottom:30, textAlign:'center', fontFamily:'NunitoSemiBold'},
-
-  googleAppleAuth:{
-      display:"flex",
-      flexDirection:"row",
-      width: "30%",
-      justifyContent:'space-between',
-      padding: 40,
-      boxSizing:'content-box'
-  },
-  background: {
-    height: (window.height*40)/100,
-    width:'100%'
-  },
-  content: {
-    width:"100%",
-    backgroundColor:'#fff',
-    position:'absolute',
-    top: (window.height*28)/100,
-    left:0,
-    right:0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding:10,
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-  },
-  title:{
-    textAlign:'center',
-    fontSize: 36,
-    padding:30,
-    paddingHorizontal:20,
-    fontFamily: 'DMSerifDisplay',
-    color: '#0B172A',
-    lineHeight:45
-  },
-  subtitle:{
-    fontSize:18,
-    paddingBottom: 50,
-    fontFamily: 'NunitoSemiBold',
-    color:"#2B4752"
-  }
-});

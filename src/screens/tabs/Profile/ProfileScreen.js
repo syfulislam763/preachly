@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Pressable, Dimensions} from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WeeklyCalendar from '../../../components/WeeklyCalendar';
 import { useNavigation } from '@react-navigation/native';
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 
 
@@ -53,7 +53,7 @@ const ProfileScreen = () => {
       </View>
 
       <View style={{
-        marginTop: 100,
+        marginTop: hp("11%"),
         paddingHorizontal: 20
       }}>
         <WeeklyCalendar/>
@@ -71,13 +71,13 @@ const ProfileScreen = () => {
 
         </View>
 
-        <View style={{height:20}}/>
+        <View style={{height:hp("1%")}}/>
 
         <Image
             source={require("../../../../assets/img/rooted.png")}
             style={styles.img}
         />
-        <View style={{height:15}}/>
+        <View style={{height:hp("1%")}}/>
         <Pressable 
           onPress={() => navigation.navigate("Calendar")}
         >
@@ -89,7 +89,7 @@ const ProfileScreen = () => {
             />
           </View>
         </Pressable>
-        <View style={{height:15}}/>
+        <View style={{height:hp("1.5%")}}/>
 
         <Pressable
           onPress={() => navigation.navigate("WeeklyCheckIn")}
@@ -112,7 +112,7 @@ const ProfileScreen = () => {
           </View>
         </Pressable>
 
-        <View style={{height:15}}/>
+        <View style={{height:hp("1.5%")}}/>
         
         <Pressable 
           onPress={() => navigation.navigate("CurrentGoals")}
@@ -170,25 +170,27 @@ const styles = StyleSheet.create({
     objectFit:"contain"
   },
   semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', },
-  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop: 20},
+  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop: hp("1.5%")},
   img: {width:'100%',height: 150,objectFit:'contain'},
   headerContainer:{
     position:'relative'
   },
   profileContainer:{
     position: 'absolute',
-    top: (window.height*14)/100,
+    top: hp("14%"),
     left: (window.width*38)/100,
     display:'flex',
     flexDirection:'column',
-    justifyContent:'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    height: 150
+    height: hp("18%"),
+    zIndex:100
   },
   profileText:{
     fontSize: 20,
     fontFamily: 'NunitoBold',
-    color:'#0B172A'
+    color:'#0B172A',
+    marginTop: hp("1%")
   },
   iconContainer:{
     position:"absolute",
@@ -207,14 +209,16 @@ const styles = StyleSheet.create({
     objectFit:'contain'
   },
   profileImage:{
-    width: 110,
-    height: 110,
+    width: 100,
+    height: 100,
     objectFit:'contain'
   },
   bgImage:{
     width:"100%",
-    height: 200,
-    objectFit:'cover'
+    height: hp("21%"),
+    objectFit:'cover',
+    borderBottomRightRadius: hp("5%"),
+    borderBottomLeftRadius: hp("5%")
   }
 });
 

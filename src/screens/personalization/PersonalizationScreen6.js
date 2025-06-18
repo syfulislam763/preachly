@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
 import WeeklyCalendar from '../../components/WeeklyCalendar';
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 export default function PersonalizationScreen({navigation}) {
 
@@ -32,7 +32,7 @@ export default function PersonalizationScreen({navigation}) {
         </View>
 
 
-        <View style={{paddingTop:30, paddingHorizontal:0}}>
+        <View style={{paddingTop:hp("1%")}}>
             <WeeklyCalendar/>
         </View>
 
@@ -41,10 +41,10 @@ export default function PersonalizationScreen({navigation}) {
 
             <Image 
                 source={require("../../../assets/img/Fire.png")}
-                style={{paddingHorizontal:10}}
+                style={{}}
             />
 
-            <Text style={{...styles.semitext, fontSize:14, marginLeft:10}}>
+            <Text style={{...styles.semitext, fontSize:14,}}>
              You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day 2</Text> of growing your faith confidence!
         </Text>
 
@@ -81,13 +81,13 @@ export default function PersonalizationScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:30},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 20, lineHeight:35, color:'#0B172A'},
+  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:hp('2%')},
+  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 10, lineHeight:35, color:'#0B172A'},
   subtitle: {fontFamily:'NunitoSemiBold', fontSize: 20, color: deepGreen},
   text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
-  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:14.5, textAlign:'center', flexWrap:'wrap', paddingHorizontal:18 },
+  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:14.5, textAlign:'center', flexWrap:'wrap', marginLeft:wp("1%") },
   img: {width:'100%',height: 180,objectFit:'contain'},
-  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:25}
+  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:hp("1%")}
 
 
 })

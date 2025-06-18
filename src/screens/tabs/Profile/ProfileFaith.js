@@ -10,6 +10,7 @@ import ReusableNavigation from '../../../components/ReusabeNavigation';
 import BackButton from '../../../components/BackButton';
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { he } from 'date-fns/locale';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 const { width, height,} = Dimensions.get('window');
 
@@ -19,25 +20,25 @@ const ProfileFaith = ({ navigation }) => {
   const {height, width, isSmall} = useLayoutDimention()
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
         <ReusableNavigation 
             backgroundStyle={{backgroundColor:'#fff'}}
             leftComponent={() => <BackButton navigation={navigation}/>}
             middleComponent={()=>{}}
             RightComponent={()=>{}}
         />
-        <View style={{marginTop:10}}>
+        <View style={{marginTop:hp("1%")}}>
             <Text style={styles.title}>Well Done!</Text>
             <Text style={styles.title}>Keep Growing in Faith</Text>
         </View>
-        <View style={{marginTop:30}}>
+        <View style={{marginTop:hp("2%")}}>
             <Text style={styles.text}> Your commitment to deepening your faithis building a strong foundation.Keep going—there’s more ahead!</Text>
         </View>
         <Image
             source={require('../../../../assets/img/bg_bible_frame.png')}
             style={{
-                height:'100%', 
-                width:'100%', 
+                height: hp('100%'), 
+                width: wp('100%'), 
                 objectFit:'contain',
                 position:'absolute',
                 top: isSmall?height*0.2: height*0.2,

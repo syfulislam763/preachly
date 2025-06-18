@@ -102,6 +102,7 @@ const LogoutModal = ({ isVisible, onClose, handleChage }) => (
     transparent
     animationType="slide"
     onRequestClose={onClose}
+    statusBarTranslucent={true}
   >
     <View style={styles.modalOverlay}>
       <View style={styles.modalContainer}>

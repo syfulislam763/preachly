@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, StyleSheet, SafeAreaView, Image, Dimensions} from 'react-native'
+import {View, Text, StyleSheet, Image, Dimensions} from 'react-native'
 import CommonButton from '../../../components/CommonButton'
 import { deepGreen, primaryText } from '../../../components/Constant'
 import { useNavigation } from '@react-navigation/native'
 import CustomModal from '../../../components/CustomModal'
 import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
 
 const window = Dimensions.get("window")
 

@@ -8,7 +8,7 @@ const Divider = ({text}) => {
         flexDirection:"row",
         alignItems:'center',
         justifyContent:'space-around',
-        marginTop: 20,
+        marginTop: 0,
         fontFamily: 'NunitoSemiBold'
     }}>
         <View style={{height:2, backgroundColor:'#90B2B2', width:'47%'}}></View>

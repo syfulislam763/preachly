@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { deepGreen, lighgreen } from './Constant';
 import useLayoutDimention from '../hooks/useLayoutDimention';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { getStyles } from './CustomCarouselStyle';
 
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.75;
@@ -39,7 +41,7 @@ const totalImages = imageData.length;
 function CustomCarousel () {
 
   const {isSmall, isMedium, isLarge, height, width} = useLayoutDimention()
-
+  const styles = getStyles(isSmall, isMedium, isLarge)
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -84,7 +86,7 @@ function CustomCarousel () {
   }, []);
 
   return (
-    <View style={{...styles.container, marginTop: isSmall?height*0.05:height*0.07}}>
+    <View style={{...styles.container}}>
       <Animated.FlatList
         ref={flatListRef}
         data={images}
@@ -167,7 +169,6 @@ function CustomCarousel () {
               >
                 <Image source={item.img} style={{
                   ...styles.image,
-                  height: isSmall?height*0.45: height*0.44
                 }} />
               </Animated.View>
             </View>
@@ -196,69 +197,5 @@ function CustomCarousel () {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: height*0.05,
-    backgroundColor:'white',
-    // height:'50%'
-  },
-
-  fullWidthCaptionWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  fullWidthCaptionContainer: {
-    width: width,
-    paddingHorizontal: 20,
-    paddingBottom: 15,
-  },
-  slideContainer: {
-    width: ITEM_WIDTH,
-    alignItems: 'center',
-    marginTop: (height*19)/100, 
-  },
-  title: {
-    color: '#0B172A',
-    fontSize: 36,
-    fontFamily: 'DMSerifDisplay',
-    marginBottom: 8,
-    textAlign: 'center',
-    paddingTop: 20,
-    width: '100%',
-  },
-  description: {
-    fontSize: 19,
-    textAlign: 'center',
-    fontFamily: 'NunitoSemiBold',
-    paddingTop: 10,
-    paddingBottom: 10,
-    color: '#2B4752',
-    width: '100%',
-    lineHeight:24
-  },
-  image: {
-    width: "100%",
-    height: height*0.4,
-    resizeMode: 'cover',
-    borderRadius: 12,
-  },
-  pagination: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: '10%',
-    marginBottom: '9%'
-  },
-  dot: {
-    height: 12,
-    borderRadius: 50,
-    marginHorizontal: 4,
-  },
-});
 
 export default CustomCarousel;

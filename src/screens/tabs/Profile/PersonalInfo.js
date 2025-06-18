@@ -1,56 +1,22 @@
 import React, { useState } from 'react';
 import {
   View,
-
   Text,
   TouchableOpacity,
   Modal,
   FlatList,
   StyleSheet,
   TextInput,
-
-
-
   Platform,
   Image,
 } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import CommonButton from '../../../components/CommonButton';
 import { deepGreen, lightgreen1 } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 
 const denominationOptions = [
@@ -75,58 +41,25 @@ const PersonalInfo = () => {
   const [selectedBibleVersion, setSelectedBibleVersion] = useState('Revised Standard Version Catholic Edition [RSVCE]');
   const [bibleModalVisible, setBibleModalVisible] = useState(false);
 
-
-
   const [name, setName] = useState('Alice');
   const [dob, setDob] = useState('21.12.2001');
   const [email, setEmail] = useState('example@gmail.com');
-
-
-
-
-
-
-
 
 
   const [tone, setTone] = useState('Clear and Hopeful');
   const [faithGoal, setFaithGoal] = useState('Confidence to share my beliefs');
   const [Answer, setAnswer] = useState('In-Depth answers');
 
-
-
-
-
-
-
-
   const handleSelect = (option) => {
     setSelectedDenomination(option);
     // setModalVisible(false);
-
-
   };
 
   const handleSelect1 = (option) => {
     setSelectedBibleVersion(option);
     // setBibleModalVisible(false);
 
-
-
-
-
-
-
-
-
-
-
-
   };
-
-
-
-
 
   return (
     <KeyboardAwareScrollView
@@ -140,7 +73,7 @@ const PersonalInfo = () => {
 
       <View style={{
         alignItems:'center',
-        paddingVertical:20
+        paddingVertical:hp("1%")
       }}>
         <Image 
           source={require("../../../../assets/img/avatar.png")}
@@ -153,8 +86,8 @@ const PersonalInfo = () => {
         <View style={{
           flexDirection:'row',
           alignItems:'center',
-          marginTop:20,
-          marginBottom: 15
+          marginTop:hp("1%"),
+          marginBottom: hp("1%")
         }}>
           <Text style={{
             fontFamily:'NunitoSemiBold',
@@ -259,9 +192,11 @@ const DropdownRow = ({ label, value, onPress }) => (
 const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem }) => (
   <Modal
     visible={isVisible}
-    transparent
+    transparent={true}
     animationType="slide"
     onRequestClose={onClose}
+    presentationStyle='overFullScreen'
+    statusBarTranslucent={true}
   >
     <View style={styles.modalOverlay}>
       <View style={styles.modalContainer}>
@@ -280,6 +215,7 @@ const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
           />
         </View>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={options}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
@@ -311,7 +247,7 @@ const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    paddingBottom: 10,
+    paddingBottom: 0,
     backgroundColor:'#fff'
   },
   card: {
@@ -335,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0B172A',
     fontFamily:'NunitoBold',
-    flex: 1/2,
+    flex: 1,
   },
   valueContainer: {
     flex: 1,
@@ -358,7 +294,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '50%',
+    maxHeight: hp('60%'),
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 20,
@@ -396,10 +332,11 @@ const styles = StyleSheet.create({
   },
   selectBtn: {
     backgroundColor: '#96b8b9',
-    paddingVertical: 20,
+    paddingVertical: hp("2%"),
     borderRadius: 27,
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: hp("1%"),
+    marginBottom : hp("1%")
   },
   selectBtnText: {
     color: '#fff',
@@ -419,13 +356,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
     
-    paddingBottom: 5,
+    paddingBottom: 0
   },
   inputFieldLabel: {
     fontSize: 16,
     color: '#0B172A',
     fontFamily:'NunitoBold',
-    flex: 1/3,
+    flex: 1,
   },
   inputField: {
     fontSize: 16,
