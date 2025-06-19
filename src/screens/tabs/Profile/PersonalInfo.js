@@ -73,7 +73,8 @@ const PersonalInfo = () => {
 
       <View style={{
         alignItems:'center',
-        paddingVertical:hp("1%")
+        paddingVertical:hp("1%"),
+        justifyContent:'center'
       }}>
         <Image 
           source={require("../../../../assets/img/avatar.png")}
@@ -87,7 +88,8 @@ const PersonalInfo = () => {
           flexDirection:'row',
           alignItems:'center',
           marginTop:hp("1%"),
-          marginBottom: hp("1%")
+          marginBottom: hp("1%"),
+          justifyContent:'center',
         }}>
           <Text style={{
             fontFamily:'NunitoSemiBold',

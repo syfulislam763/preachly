@@ -4,19 +4,13 @@ import { View, StyleSheet, Dimensions,Image, Pressable, Text } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useLayoutDimention from '../hooks/useLayoutDimention'
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 
 const window = Dimensions.get("window")
 const InactiveColor = "#90B2B2"
 const ActiveColor = "#004F4A"
-const Answers = {
-    1:'Finding my rhythm',
-    2: 'Trying to believe',
-    3: 'Not confident at all',
-    4: 'Growing strong',
-    5: 'Very confident'
-}
+
 const progressPercentage = {
     1: 10,
     2: 30,
@@ -59,13 +53,12 @@ const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
 }
   
 
-function FaithQuestionSlider() {
+function FaithQuestionSlider({Answers, selectedOption=1, ans, setAns}) {
 
     const {isSmall,isMedium, height} = useLayoutDimention()
 
     const [progress, setProgress] = useState(0)
     const [activeDot, setActiveDot] = useState({1:false,2:false,3:false,4:false, 5:false})
-    const [ans, setAns] = useState("Finding my rhythm")
 
     const [group, setGroup] = useState({1:false,2:false,3:false,4:false, 5:false})
 
@@ -91,9 +84,9 @@ function FaithQuestionSlider() {
     }
 
    useEffect(()=>{
-    progressHandler(1)
-   },[])
-
+    progressHandler(selectedOption)
+   },[Answers])
+ 
   return (
     <SafeAreaView style={{
         flex:1,
@@ -121,8 +114,9 @@ function FaithQuestionSlider() {
             }}>
                 <Text style={{
                     fontFamily:'DMSerifDisplay',
-                    fontSize:32,
-                    textAlign:'center'
+                    fontSize:hp("4%"),
+                    textAlign:'center',
+                    color:'#0B172A'
                 }}>{ans}</Text>
             </View>
 

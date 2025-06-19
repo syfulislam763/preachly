@@ -7,6 +7,7 @@ import CustomModal from '../../../components/CustomModal'
 import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import QuestionModal from './QuestionModal'
 
 
 const window = Dimensions.get("window")
@@ -15,16 +16,10 @@ const RegularCheckIn = ({navigation, route}) => {
 
     const {title} = route.params
     const [modalVisible, setModalVisible] = useState(false);
-    // const navigation = useNavigation()
 
     useEffect(()=>{
         navigation.setOptions({title})
     }, [navigation, title]);
-
-    const handleNext = () =>{
-        setModalVisible(false),
-        navigation.navigate("PorfileFaith")
-    }
 
   return (
     <View style={styles.container}>
@@ -54,54 +49,11 @@ const RegularCheckIn = ({navigation, route}) => {
             opacity={1}
         />
 
-        { <CustomModal
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            animationType='slide'
-            overlayStyle={{backgroundColor:'#fff'}}
-            modalContainerStyle={{
-                elevation: 0,
-                backgroundColor:"#fff",
-                width: "110%",
-                height:window.height
-            }}
-            title={() => <Text style={{fontFamily:'NunitoBold'}}>1/10</Text>}
-            headerStyle={{paddingHorizontal:20, paddingVertical:10}}
-        >
-            <View style={{paddingVertical:20,paddingHorizontal:20}}>
-                <ProgressBar progress={20}/>
-            </View>
-            <View>
-                <Text style={{
-                    fontFamily:'NunitoBold',
-                    fontSize: 18,
-                    textAlign:'center',
-                    padding: 30
-                }}>How confident do you feel about the direction of your faith journey?</Text>
-            </View>
-            
-            <FaithQuestionSlider/>
-            
-            <Text style={{paddingHorizontal:60, paddingBottom:30,color:'#80ADAA', fontFamily:'NunitoSemiBold', fontSize:16, textAlign:'center'}}>
-                Drag the slider left or right to change the answer
-            </Text>
-
-            <View style={{paddingHorizontal:20, paddingBottom:30}}>
-                <CommonButton
-                    btnText={"Next"}
-                    bgColor={deepGreen}
-                    navigation={navigation}
-                    route={""}
-                    txtColor={primaryText}
-                    bold='bold'
-                    handler={() => handleNext()}
-                    opacity={1}
-                />
-            </View>
-
-        </CustomModal>}
-
-
+        {modalVisible&& <QuestionModal
+            modalVisible={modalVisible}
+            setModalVisible={() => setModalVisible(false)}
+            navigation={navigation}
+        />}
     </View>
   )
 }
