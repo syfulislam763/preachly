@@ -5,9 +5,13 @@ import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+import { getStyles } from './PersonalizationScreen4Style';
 
 export default function PersonalizationScreen({navigation}) {
 
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <View style={styles.container}>
@@ -35,7 +39,7 @@ export default function PersonalizationScreen({navigation}) {
             />
         </View>
 
-        <View style={{paddingHorizontal:25, paddingVertical:30}}>
+        <View style={styles.textContainer}>
             <Text style={styles.text}>A great foundation! Let's go deeper</Text>
             <View style={{height:15}}></View>
             <Text style={styles.text}>You have some knowledge, and we'll build on it!</Text>
@@ -63,15 +67,3 @@ export default function PersonalizationScreen({navigation}) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:30},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 40, color:'#0B172A', lineHeight:35},
-  subtitle: {fontFamily:'NunitoBold', fontSize: 25, color: deepGreen},
-  text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
-  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', paddingVertical:30},
-  img: { height:130,width: 120, objectFit:'contain'},
-  imageContainer: {display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between', backgroundColor:'#fff'}
-
-
-})

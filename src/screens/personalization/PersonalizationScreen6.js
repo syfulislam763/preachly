@@ -7,9 +7,13 @@ import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
 import WeeklyCalendar from '../../components/WeeklyCalendar';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+import { getStyles } from './PersonalizationScreen6Style';
 
 export default function PersonalizationScreen({navigation}) {
 
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <View style={styles.container}>
@@ -23,7 +27,7 @@ export default function PersonalizationScreen({navigation}) {
         <Text style={styles.title}>Your Daily Dose of Clarity, and Inspired Confidence</Text>
 
 
-        <View style={{paddingBottom:30}}>
+        <View style={styles.textContainer}>
             <Text style={styles.text}>Each day you show up strengthen</Text>
             <Text style={styles.text}> your spiritual foundation. Build your streak, </Text>
             <Text style={styles.text}>check in weekly, and unlock badges that </Text>
@@ -46,7 +50,7 @@ export default function PersonalizationScreen({navigation}) {
 
             <Text style={{...styles.semitext, fontSize:14,}}>
              You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day 2</Text> of growing your faith confidence!
-        </Text>
+            </Text>
 
         </View>
         
@@ -79,15 +83,3 @@ export default function PersonalizationScreen({navigation}) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:hp('2%')},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 10, lineHeight:35, color:'#0B172A'},
-  subtitle: {fontFamily:'NunitoSemiBold', fontSize: 20, color: deepGreen},
-  text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
-  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:14.5, textAlign:'center', flexWrap:'wrap', marginLeft:wp("1%") },
-  img: {width:'100%',height: 180,objectFit:'contain'},
-  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:hp("1%")}
-
-
-})

@@ -40,8 +40,8 @@ const totalImages = imageData.length;
 
 function CustomCarousel () {
 
-  const {isSmall, isMedium, isLarge, height, width} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge)
+  const {isSmall, isMedium, isLarge,isFold, height, width} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);

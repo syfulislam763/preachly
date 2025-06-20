@@ -16,8 +16,8 @@ import useLayoutDimention from '../../hooks/useLayoutDimention';
 
 export default function AuthHome({ navigation }) {
   const { login } = useAuth();
-  const {isLarge, isMedium, isSmall} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge)
+  const {isLarge, isMedium, isSmall, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   return (
     <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
         

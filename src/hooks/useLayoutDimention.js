@@ -21,7 +21,8 @@ export default function useLayoutDimention () {
         ...windowInfo,
         isSmall: (windowInfo.width<=360) && "small",
         isMedium: (windowInfo.width <= 414) && "medium",
-        isLarge: (windowInfo.width<768) && "large"
+        isLarge: (windowInfo.width<768) && "large",
+        isFold: (768 < windowInfo.width) && "fold"
     }
 }
 

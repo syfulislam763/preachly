@@ -7,7 +7,7 @@ import CustomModal from '../../../components/CustomModal'
 import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
 import { SafeAreaView } from 'react-native-safe-area-context'
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 
 const questions = {
     1:{
@@ -180,12 +180,17 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
         <View style={{paddingVertical:20,paddingHorizontal:20}}>
             <ProgressBar progress={currentQuestionIndex*10}/>
         </View>
-        <View>
+        <View style={{
+            // maxHeight: hp("20%"),
+            // backgroundColor:'red',
+            // flexWrap:'wrap'
+        }}>
             <Text style={{
                 fontFamily:'NunitoBold',
                 fontSize: 18,
                 textAlign:'center',
-                padding: 30
+                padding: 30,
+                flexWrap:'wrap'
             }}>{currentQuestion?.question}</Text>
         </View>
         

@@ -7,6 +7,8 @@ import CommonButton from '../../components/CommonButton';
 import { deepGreen, lightgreen1, primaryText } from '../../components/Constant';
 import SelectableCard from '../../components/SelectableCard';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+import { getStyles } from './PersonalizationScreen3Style';
 
 const data = [
   {
@@ -67,6 +69,9 @@ walk boldly in the freedom He’s given you.”`,
 export default function PersonalizationScreen3({ navigation }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
+  const {isSmall, isMedium, isLarge, isFold} =  useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+
   return (
     <View style={styles.container}>
 
@@ -120,40 +125,3 @@ export default function PersonalizationScreen3({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: hp("2%"),
-    paddingTop: hp('1%')
-  },
-  title: {
-    fontFamily: 'DMSerifDisplay',
-    fontSize: 30,
-    textAlign: 'center',
-    flexWrap: 'wrap',
-    paddingTop: 35,
-    paddingBottom: 25,
-    paddingHorizontal: 0,
-    color: '#0B172'
-  },
-  text: {
-    fontFamily: 'NunitoSemiBold',
-    fontSize: 18,
-    color: '#2B4752',
-    textAlign: 'center',
-    flexWrap: 'wrap',
-    paddingBottom: hp("3%"),
-    paddingHorizontal: 0
-  },
-  footerText: {
-    color: "#90B2B2",
-    fontFamily: 'NunitoSemiBold',
-    fontSize: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    textAlign: 'center'
-  }
-});

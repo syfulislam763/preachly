@@ -6,9 +6,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
 import QuestionSlider from '../../components/QuestionSlider';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+import {getStyles} from './personalizationScreen2Style'
 
 export default function PersonalizationScreen2({navigation}) {
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
 
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <View style={styles.container}>
@@ -42,9 +46,3 @@ export default function PersonalizationScreen2({navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', paddingHorizontal: 20, paddingBottom: 60, paddingTop:10},
-  title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingTop: 35, paddingBottom: 25, paddingHorizontal: 70, color:'#0B172A', lineHeight:35},
-  text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap', paddingBottom: 50, paddingHorizontal: 20},
-  
-})

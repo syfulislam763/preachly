@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import dayjs from 'dayjs';
+import useLayoutDimention from '../hooks/useLayoutDimention';
 
 const WeeklyCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
-
+  const {isSmall} = useLayoutDimention()
   // Generate 7 days starting from Sunday of current week
   const startOfWeek = dayjs().startOf('week'); // Sunday
   const weekDays = Array.from({ length: 7 }).map((_, i) => {
@@ -62,7 +63,7 @@ const WeeklyCalendar = () => {
         horizontal
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
-        contentContainerStyle={{ gap: 12 }}
+        contentContainerStyle={{ gap: isSmall?6:12 }}
         showsHorizontalScrollIndicator={false}
       />
     </View>

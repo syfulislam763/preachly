@@ -54,7 +54,7 @@ const baseStyle = StyleSheet.create({
   }
 });
 
-export const getStyles = (isSmall, isMedium, isLarge) => {
+export const getStyles = (isSmall, isMedium, isLarge, isFold) => {
     const styleContainer = {
         small: StyleSheet.create({
           footerHighlighter:{
@@ -97,7 +97,8 @@ export const getStyles = (isSmall, isMedium, isLarge) => {
             marginTop:0
           }
         }),
-        medium: StyleSheet.create({
+        medium: baseStyle,
+        large: StyleSheet.create({
           footerHighlighter:{
             ...baseStyle.footerHighlighter
           },
@@ -126,9 +127,9 @@ export const getStyles = (isSmall, isMedium, isLarge) => {
             ...baseStyle.divider,
           }
         }),
-        large: baseStyle
+        fold: baseStyle,
 
     }
 
-    return styleContainer[isSmall] || styleContainer[isMedium] || styleContainer[isLarge]
+    return styleContainer[isSmall] || styleContainer[isMedium] || styleContainer[isLarge] || styleContainer[isFold]
 }

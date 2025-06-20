@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // for arrows
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import useLayoutDimention from '../hooks/useLayoutDimention';
+import { getStyles } from './QuestionSliderStyle';
+
 const questions = [
   {
     id: '1',
@@ -14,9 +17,9 @@ const questions = [
   },
    {
     id: '2',
-    question: "What’s holding you back from confidently living and sharing your faith?",
+    question: "Hello holding you back from confidently living and sharing your faith?",
     options: [
-      "I feel unsure how to respond to questions or doubts about my faith",
+      "I  unsure how to respond to questions or doubts about my faith",
       "I struggle to find the right words to share scripture effectively",
       "I feel I need a deeper connection to God’s word before I can inspire others",
     ],
@@ -36,7 +39,8 @@ const questions = [
 export default function QuestionSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState({});
-
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const handleSelect = (index) => {
     setSelectedOptions((prev) => ({ ...prev, [currentIndex]: index }));
   };
@@ -107,67 +111,4 @@ export default function QuestionSlider() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-  },
-  questionBox: {
-    backgroundColor: '#fff4dd',
-    padding: 15,
-    borderRadius: 20,
-    marginBottom: 25,
-  },
-  questionText: {
-    fontSize: 17,
-    fontFamily:'NunitoBold',
-    color: '#0B172A',
-  },
-  radioRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  radioOuter: {
-    height: 28,
-    width: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: '#0b5c53',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  radioInner: {
-    height: 19,
-    width: 19,
-    borderRadius: 50,
-    backgroundColor: '#0b5c53',
-  },
-  optionText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#0B172A',
-    fontFamily:'NunitoSemiBold'
-  },
-  navigation: {
-    marginTop: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '45%'
-  },
-  dots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#c2d8d5',
-    marginHorizontal: 2,
-  },
-  activeDot: {
-    backgroundColor: '#0b5c53',
-  },
-});
+

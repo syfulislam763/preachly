@@ -49,15 +49,15 @@ const baseStyle = StyleSheet.create({
     },
     image: {
         width: "100%",
-        height: height*0.4,
+        height: height*0.48,
         resizeMode: 'cover',
-        borderRadius: 12,
+        borderRadius: 30,
     },
     pagination: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: '10%',
-        marginBottom: '10%'
+        marginTop:"5%",
+        marginBottom:"0%"
     },
     dot: {
         height: 12,
@@ -67,7 +67,7 @@ const baseStyle = StyleSheet.create({
     },
 })
 
-export const getStyles = (isSmall, isMedium, isLarge) =>  {
+export const getStyles = (isSmall, isMedium, isLarge, isFold) =>  {
   const styleContainer = {
     small: StyleSheet.create({
       container: {
@@ -108,9 +108,14 @@ export const getStyles = (isSmall, isMedium, isLarge) =>  {
         marginTop:8
       },
     }),
-    medium: StyleSheet.create({
+
+    medium: baseStyle,
+
+    large: baseStyle,
+
+    fold: StyleSheet.create({
       container: {
-        ...baseStyle.container
+        ...baseStyle.container,
       },
 
       fullWidthCaptionWrapper: {
@@ -120,29 +125,27 @@ export const getStyles = (isSmall, isMedium, isLarge) =>  {
         ...baseStyle.fullWidthCaptionContainer
       },
       slideContainer: {
-        ...baseStyle.slideContainer
+        ...baseStyle.slideContainer,
       },
       title: {
-        ...baseStyle.title
+        ...baseStyle.title,
       },
       description: {
-        ...baseStyle.description
+        ...baseStyle.description,
       },
       image: {
         ...baseStyle.image,
-        height:height*0.48,
-        borderRadius: 30,
+        height: height*0.4,
+        width: width*0.99,
+        objectFit:'contain'
       },
       pagination: {
         ...baseStyle.pagination,
-        marginTop:"5%",
-        marginBottom:"0%"
       },
       dot: {
-        ...baseStyle.dot
+        ...baseStyle.dot,
       },
     }),
-    large:baseStyle
   }
-  return styleContainer[isSmall] || styleContainer[isMedium] || styleContainer[isLarge]
+  return styleContainer[isSmall] || styleContainer[isMedium] || styleContainer[isLarge] || styleContainer[isFold]
 };
