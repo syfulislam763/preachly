@@ -8,6 +8,7 @@ import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import useLayoutDimention from '../../../hooks/useLayoutDimention'
 
 const questions = {
     1:{
@@ -142,6 +143,8 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
     })
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1)
 
+    const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+
     useEffect(()=>{
         setAllQuestions(questions)
         setCurrentQuestion(questions[currentQuestionIndex])
@@ -177,7 +180,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
         title={() => <Text style={{fontFamily:'NunitoBold'}}>{currentQuestionIndex}/10</Text>}
         headerStyle={{paddingHorizontal:20, paddingVertical:10}}
     >
-        <View style={{paddingVertical:20,paddingHorizontal:20}}>
+        <View style={{paddingVertical:10,paddingHorizontal:20}}>
             <ProgressBar progress={currentQuestionIndex*10}/>
         </View>
         <View style={{
@@ -187,9 +190,10 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
         }}>
             <Text style={{
                 fontFamily:'NunitoBold',
-                fontSize: 18,
+                fontSize: isSmall?16:18,
                 textAlign:'center',
-                padding: 30,
+                paddingVertical: isSmall?30:30,
+                paddingHorizontal:20,
                 flexWrap:'wrap'
             }}>{currentQuestion?.question}</Text>
         </View>
@@ -201,9 +205,9 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             setAns={a=> setAns(a)}
         />
         
-        <Text style={{paddingHorizontal:60, paddingBottom:30,color:'#80ADAA', fontFamily:'NunitoSemiBold', fontSize:16, textAlign:'center'}}>
+        {!isSmall && <Text style={{paddingHorizontal:60, paddingBottom:30,color:'#80ADAA', fontFamily:'NunitoSemiBold', fontSize:16, textAlign:'center'}}>
             Drag the slider left or right to change the answer
-        </Text>
+        </Text>}
 
         <View style={{paddingHorizontal:20, paddingBottom:0}}>
             <CommonButton

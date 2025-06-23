@@ -10,6 +10,9 @@ import Divider from '../../components/Divider'
 import PlanSelector from '../../components/SubscriptionPlan';
 import CustomHeader from '../../components/CustomNavigation';
 import ParagraphIcon from '../../components/ParagraphIcon';
+import useLayoutDimention from '../../hooks/useLayoutDimention';
+import { getStyles } from './SubscriptionScreenStyle';
+
 
 
 const window = Dimensions.get("window")
@@ -17,6 +20,8 @@ const window = Dimensions.get("window")
 export default function SubscriptionScreen({ navigation }) {
   const { login } = useAuth();
   
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
@@ -27,15 +32,7 @@ export default function SubscriptionScreen({ navigation }) {
             style={styles.background}
             resizeMode="cover" 
         >
-            <Text style={{
-              fontFamily:'DMSerifDisplay',
-              fontSize:32,
-              paddingHorizontal:32,
-              paddingTop:10,
-              lineHeight:35,
-              color:'#0B172A',
-              textAlign:'center'
-            }}>Inspired Answers, When You're Lost for Words</Text>
+            <Text style={styles.title}>Inspired Answers, When You're Lost for Words</Text>
         </ImageBackground>
 
 
@@ -80,49 +77,49 @@ export default function SubscriptionScreen({ navigation }) {
 }
 
 
-const styles = StyleSheet.create({
-  footerHighlighter:{color:'black', textDecorationLine:'underline', fontFamily: 'NunitoExtraBold'},
+// const styles = StyleSheet.create({
+//   footerHighlighter:{color:'black', textDecorationLine:'underline', fontFamily: 'NunitoExtraBold'},
 
-  footerText:{fontSize:16, color:'#90B2B2', paddingHorizontal: 16, paddingVertical:20, textAlign:'center', fontFamily:'NunitoSemiBold'},
+//   footerText:{fontSize:16, color:'#90B2B2', paddingHorizontal: 16, paddingVertical:20, textAlign:'center', fontFamily:'NunitoSemiBold'},
 
-  googleAppleAuth:{
-      display:"flex",
-      flexDirection:"row",
-      width: "30%",
-      justifyContent:'space-between',
-      padding: 40,
-      boxSizing:'content-box'
-  },
-  background: {
-    height: window.height*0.28,
-    width:'100%'
-  },
-  content: {
-    width:"100%",
-    backgroundColor:'#fff',
-    position:'absolute',
-    top: window.height*0.22,
-    left:0,
-    right:0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding:20,
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-  },
-  title:{
-    textAlign:'center',
-    fontSize: 32,
-    padding:30,
-    fontFamily: 'DMSerifDisplay'
-  },
-  subtitle:{
-    fontSize:16,
-    paddingBottom: 50,
-    fontFamily: 'NunitoSemiBold'
-  }
-});
+//   googleAppleAuth:{
+//       display:"flex",
+//       flexDirection:"row",
+//       width: "30%",
+//       justifyContent:'space-between',
+//       padding: 40,
+//       boxSizing:'content-box'
+//   },
+//   background: {
+//     height: window.height*0.28,
+//     width:'100%'
+//   },
+//   content: {
+//     width:"100%",
+//     backgroundColor:'#fff',
+//     position:'absolute',
+//     top: window.height*0.22,
+//     left:0,
+//     right:0,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     borderTopLeftRadius: 25,
+//     borderTopRightRadius: 25,
+//     padding:20,
+//   },
+//   text: {
+//     color: 'white',
+//     fontSize: 24,
+//   },
+//   title:{
+//     textAlign:'center',
+//     fontSize: 32,
+//     padding:30,
+//     fontFamily: 'DMSerifDisplay'
+//   },
+//   subtitle:{
+//     fontSize:16,
+//     paddingBottom: 50,
+//     fontFamily: 'NunitoSemiBold'
+//   }
+// });

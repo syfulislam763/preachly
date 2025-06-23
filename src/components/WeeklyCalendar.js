@@ -63,7 +63,7 @@ const WeeklyCalendar = () => {
         horizontal
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
-        contentContainerStyle={{ gap: isSmall?6:12 }}
+        contentContainerStyle={{ gap: isSmall?4:12 }}
         showsHorizontalScrollIndicator={false}
       />
     </View>

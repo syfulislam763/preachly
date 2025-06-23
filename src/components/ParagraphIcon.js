@@ -1,7 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
+import useLayoutDimention from '../hooks/useLayoutDimention'
+import { getStyles } from './ParagraphIconStyle'
 
 const ParagraphIcon = ({icon, text, textStyle={}}) => {
+    const {isSmall, isMedium, isLarge,isFold} = useLayoutDimention()
+    const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   return (
     <View style={styles.container}>
         <Image 
@@ -15,28 +19,3 @@ const ParagraphIcon = ({icon, text, textStyle={}}) => {
 
 export default ParagraphIcon
 
-
-
-const styles = StyleSheet.create({
-    container:{
-        display:'flex',
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'flex-start',
-        width:'100%',
-        paddingVertical:10,
-        paddingRight: 35
-    },
-    img: {
-        height:25,
-        width:25,
-        objectFit: 'contain',
-        marginRight:12
-    },
-    text: {
-        fontFamily:'NunitoSemiBold',
-        color:'#2B4752',
-        fontSize: 18,
-        flexWrap:'wrap',
-    }
-})

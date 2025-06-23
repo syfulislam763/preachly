@@ -9,46 +9,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomModal from '../../../components/CustomModal';
 import CommonButton from '../../../components/CommonButton';
 import { deepGreen, primaryText } from '../../../components/Constant';
+import useLayoutDimention from '../../../hooks/useLayoutDimention';
+import { getStyles } from './CalendarStyle';
 
 const screenWidth = Dimensions.get('window').width;
 const calendarPadding = 10;
 const daySize = (screenWidth - calendarPadding * 2) / 7 - 4;
-
-const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
-  const isToday = isSameDay(day, new Date());
-  const isSelected = isSameDay(day, selectedDate);
-  const inCurrentMonth = isSameMonth(day, currentMonth);
-  const isMarked = markedDates?.some(marked => isSameDay(marked, day));
-  
-
-  let bgColor = 'transparent';
-  if (isSelected) bgColor = '#004d40';
-  else if (isMarked) bgColor = '#ffe0b2';
-
-  return (
-    <TouchableOpacity
-      onPress={() => onSelect(day)}
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: daySize / 2,
-        backgroundColor: bgColor,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 7.5,
-        opacity: inCurrentMonth ? 1 : 0.4
-      }}
-    >
-      <Text style={{ color: isSelected ? 'white' : '#3F5862', fontFamily:'NunitoSemiBold', fontSize:18 }}>{format(day, 'd')}</Text>
-    </TouchableOpacity>
-  );
-};
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date(2025, 0));
   const [selectedDate, setSelectedDate] = useState(new Date(2025, 0, 2));
   const navigation = useNavigation()
   const markedDates = [new Date(2025, 0, 1), new Date(2025, 0, 15), new Date(2025, 0, 27)];
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   const renderHeader = () => (
     <View style={{ width: screenWidth - calendarPadding * 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 0, paddingVertical: 25 }}>
@@ -75,11 +49,32 @@ const Calendar = () => {
     return (
       <View style={{ flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
         {days.map((day, idx) => (
-          <Text key={idx} style={{ width: 55, textAlign: 'center', fontFamily:'NunitoSemiBold',color:'#90B2B2', fontSize:14 }}>{day.toUpperCase()}</Text>
+          <Text key={idx} style={styles.dayTitle}>{day.toUpperCase()}</Text>
         ))}
       </View>
     );
   };
+  
+const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
+  const isToday = isSameDay(day, new Date());
+  const isSelected = isSameDay(day, selectedDate);
+  const inCurrentMonth = isSameMonth(day, currentMonth);
+  const isMarked = markedDates?.some(marked => isSameDay(marked, day));
+  
+
+  let bgColor = 'transparent';
+  if (isSelected) bgColor = '#004d40';
+  else if (isMarked) bgColor = '#ffe0b2';
+
+  return (
+    <TouchableOpacity
+      onPress={() => onSelect(day)}
+      style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}]}
+    >
+      <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }]}>{format(day, 'd')}</Text>
+    </TouchableOpacity>
+  );
+};
 
   const generateCalendar = () => {
     const start = startOfWeek(startOfMonth(currentMonth));
@@ -96,7 +91,8 @@ const Calendar = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <SafeAreaView style={{ flex:1, backgroundColor:'#fff',}}>
+    <SafeAreaView style={{ flex:1, backgroundColor:'#fff',justifyContent:"space-between"
+    }}>
       <ReusableNavigation
         leftComponent={() => <BackButton navigation={navigation}/>}
         middleComponent={() => (<Text style={{
@@ -137,11 +133,7 @@ const Calendar = () => {
         }}>Weekly Check-In Reminder</Text>
         <Image
           source={require("../../../../assets/img/weeklyStreakBg.png")}
-          style={{
-            height: 170,
-            width:"100%",
-            objectFit:'contain',
-          }}
+          style={styles.weeklyCheckInImage}
         />
       </View>
         {modalVisible && <CustomModal
@@ -193,27 +185,5 @@ const Calendar = () => {
 
 export default Calendar;
 
-const styles = StyleSheet.create({
-  title:{
-    fontFamily:'DMSerifDisplay',
-    fontSize:32,
-    textAlign:'center',
-    color:'#0B172A'
-  },
-  text:{
-    fontFamily:'NunitoSemiBold',
-    fontSize: 16,
-    color:'#2B4752',
-    textAlign:'center',
-    paddingHorizontal: 20
-  },
-  footerText:{
-    color: '#90B2B2',
-    fontFamily:'NunitoBold',
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#90B2B2'
-  }
-})
 
 

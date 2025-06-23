@@ -8,6 +8,8 @@ import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import QuestionModal from './QuestionModal'
+import useLayoutDimention from '../../../hooks/useLayoutDimention'
+import { getStyles } from './RegularCheckInStyle'
 
 
 const window = Dimensions.get("window")
@@ -16,6 +18,8 @@ const RegularCheckIn = ({navigation, route}) => {
 
     const {title} = route.params
     const [modalVisible, setModalVisible] = useState(false);
+    const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+    const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
     useEffect(()=>{
         navigation.setOptions({title})
@@ -25,12 +29,7 @@ const RegularCheckIn = ({navigation, route}) => {
     <View style={styles.container}>
         <Image 
             source={require("../../../../assets/img/create_weekly_check_in.png")}
-            style={{
-                height:250,
-                width: 200,
-                objectFit:'contain',
-                backgroundColor:'#fff'
-            }}
+            style={styles.img}
         />
 
         <Text style={styles.title}>Time for a heart check!</Text>
@@ -59,19 +58,3 @@ const RegularCheckIn = ({navigation, route}) => {
 }
 
 export default RegularCheckIn
-const styles = StyleSheet.create({
-    container:{flex:1, backgroundColor:'#fff', alignItems:'center',  paddingHorizontal:20, paddingVertical:40},
-    title:{
-        fontFamily:'DMSerifDisplay',
-        fontSize:32,
-        color:'#0B172A',
-        paddingVertical:40
-    },
-    text:{
-        fontFamily:'NunitoSemiBold',
-        fontSize: 17,
-        color:'#2B4752',
-        textAlign:'center',
-        paddingBottom: 50
-    }
-})

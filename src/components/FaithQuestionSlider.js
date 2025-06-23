@@ -131,8 +131,8 @@ function FaithQuestionSlider({Answers, selectedOption=1, ans, setAns}) {
             />
             <Dot
                 dotNumber={1}
-                left={(window.width*5)/100}
-                top={ activeDot[1]?44:55}
+                left={(window.width*4)/100}
+                top={ activeDot[1]?50:55}
                 pressEvent={progressHandler}
                 activeDot={activeDot}
                 group={group}
@@ -178,7 +178,8 @@ const styles = StyleSheet.create({
         marginTop: 100 ,
         position:'relative',
         backgroundColor:'#fff',
-        height:350
+        height:350,
+        width:"100%"
     },
     cardContainer:{
         backgroundColor:'#EDF3F3',
@@ -196,7 +197,8 @@ const styles = StyleSheet.create({
         overflow:'hidden',
         position:'absolute',
         zIndex:2,
-        left:0
+        left:0,
+        width: '110%',
     },
     cardTwo:{
         backgroundColor:'#fff',
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
         borderRadius:'50%',
         zIndex:3,
         top: 10,
-        left:10
+        left:10,
         // left:0,
         // bottom:0
     },

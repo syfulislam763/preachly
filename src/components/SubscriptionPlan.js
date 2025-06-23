@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import useLayoutDimention from '../hooks/useLayoutDimention';
+import { getStyles } from './SubscriptionPlanStyle';
 
 const PlanSelector = ({OtherPlan=null}) => {
   const [selectedPlan, setSelectedPlan] = useState('monthly');
-
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   return (
     <View>
       {/* Monthly Plan */}
@@ -61,78 +64,3 @@ const PlanSelector = ({OtherPlan=null}) => {
 };
 
 export default PlanSelector;
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 0,
-  },
-  planContainer: {
-    borderWidth: 1,
-    borderColor: '#B0CFCB',
-    borderRadius: 20,
-    padding: 10,
-    paddingHorizontal:15,
-    marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'relative',
-    width:'100%',
-    
-  },
-  selectedPlan: {
-    borderColor: '#005A55',
-  },
-  planTitle: {
-    fontFamily:'NunitoSemiBold',
-    fontSize: 16,
-    color: '#0B1D26',
-  },
-  subText: {
-    fontSize: 16,
-    color: '#84B3B2',
-  },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  priceText: {
-    fontSize: 18,
-    fontFamily:"NunitoSemiBold",
-    color: '#0B172A',
-  },
-  radioOuter: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: '#46636A',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radioOuterSelected: {
-    borderColor: '#005F56',
-    borderWidth: 1,
-  },
-  radioInner: {
-    width: 23,
-    height: 23,
-    borderRadius: 23/2,
-    backgroundColor: '#005A55',
-  },
-  badge: {
-    position: 'absolute',
-    right: 16,
-    top: -10,
-    backgroundColor: '#005A55',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  badgeText: {
-    color: 'white',
-    fontFamily:'NunitoSemiBold',
-    fontSize:14
-  },
-});

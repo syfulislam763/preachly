@@ -11,13 +11,15 @@ import BackButton from '../../../components/BackButton';
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { he } from 'date-fns/locale';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import { getStyles } from './ProfileFaithStyle';
 
 const { width, height,} = Dimensions.get('window');
 
 const ProfileFaith = ({ navigation }) => {
 
   const {completePersonalization} = useAuth()
-  const {height, width, isSmall} = useLayoutDimention()
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
@@ -36,16 +38,7 @@ const ProfileFaith = ({ navigation }) => {
         </View>
         <Image
             source={require('../../../../assets/img/bg_bible_frame.png')}
-            style={{
-                height: hp('100%'), 
-                width: wp('100%'), 
-                objectFit:'contain',
-                position:'absolute',
-                top: isSmall?height*0.2: height*0.2,
-                left:0,
-                right:0,
-                zIndex: 1
-            }}
+            style={styles.bg_image}
         />
 
         <View style={styles.btnContainer}>
@@ -67,53 +60,3 @@ const ProfileFaith = ({ navigation }) => {
 
 
 export default ProfileFaith;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:'#fff',
-    position:'relative'
-  },
-  textContainer: {
-    height: height * (1/5),
-    width: '100%',
-    backgroundColor:'#fff',
-    marginTop:'8%',
-    padding:20
-  },
-  
-  btnContainer:{
-    paddingHorizontal: 20,
-    position:'absolute',
-    bottom:30,
-    left:0,
-    right:0,
-    zIndex: 1
-  },
-  title:{
-    fontFamily:'DMSerifDisplay',
-    fontSize:32,
-    color:'#0B172A',
-    textAlign:'center',
-  },
-  text:{
-    fontFamily:"NunitoBold",
-    color:"#2B4752",
-    fontSize: 17,
-    textAlign:'center',
-    paddingHorizontal:20
-  },
-  button: {
-    backgroundColor: '#005A55',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 30,
-    width: width * 0.8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});

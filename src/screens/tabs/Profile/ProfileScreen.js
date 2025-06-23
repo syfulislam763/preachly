@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import WeeklyCalendar from '../../../components/WeeklyCalendar';
 import { useNavigation } from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import useLayoutDimention from '../../../hooks/useLayoutDimention';
+import { getStyles } from './ProfileScreenStyle';
 
 
 
@@ -14,6 +16,8 @@ const ProfileScreen = () => {
 
   const navigation = useNavigation()
 
+  const {isSmall, isMedium,isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   return (
     <View style={{flex:1,backgroundColor:'#fff'}}>
@@ -52,10 +56,7 @@ const ProfileScreen = () => {
 
       </View>
 
-      <View style={{
-        marginTop: hp("11%"),
-        paddingHorizontal: 20
-      }}>
+      <View style={styles.semiContainer}>
         <WeeklyCalendar/>
 
         <View style={styles.caption}>
@@ -137,89 +138,5 @@ const ProfileScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  tootltipText:{
-    fontFamily:'NunitoSemiBold',
-    fontSize:14,
-    color:'#966F44'
-  },
-  tooltip: {
-    display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between',
-    width: 100
-  },
-  menuText:{
-    fontFamily:'NunitoSemiBold',
-    color:'#0B172A',
-    fontSize: 18
-  },
-  weeklyCheckIn:{
-    display: 'flex',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    backgroundColor:'#F3F8F8',
-    padding: 15,
-    borderRadius: 20
-  },
-  caretRight:{
-    width:20,
-    height:20,
-    objectFit:"contain"
-  },
-  semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', },
-  caption: {display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop: hp("1.5%")},
-  img: {width:'100%',height: 150,objectFit:'contain'},
-  headerContainer:{
-    position:'relative'
-  },
-  profileContainer:{
-    position: 'absolute',
-    top: hp("14%"),
-    left: (window.width*38)/100,
-    display:'flex',
-    flexDirection:'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    height: hp("18%"),
-    zIndex:100
-  },
-  profileText:{
-    fontSize: 20,
-    fontFamily: 'NunitoBold',
-    color:'#0B172A',
-    marginTop: hp("1%")
-  },
-  iconContainer:{
-    position:"absolute",
-    top: 30,
-    right: 30,
-    display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between',
-    width:  80,
-    paddingTop: 20
-  },
-  icon:{
-    width: 25,
-    height: 25,
-    objectFit:'contain'
-  },
-  profileImage:{
-    width: 100,
-    height: 100,
-    objectFit:'contain'
-  },
-  bgImage:{
-    width:"100%",
-    height: hp("21%"),
-    objectFit:'cover',
-    borderBottomRightRadius: hp("5%"),
-    borderBottomLeftRadius: hp("5%")
-  }
-});
 
 export default ProfileScreen;

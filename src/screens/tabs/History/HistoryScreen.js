@@ -13,6 +13,8 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HistoryNotFound from './HistoryNotFound';
+import useLayoutDimention from '../../../hooks/useLayoutDimention'
+import {getStyles} from './HistoryScreenStyle'
 
 const star = require("../../../../assets/img/VectorStar.png")
 const bookmark = require("../../../../assets/img/24-bookmark.png")
@@ -109,6 +111,9 @@ const HistoryScreen = ({navigation}) => {
   const [selectedFilter, setSelectedFilter] = useState('All chats');
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState(initialData);
+  
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   const handleDelete = (id) => {
     setData((prev) => prev.filter((item) => item.id !== id));
@@ -217,12 +222,7 @@ const HistoryScreen = ({navigation}) => {
             
             {filter?.img?<Image
               source={filter.img}
-              style={{
-                height:20,
-                width:20,
-                objectFit:'contain',
-                marginRight:10
-              }}
+              style={styles.filterIcon}
             />:null}
             <Text
               style={[
