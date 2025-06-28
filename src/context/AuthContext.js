@@ -11,8 +11,15 @@ export const AuthProvider = ({ children }) => {
   const completePersonalization = () => setIsPersonalized(true);
   const completeSubscription = () => setIsSubscribed(true);
 
+
+  const [store, setStore] = useState({})
+
+  const updateStore = (data) => {
+    setStore({...store, ...data})
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isPersonalized, isSubscribed, login, completePersonalization, completeSubscription }}>
+    <AuthContext.Provider value={{ isAuthenticated, isPersonalized, isSubscribed, store, login, completePersonalization, completeSubscription,updateStore }}>
       {children}
     </AuthContext.Provider>
   );

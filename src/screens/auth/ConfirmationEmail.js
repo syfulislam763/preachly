@@ -45,7 +45,7 @@ export default function ConfirmationEmail({ navigation }) {
 
         <View style={styles.buttonContainer}>
           <CommonButton
-            btnText={"Change email"}
+            btnText={"Enter Confirmation Code"}
             bgColor={lightgreen1}
             navigation={navigation}
             route={"ConfirmationCode"}
