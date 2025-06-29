@@ -4,7 +4,7 @@ import CommonButton from '../../components/CommonButton';
 import { deepGreen , primaryText} from '../../components/Constant';
 import { useAuth } from '../../context/AuthContext';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
-import { getStyles } from './FinishAuthenticationStyle';
+import { getStyles } from './authStyles/FinishAuthenticationStyle';
 
 
 const { width, height } = Dimensions.get('window');

@@ -100,6 +100,7 @@ const OTPInput = ({
           {
             width: boxSize,
             height: boxSize,
+            borderBottomColor: editable?"#005A55":"",
             marginRight: index < length - 1 ? boxSpacing : 0,
             borderColor: isError
               ? errorColor

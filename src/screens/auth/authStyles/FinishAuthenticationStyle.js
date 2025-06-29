@@ -2,7 +2,7 @@ import {StyleSheet, Dimensions} from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.75;
-import { deepGreen } from '../../components/Constant';
+import { deepGreen } from '../../../components/Constant';
 
 const baseStyle = StyleSheet.create({
   container: {

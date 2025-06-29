@@ -1,31 +1,56 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Pressable, ActivityIndicator } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { deepGreen, lighgreen } from '../../components/Constant';
 import OTPInput from '../../components/OTPInput';
+import {verify_email, resentOTP, handleToast} from './AuthAPI'
+import Indicator from '../../components/Indicator'
+import { useNavigation, useRoute , CommonActions} from '@react-navigation/native';
 
 
+const ConfirmationCode = ({ }) => {
+  const [isLoading, setIsloading] = useState(false)
+  const route = useRoute()
+  const navigation = useNavigation()
+  const {email} = route.params
+  const handleComplete = (otp) => {
+    setIsloading(true)
+    const payload = {...route.params, otp: otp}
+    verify_email(payload, (res, isSuccess) => {
+      if(isSuccess){
+        if(res.success){
+          setIsloading(false)
+          navigation.navigate("CreatePassword")
+        }else{
+          setIsloading(false)
+          // handleToast("info", "Your OTP has expired, send again", () => {
+          //   navigation.navigate("SingUp", {resentOPT:true, ...route.params})
+          // })
+        }
+      }else{
+          handleToast("info", "Your OTP has expired, send again", () => {
+              // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
+              navigation.dispatch(state => {
+              
+              const routes = state.routes.slice(0,-3);
+              
+              routes.push({
+                name: 'SignUp',
+                params: payload
+              });
+              
+              return CommonActions.reset({
+                ...state,
+                index: routes.length - 1,
+                routes
+              });
+            });
+          })
+        setIsloading(false)
 
-
-
-
-const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
-  const [code, setCode] = useState('');
-  const handleOtpChange = (otp) => {
-    console.log('OTP:', otp);
-  };
-
-  // Handle keypad press
-  const handleKeyPress = (value) => {
-    if (value === 11 && code.length > 0) {
-      navigation.navigate("CreatePassword")
-      console.log('Submitting code:', code);
-    } else if (value === 10) {
-      setCode(code.slice(0, -1));
-    } else if (code.length < 4 && !isNaN(value)) {
-      setCode(code + value);
-    }
-  };
+      }
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -47,7 +72,7 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
         <OTPInput 
           length={4}
           onChange={(otp) => console.log('OTP changed:', otp)}
-          onComplete={(otp) => navigation.navigate("CreatePassword")}
+          onComplete={(otp) => handleComplete(otp)}
           error={false}
           focusColor="#005A55"
           errorColor="#B00020"
@@ -66,7 +91,11 @@ const ConfirmationCode = ({ email = 'qwerty123@gmail.com', navigation }) => {
       </View>
 
 
-
+      {isLoading  && 
+        <Indicator onClose={() => setIsloading(false)} visible={isLoading}>
+          <ActivityIndicator size="large"/>
+        </Indicator>
+      }
     </View>
   );
 };

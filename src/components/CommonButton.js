@@ -1,12 +1,12 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const CommonButton = ({bgColor, bold='', txtColor, btnText, route,opacity, handler=null, navigation}) => {
+const CommonButton = ({bgColor, disabled=false, txtColor, btnText, route,opacity, handler=null, navigation}) => {
 
 
 
   return (
-    <TouchableOpacity style={{...styles.btn, backgroundColor: bgColor, opacity:opacity}} onPress={route===""?handler: () => navigation.navigate(route)  }> 
+    <TouchableOpacity disabled={disabled} style={{...styles.btn, backgroundColor: bgColor, opacity:opacity}} onPress={route===""?handler: () => navigation.navigate(route)  }> 
         <Text style={{...styles.btnText, color: txtColor,}}>{btnText}</Text>
     </TouchableOpacity>
   )

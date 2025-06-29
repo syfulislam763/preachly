@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
@@ -9,7 +9,8 @@ import {
   Pressable, 
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -21,10 +22,90 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
+import {ROOT_URL, SIGNUP} from '../../context/APIs'
+import axios from 'axios';
+import { sign_up, resentOTP } from './AuthAPI';
+import Indicator from '../../components/Indicator';
+import Toast from 'react-native-toast-message';
+import { useNavigation, useRoute, } from '@react-navigation/native';
 
-export default function SignInScreen({ navigation }) {
+export default function SignInScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
+  const navigation = useNavigation()
+  const route = useRoute()
+  console.log("sign up ", route)
+
+  const handleToast = (type, msg, goTo) => {
+    Toast.show({
+      type: type, 
+      text1: type,
+      text2: msg,
+      visibilityTime: 1000,
+      position: 'top',
+      onHide: () => goTo()
+    })
+  }
+  useEffect(() => {
+    if(route.params){
+      setEmail(route.params.email)
+    }
+  }, [route.params])
+  const isValidEmail = {
+    "Invalid email format.":true
+  }
+  const handleSignUp = () => {
+      setIsLoading(true)
+      const payload = {
+        email: email
+      }
+      if(route.params){
+        setIsLoading(true)
+        const resent_payload = {
+          "email": route.params.email,
+          "purpose": "verification"
+        }
+        resentOTP(resent_payload, (res, isSuccess)=>{
+          if(isSuccess){
+            setIsLoading(false)
+            console.log("resent otp", res)
+            handleToast("info", "OTP has sent again!", () => {
+              navigation.navigate("ConfirmationEmail", payload)
+            })
+          }else{
+            console.log(res)
+          }
+        })
+      }
+      else{
+        sign_up(payload, (res, isSuccess) => {
+          if(isSuccess){
+            const data = res?.data
+            if(data?.is_sent){
+              setIsLoading(false)
+              navigation.navigate("ConfirmationEmail", payload)
+            }
+            else if(isValidEmail[res.message]){
+              setIsLoading(false)
+              handleToast('error', res?.message, ()=>{})
+            }
+            else{
+              setIsLoading(false)
+              // handleToast('info', res?.message, () => navigation.navigate("SignIn"))
+              handleToast('info', res?.message, () => navigation.navigate("ConfirmationEmail", payload))
+
+            }
+          }else{
+            setIsLoading(false)
+            console.log(res)
+          }
+          
+        })
+      }
+  }
+
+
 
   return (
     <KeyboardAvoidingView
@@ -45,7 +126,7 @@ export default function SignInScreen({ navigation }) {
               placeholder="example@gmail.com"
               value={email}
               onChangeText={(e) => setEmail(e)}
-              style={styles.input}
+              style={email.length?styles.activeInput:styles.input}
               placeholderColor='#607373'
             />
           </View>
@@ -56,11 +137,22 @@ export default function SignInScreen({ navigation }) {
             btnText={"Send Confirmation email"}
             bgColor={"#005A55"}
             navigation={navigation}
-            route={"ConfirmationEmail"}
+            route={""}//"ConfirmationEmail"
             txtColor={"#fff"}
-            opacity={1}
+            handler={handleSignUp}
+            opacity={email.length?1:0.6}
+            disabled={email.length?false:true}
           />
         </View>
+
+        {isLoading && 
+          <Indicator onClose={() => setIsLoading(false)} visible={isLoading}>
+            <ActivityIndicator size="large" />
+          </Indicator>
+          
+        }
+
+
       </Pressable>
     </KeyboardAvoidingView>
   );
@@ -95,6 +187,10 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 20,
     borderColor: '#ACC6C5',
+  },
+  activeInput:{
+    marginBottom: 20,
+    borderColor:"#005A55"
   },
   buttonContainer: {
     padding: 20,

@@ -7,7 +7,7 @@ import {
 import FooterBar from '../../components/FooterBar';
 import CommonButton from '../../components/CommonButton';
 import Divider from '../../components/Divider';
-import { getStyles } from './AuthHomeStyle';
+import { getStyles } from './authStyles/AuthHomeStyle';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 
 

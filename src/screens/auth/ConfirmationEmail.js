@@ -23,11 +23,10 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-
-export default function ConfirmationEmail({ navigation }) {
-  const { login } = useAuth();
-  const [email, setEmail] = useState("");
-
+import { useRoute, useNavigation } from '@react-navigation/native';
+export default function ConfirmationEmail() {
+  const route = useRoute()
+  const navigation = useNavigation()
   return (
     <View
       style={styles.container}
@@ -39,7 +38,7 @@ export default function ConfirmationEmail({ navigation }) {
         >
           <View style={styles.content}>
             <Text style={styles.title}>Confirmation email has been sent</Text>
-            <Text style={styles.text}>Check your email for qwerty123@gmail.com to which the confirmation email was sent</Text>
+            <Text style={styles.text}>Check your email for {route?.params?route?.params?.email: "qwerty123@gmail.com"} to which the confirmation email was sent</Text>
           </View>
         </ScrollView>
 
@@ -48,7 +47,8 @@ export default function ConfirmationEmail({ navigation }) {
             btnText={"Enter Confirmation Code"}
             bgColor={lightgreen1}
             navigation={navigation}
-            route={"ConfirmationCode"}
+            route={""}
+            handler={() => navigation.navigate("ConfirmationCode", route.params)}
             txtColor={"#2B4752"}
             opacity={1}
           />
