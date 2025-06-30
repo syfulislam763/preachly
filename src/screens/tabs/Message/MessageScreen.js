@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
 import BackButton from '../../../components/BackButton';
 import Conversations from './Conversations';
-import ChatInput from './ChatInput';
+// import ChatInput from './ChatInput';
 import LostConnection from './LostConnection';
 import CustomModal from '../../../components/CustomModal';
 import RatingMessage from './RatingMessage';

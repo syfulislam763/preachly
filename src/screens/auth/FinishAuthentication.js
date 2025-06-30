@@ -11,10 +11,12 @@ const { width, height } = Dimensions.get('window');
 
 const FinishAuthentication = ({ navigation }) => {
 
-  const {login} = useAuth()
+  const {login, store} = useAuth()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
 
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+
+  console.log("final login store -> ", store)
 
   return (
     <View style={styles.container}>

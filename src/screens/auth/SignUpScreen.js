@@ -28,6 +28,7 @@ import { sign_up, resentOTP } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import Toast from 'react-native-toast-message';
 import { useNavigation, useRoute, } from '@react-navigation/native';
+import { handleToast } from './AuthAPI';
 
 export default function SignInScreen() {
   const { login } = useAuth();
@@ -35,18 +36,7 @@ export default function SignInScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const navigation = useNavigation()
   const route = useRoute()
-  console.log("sign up ", route)
 
-  const handleToast = (type, msg, goTo) => {
-    Toast.show({
-      type: type, 
-      text1: type,
-      text2: msg,
-      visibilityTime: 1000,
-      position: 'top',
-      onHide: () => goTo()
-    })
-  }
   useEffect(() => {
     if(route.params){
       setEmail(route.params.email)
@@ -70,7 +60,7 @@ export default function SignInScreen() {
           if(isSuccess){
             setIsLoading(false)
             console.log("resent otp", res)
-            handleToast("info", "OTP has sent again!", () => {
+            handleToast("info", "OTP has sent again!",3000, () => {
               navigation.navigate("ConfirmationEmail", payload)
             })
           }else{
@@ -89,12 +79,12 @@ export default function SignInScreen() {
             }
             else if(isValidEmail[res.message]){
               setIsLoading(false)
-              handleToast('error', res?.message, ()=>{})
+              handleToast('error', res?.message,2000, ()=>{})
             }
             else{
               setIsLoading(false)
-              // handleToast('info', res?.message, () => navigation.navigate("SignIn"))
-              handleToast('info', res?.message, () => navigation.navigate("ConfirmationEmail", payload))
+              handleToast('info', res?.message,3000, () => navigation.navigate("SignIn"))
+              //handleToast('info', res?.message, () => navigation.navigate("ConfirmationEmail", payload))
 
             }
           }else{

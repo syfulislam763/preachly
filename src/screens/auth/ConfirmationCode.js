@@ -28,7 +28,7 @@ const ConfirmationCode = ({ }) => {
         navigation.navigate("CreatePassword", payload)
         
       }else{
-          handleToast("info", "Your OTP has expired, send again", () => {
+          handleToast("info", "Your OTP has expired, send again",2000, () => {
               // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
               navigation.dispatch(state => {
               

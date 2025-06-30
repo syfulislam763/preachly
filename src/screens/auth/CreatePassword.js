@@ -8,7 +8,8 @@ import {
   Pressable, 
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -22,24 +23,38 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-import { create_password } from './AuthAPI';
+import { create_password, handleToast } from './AuthAPI';
 import { useRoute } from '@react-navigation/native';
-export default function CreatePassword({ navigation }) {
-  const { login, store } = useAuth();
+import Indicator from '../../components/Indicator';
+import { useNavigation } from '@react-navigation/native';
+
+export default function CreatePassword() {
+  const { updateStore } = useAuth();
   const [password, setPassword] = useState("");
   const route = useRoute()
+  const navigation = useNavigation()
   
-
+  const [loading, setLoading] = useState(false)
   const handleSignUpComplete = () => {
     const payload = {
       ...route.params,
       password: password,
       password2: password
     }
-    console.log("create_password", payload)
-    //FinishAuthentication
+    
+    //
+    setLoading(true)
     create_password(payload, (res, isSuccess)=>{
-      
+      if(isSuccess){
+        setLoading(false)
+        updateStore(res.data)
+        handleToast("success", "User is created!",2000, () => {
+          navigation.navigate("FinishAuthentication")
+        })
+      }else{
+        setLoading(false)
+        console.log("error", res)
+      }
     })
   }
 
@@ -59,7 +74,7 @@ export default function CreatePassword({ navigation }) {
             <Text style={styles.text}>The password must be longer than 8 characters, contain numbers and letters</Text>
             
             <CommonInput
-              type='default'
+              type='password'
               placeholder="Enter password"
               value={password}
               onChangeText={(e) => setPassword(e)}
@@ -83,6 +98,9 @@ export default function CreatePassword({ navigation }) {
           />
         </View>
       </Pressable>
+      {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </KeyboardAvoidingView>
   );
 }

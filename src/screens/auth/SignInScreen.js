@@ -9,7 +9,8 @@ import {
   Pressable, 
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -24,16 +25,31 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { login } from './AuthAPI';
+import Indicator from '../../components/Indicator';
+import { useNavigation } from '@react-navigation/native';
 
-export default function SignInScreen ({ navigation }) {
-  const { login } = useAuth();
+export default function SignInScreen () {
+  const { updateStore } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false)
+  const navigation = useNavigation()
 
   const handleLogin = () => {
-    //FinishAuthentication
-    console.log(email,password)
+    const payload = {
+      email: email,
+      password: password
+    }
+    setLoading(true)
+    login(payload, (res, success) => {
+      if(success){
+        setLoading(false)
+        updateStore(res?.data)
+        navigation.navigate("FinishAuthentication")
+      }else{
+        setLoading(false)
+      }
+    })
   }
 
   return (
@@ -81,6 +97,11 @@ export default function SignInScreen ({ navigation }) {
           />
         </View>
       </Pressable>
+      {loading && 
+        <Indicator visible={loading} onClose={() => setLoading(false)}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>
+      }
     </KeyboardAvoidingView>
   );
 }

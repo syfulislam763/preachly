@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, Pressable} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, Pressable, ActivityIndicator} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import {
   SafeAreaView
@@ -9,21 +9,52 @@ import CommonButton from '../../components/CommonButton';
 import Divider from '../../components/Divider';
 import { getStyles } from './authStyles/AuthHomeStyle';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
+import { googleSignIn, googleSignOut, googleLogin} from './AuthAPI';
+import { useNavigation } from '@react-navigation/native';
+import Indicator from '../../components/Indicator';
 
 
-
-
-
-export default function AuthHome({ navigation }) {
-  const { login } = useAuth();
+export default function AuthHome({}) {
+  const { login, updateStore } = useAuth();
   const {isLarge, isMedium, isSmall, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
-
+  const navigation = useNavigation()
+  const [loading, setLoading] = useState(false)
+  const [isLoginInfo, setIsLoginInfo] = useState(false)
+  const [data, setData] = useState({})
 
   const handleGoogleLogin = () => {
+    // googleSignOut(success => {
+    //   console.log(success)
+    // })
+    // return 
     
+    googleSignIn((res, success) => {
+      if(success){
+        const payload = {
+          email: res?.user?.email,
+          provider: "google",
+          name: res?.user?.name
+        }
+  
+        setLoading(true)
+        googleLogin(payload, (loginRes, isSuccess) => {
+          console.log(":ddf", loginRes)
+          if(isSuccess){
+            setLoading(false)
+            updateStore(loginRes?.data)
+            navigation.navigate("FinishAuthentication")
+          }else{
+            console.log("falid login", loginRes)
+            setLoading(false)
+          }
+        })
+      }else{
+        console.log("error",res)
+        setLoading(false)
+      }
+    })
   }
-
 
 
 
@@ -76,7 +107,9 @@ export default function AuthHome({ navigation }) {
                     width={50}
                   />
                 </Pressable>
-                <Pressable>
+                <Pressable 
+                  onPress={handleGoogleLogin}
+                >
                   <Image 
                     source={require("../../../assets/img/googleAuth.png")}
                     height={50}
@@ -90,7 +123,9 @@ export default function AuthHome({ navigation }) {
 
         </View>
 
-
+        <Indicator onClose={() => setLoading(false)} visible={loading}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>
     </View>
   );
 }
