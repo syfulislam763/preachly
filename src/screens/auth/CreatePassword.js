@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  LayoutAnimation
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -58,6 +59,27 @@ export default function CreatePassword() {
     })
   }
 
+  const [keyboardOffset, setKeyboardOffset] = useState(30);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      const height = e.endCoordinates.height;
+      console.log(height)
+      const safeOffset = Math.min(height, 100); 
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setKeyboardOffset(safeOffset);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setKeyboardOffset(30);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -84,7 +106,7 @@ export default function CreatePassword() {
           </View>
         </ScrollView>
 
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { paddingBottom: keyboardOffset }]}>
           <CommonButton
             btnText={"Save"}
             bgColor={password.length>8?deepGreen:lightgreen1}
@@ -138,6 +160,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     padding: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 30,
+    //paddingBottom: Platform.OS === 'ios' ? 30 : 30,
   }
 });

@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  LayoutAnimation
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -34,6 +35,7 @@ export default function SignInScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false)
+  const [keyboardOffset, setKeyboardOffset] = useState(30);
   const navigation = useNavigation()
   const route = useRoute()
 
@@ -97,6 +99,25 @@ export default function SignInScreen() {
   }
 
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      const height = e.endCoordinates.height;
+      console.log(height)
+      const safeOffset = Math.min(height, 100); 
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setKeyboardOffset(safeOffset);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setKeyboardOffset(30);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -123,7 +144,7 @@ export default function SignInScreen() {
           </View>
         </ScrollView>
 
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { paddingBottom: keyboardOffset }]}>
           <CommonButton
             btnText={"Send Confirmation email"}
             bgColor={"#005A55"}
@@ -156,6 +177,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    flex:1,
     padding: 20,
   },
   content: {
@@ -185,6 +207,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     padding: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 90,
+    // paddingBottom: Platform.OS === 'ios' ? 30 : 30,
   }
 });
