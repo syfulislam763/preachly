@@ -21,13 +21,15 @@
         "backgroundColor": "#005A55"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.syful151.preachly"
+      "package": "com.syful151.preachly",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "@react-native-google-signin/google-signin"
     ]
   }
 }

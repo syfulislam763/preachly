@@ -23,11 +23,18 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
+import { login } from './AuthAPI';
 
 export default function SignInScreen ({ navigation }) {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
-  console.log(Platform.OS)
+  const [password, setPassword] = useState("");
+
+
+  const handleLogin = () => {
+    //FinishAuthentication
+    console.log(email,password)
+  }
 
   return (
     <KeyboardAvoidingView
@@ -46,15 +53,15 @@ export default function SignInScreen ({ navigation }) {
               placeholder=""
               value={email}
               onChangeText={(e) => setEmail(e)}
-              style={styles.input}
+              style={email.length>0?{...styles.input, ...styles.activeInput}:styles.input}
             />
             <Text style={styles.label}>Password</Text>
             <CommonInput
               type='password'
               placeholder="Enter password"
-              value={email}
-              onChangeText={(e) => setEmail(e)}
-              style={styles.input}
+              value={password}
+              onChangeText={(e) => setPassword(e)}
+              style={password.length>0?{...styles.input, ...styles.activeInput}:styles.input}
               placeholderColor='#607373'
             />
             <Text style={styles.forgotPass}>Forgot password?</Text>
@@ -64,10 +71,12 @@ export default function SignInScreen ({ navigation }) {
         <View style={styles.buttonContainer}>
           <CommonButton
             btnText={"Log in"}
-            bgColor={lightgreen1}
+            bgColor={!(email.length && password.length)?lightgreen1:deepGreen}
             navigation={navigation}
-            route={"FinishAuthentication"}
-            txtColor={deepGreen}
+            route={""}
+            handler={handleLogin}
+            txtColor={!(email.length && password.length)?deepGreen:"white"}
+            disabled={ !(email.length && password.length) }
             opacity={1}
           />
         </View>
@@ -104,6 +113,9 @@ const styles = StyleSheet.create({
       borderColor: deepGreen,
       outlineStyle: 'none'
     }
+  },
+  activeInput:{
+    borderColor:"#005A55"
   },
   buttonContainer: {
     paddingHorizontal: 20,

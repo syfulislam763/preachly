@@ -75,6 +75,7 @@ export default function SignInScreen() {
             })
           }else{
             console.log(res)
+            setIsLoading(false)
           }
         })
       }

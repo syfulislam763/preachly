@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, Image, Dimensions} from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, Pressable} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import {
   SafeAreaView
@@ -18,6 +18,17 @@ export default function AuthHome({ navigation }) {
   const { login } = useAuth();
   const {isLarge, isMedium, isSmall, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+
+
+  const handleGoogleLogin = () => {
+    
+  }
+
+
+
+
+
+
   return (
     <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
         
@@ -58,16 +69,20 @@ export default function AuthHome({ navigation }) {
             </View>
 
             <View style={styles.googleAppleAuth}>
-                <Image 
+                <Pressable>
+                  <Image 
                     source={require("../../../assets/img/appleAuth.png")}
                     height={50}
                     width={50}
-                />
-                <Image 
+                  />
+                </Pressable>
+                <Pressable>
+                  <Image 
                     source={require("../../../assets/img/googleAuth.png")}
                     height={50}
                     width={50}
-                />
+                  />
+                </Pressable>
             </View>
         
             <Text style={styles.footerText}>By singing up, you agree to the app's <Text style={styles.footerHighlighter}>Terms of Use</Text> and <Text style={styles.footerHighlighter}>Privacy Policy</Text></Text>

@@ -6,27 +6,27 @@ import OTPInput from '../../components/OTPInput';
 import {verify_email, resentOTP, handleToast} from './AuthAPI'
 import Indicator from '../../components/Indicator'
 import { useNavigation, useRoute , CommonActions} from '@react-navigation/native';
-
+import { useAuth } from '../../context/AuthContext';
 
 const ConfirmationCode = ({ }) => {
   const [isLoading, setIsloading] = useState(false)
   const route = useRoute()
   const navigation = useNavigation()
   const {email} = route.params
+  const {updateStore} = useAuth()
+
   const handleComplete = (otp) => {
     setIsloading(true)
     const payload = {...route.params, otp: otp}
+    console.log(payload, " -> payload")
     verify_email(payload, (res, isSuccess) => {
+      console.log(res, "res")
       if(isSuccess){
-        if(res.success){
-          setIsloading(false)
-          navigation.navigate("CreatePassword")
-        }else{
-          setIsloading(false)
-          // handleToast("info", "Your OTP has expired, send again", () => {
-          //   navigation.navigate("SingUp", {resentOPT:true, ...route.params})
-          // })
-        }
+        
+        setIsloading(false)
+        updateStore({refreshToken:res?.refresh, accessToken: res?.access})
+        navigation.navigate("CreatePassword", payload)
+        
       }else{
           handleToast("info", "Your OTP has expired, send again", () => {
               // navigation.navigate("SignUp", {resentOPT:true, ...route.params})

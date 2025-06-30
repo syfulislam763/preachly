@@ -22,10 +22,26 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-
+import { create_password } from './AuthAPI';
+import { useRoute } from '@react-navigation/native';
 export default function CreatePassword({ navigation }) {
-  const { login } = useAuth();
-  const [email, setEmail] = useState("");
+  const { login, store } = useAuth();
+  const [password, setPassword] = useState("");
+  const route = useRoute()
+  
+
+  const handleSignUpComplete = () => {
+    const payload = {
+      ...route.params,
+      password: password,
+      password2: password
+    }
+    console.log("create_password", payload)
+    //FinishAuthentication
+    create_password(payload, (res, isSuccess)=>{
+      
+    })
+  }
 
   return (
     <KeyboardAvoidingView
@@ -45,9 +61,9 @@ export default function CreatePassword({ navigation }) {
             <CommonInput
               type='default'
               placeholder="Enter password"
-              value={email}
-              onChangeText={(e) => setEmail(e)}
-              style={styles.input}
+              value={password}
+              onChangeText={(e) => setPassword(e)}
+              style={password.length>8?{...styles.input, borderColor:deepGreen}:styles.input}
               placeholderColor='#607373'
             />
           </View>
@@ -56,12 +72,14 @@ export default function CreatePassword({ navigation }) {
         <View style={styles.buttonContainer}>
           <CommonButton
             btnText={"Save"}
-            bgColor={lightgreen1}
+            bgColor={password.length>8?deepGreen:lightgreen1}
             navigation={navigation}
-            route={"FinishAuthentication"}
-            txtColor={deepGreen}
+            route={""}
+            handler={handleSignUpComplete}
+            txtColor={password.length>8?"white": deepGreen}
             bold='bold'
             opacity={1}
+            disabled={password.length<=8}
           />
         </View>
       </Pressable>
