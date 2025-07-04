@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ROOT_URL, SIGNUP, VERYFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN } from "../../context/APIs";
+import { ROOT_URL, SIGNUP, VERYFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN } from "../../context/Paths";
 import Toast from "react-native-toast-message";
 import {
   GoogleSignin,

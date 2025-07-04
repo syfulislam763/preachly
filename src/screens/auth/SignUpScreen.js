@@ -23,7 +23,7 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-import {ROOT_URL, SIGNUP} from '../../context/APIs'
+import {ROOT_URL, SIGNUP} from '../../context/Paths'
 import axios from 'axios';
 import { sign_up, resentOTP } from './AuthAPI';
 import Indicator from '../../components/Indicator';
