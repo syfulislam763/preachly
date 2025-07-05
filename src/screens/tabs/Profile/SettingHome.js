@@ -2,10 +2,13 @@ import { useNavigation } from '@react-navigation/native'
 import React, { useLayoutEffect, useState } from 'react'
 import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-
-
+import { logoutUser } from '../../../context/api'
+import { useAuth } from '../../../context/AuthContext'
+import { CommonActions } from '@react-navigation/native'
 
 const SettingHome = () => {
+
+    const { logout } = useAuth()
 
     const navigation = useNavigation()
 
@@ -86,6 +89,8 @@ const SettingHome = () => {
         <LogoutModal
             isVisible={isOpenModal}
             onClose={() => setOpenModal(false)}
+            logout={logout}
+            navigation={navigation}
         />
 
     </View>
@@ -96,7 +101,7 @@ export default SettingHome;
 
 
 
-const LogoutModal = ({ isVisible, onClose, handleChage }) => (
+const LogoutModal = ({ isVisible, onClose, logout, navigation }) => (
   <Modal
     visible={isVisible}
     transparent
@@ -141,7 +146,11 @@ const LogoutModal = ({ isVisible, onClose, handleChage }) => (
 
           <TouchableOpacity
             style={{...styles.selectBtn, backgroundColor:'#EDF3F3'}}
-            onPress={onClose}
+            onPress={() => {
+              logoutUser(() => {
+                logout();
+              });
+            }}
           >
             <Text style={{...styles.selectBtnText, color:'#000'}}>Logout</Text>
           </TouchableOpacity>

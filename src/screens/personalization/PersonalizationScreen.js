@@ -1,22 +1,64 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ImageBackground, ActivityIndicator} from 'react-native';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen, primaryText } from '../../components/Constant';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import { journey_reason, onboarding_options } from './PersonalizationAPIs';
+import { useNavigation } from '@react-navigation/native';
+import Indicator from '../../components/Indicator';
+import { handleToast } from '../auth/AuthAPI';
+import { logoutUser } from '../../context/api';
+import { useAuth } from '../../context/AuthContext';
 
+export default function PersonalizationScreen() {
 
-export default function PersonalizationScreen({navigation}) {
+  const { logout } = useAuth();
 
   const [cardOne, setCardOne] = useState(true)
   const [cardTwo, setCardTwo] = useState(false)
+  const [loading, setLoading] = useState(false);
 
+  const navigation = useNavigation();
 
   const handleIsActive = () => {
     setCardOne(!cardOne)
     setCardTwo(!cardTwo)
   }
+
+  const handleJourneyReason = () => {
+    const payload = {
+      "journey_reason": 1
+    }
+    if(cardOne) {
+      payload.journey_reason = 1
+    }else if(cardTwo) {
+      payload.journey_reason = 2
+    }
+    setLoading(true);
+    journey_reason(payload, (res, status) => {
+      if(status) {
+        
+        setLoading(false);
+        navigation.navigate("Personalization1");
+      } else if(res.response && res.response.status === 401) {
+        setLoading(false);
+        handleToast("error", "Session expired. Please login again.", 2000, () => {
+          logoutUser(() => {
+            logout();
+          }, () => {
+            setLoading(false)
+          });
+        });
+
+      }else {
+        console.log("Error fetching journey reason: ", res.response.status);
+        setLoading(false);
+      }
+    });
+  }
+
 
 
   return (
@@ -53,11 +95,15 @@ export default function PersonalizationScreen({navigation}) {
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization1"}
+          route={""}
           txtColor={primaryText}
+          handler={handleJourneyReason}
           bold='bold'
           opacity={1}
       />
+      {loading && <Indicator>
+        <ActivityIndicator size="large" />
+      </Indicator>}
     </SafeAreaView>
   );
 }

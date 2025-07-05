@@ -7,7 +7,7 @@ export const ROOT_URL = BASE_URL+URL_CATEGORY
 export const TOKEN_URL = "/auth/token/refresh/"
 
 export const SIGNUP = "/auth/register/initiate/"
-export const VERYFY_EMAIL = "/auth/verify-email/"
+export const VERIFY_EMAIL = "/auth/verify-email/"
 export const RESEND_OTP = "/auth/resend-otp/"
 export const CHANGE_PASSWORD = "/auth/password/change/"
 export const LOGIN = "/auth/login/"
@@ -25,6 +25,8 @@ export const BIBLE_VERSION = ONBOARDING+"/bible-version/"
 export const BIBLE_FAMILIARITY = ONBOARDING+"/bible-familiarity/"
 export const TONE_PREFERENCE = ONBOARDING+"/tone-preference/"
 export const ONBOARDING_COMPLETE = ONBOARDING+"/complete/"
+export const ONBOARDING_STATUS = ONBOARDING+"/status/"
+export const ONBOARDING_OPTIONS = ONBOARDING+"/options/"
 
 
 

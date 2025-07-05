@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PersonalizationScreen from '../screens/personalization/PersonalizationScreen';
 import PersonalizationScreen1 from '../screens/personalization/PersonalizationScreen1';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import PersonalizationScreen2 from '../screens/personalization/PersonalizationScreen2';
 import { commonNavigationOptions } from '../components/Constant';
 import PersonalizationScreen3 from '../screens/personalization/PersonalizationScreen3';
@@ -19,22 +19,33 @@ import MessageScreen from '../screens/tabs/Message/MessageScreen';
 import { useAuth } from '../context/AuthContext';
 
 
+const NotFound = () => <View>
+  <Text>Not Found</Text>
+</View>
+
 const Stack = createNativeStackNavigator();
 
 export default function PersonalizationStack() {
 
-  const {} = useAuth()
+  const {store} = useAuth()
 
   return (
     <Stack.Navigator>
 
-      <Stack.Screen 
+      {store?.onboarding_completed ?<Stack.Screen 
+         options={({ navigation }) => ({
+          headerShown:false
+        })} 
+        name="MainTabs" 
+        component={store?.onboarding_completed?MainTabs:NotFound} 
+      /> : <Stack.Screen 
         options={()=> ({
           headerShown: false
         })}
         name="Personalization" 
         component={PersonalizationScreen} 
       />
+      }
       <Stack.Screen 
         options={commonNavigationOptions}
         name="Personalization1" 
@@ -116,14 +127,6 @@ export default function PersonalizationStack() {
         component={SubscriptionConfirmedScreen} 
       />
 
-
-      <Stack.Screen 
-         options={({ navigation }) => ({
-          headerShown:false
-        })} 
-        name="MainTabs" 
-        component={MainTabs} 
-      />
 
       <Stack.Screen 
          options={({ navigation }) => ({

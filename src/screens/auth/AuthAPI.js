@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ROOT_URL, SIGNUP, VERYFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN } from "../../context/Paths";
+import { ROOT_URL, SIGNUP, VERIFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN } from "../../context/Paths";
 import Toast from "react-native-toast-message";
 import {
   GoogleSignin,
@@ -7,7 +7,7 @@ import {
   isSuccessResponse,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-
+import api from "../../context/api";
 
 GoogleSignin.configure({
 
@@ -55,21 +55,22 @@ export const googleSignOut = async (cb) => {
 };
 
 
-export const handleToast = (type, msg,duration=1000, goTo) => {
+export const handleToast = (type, msg,duration=1000, goTo, show=()=>{}) => {
     Toast.show({
         type: type, 
         text1: type,
         text2: msg,
         visibilityTime: duration,
         position: 'top',
-        onHide: () => goTo()
+        onHide: () => goTo(),
+        onShow: () => show()
     })
 }
 
 
 export const sign_up = async (payload, cb) => {
     try{
-        const response = await axios.post(ROOT_URL+SIGNUP, payload)
+        const response = await api.post(SIGNUP, payload)
         cb(response.data, true)
     }catch(error){
         cb(error, false)
@@ -78,7 +79,7 @@ export const sign_up = async (payload, cb) => {
 
 export const verify_email = async (payload, cb) => {
     try{
-        const res = await axios.post(ROOT_URL+VERYFY_EMAIL, payload)
+        const res = await api.post(VERIFY_EMAIL, payload)
         const data = res.data
         cb(data, true)
     }catch(error){
@@ -88,7 +89,7 @@ export const verify_email = async (payload, cb) => {
 
 export const resentOTP = async (payload, cb) => {
     try{
-        const res = await axios.post(ROOT_URL+RESEND_OTP, payload)
+        const res = await api.post(RESEND_OTP, payload)
         const data = res.data
         cb(data, true)
     }catch(error){
@@ -98,7 +99,7 @@ export const resentOTP = async (payload, cb) => {
 
 export const create_password = async (payload, cb) => {
     try{
-        const res = await axios.post(ROOT_URL+CREATE_PASS, payload)
+        const res = await api.post(CREATE_PASS, payload)
         const data = res.data
         cb(data, true)
     }catch(error){
@@ -108,7 +109,7 @@ export const create_password = async (payload, cb) => {
 
 export const login = async (payload, cb) => {
     try{
-        const res = await axios.post(ROOT_URL+LOGIN, payload)
+        const res = await api.post(LOGIN, payload)
         const data = res.data
         cb(data, true)
     }catch(error){
@@ -119,7 +120,7 @@ export const googleLogin = async (payload, cb) => {
     try{
         console.log("hey", ROOT_URL+SOCIAL_LOGIN)
         console.log(payload)
-        const res = await axios.post(ROOT_URL+SOCIAL_LOGIN, payload,{
+        const res = await api.post(SOCIAL_LOGIN, payload,{
             headers:{
                 'Content-Type':'application/json',
                 'X-CSRFTOKEN': 'L5lIgvX3eVyHzQ3Rp547wKsPR1KaeCMfFnk7kjy7YuV7Zf1y3n5BrKgB34oRagh4'

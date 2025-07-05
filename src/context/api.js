@@ -3,7 +3,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
-import { ROOT_URL } from './Paths';
+import { ROOT_URL , TOKEN_URL} from './Paths';
+
 
 // Replace with your API base URL
 const api = axios.create({
@@ -11,31 +12,47 @@ const api = axios.create({
 });
 
 
-export const loadAuthToken = async () => {
-  const token = await AsyncStorage.getItem('authToken');
-  if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+export const loadAuthToken = async (cb) => {
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  const refreshToken = await AsyncStorage.getItem('refreshToken');
+  const store = await AsyncStorage.getItem('store');
+
+  if (accessToken) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  }
+  cb({
+    accessToken,
+    refreshToken,
+    store: store ? JSON.parse(store) : null,
+  });
+};
+
+export const getNewAccessToken = async (refreshToken, cb) => {
+  try {
+    const response = await api.post(TOKEN_URL, { refreshToken });
+    const { accessToken } = response.data;
+    await setAuthToken(accessToken, refreshToken, () => {});
+    return accessToken;
+  } catch (error) {
+    console.error('Error getting new access token:', error);
+    throw error;
   }
 };
 
-
-export const setAuthToken = async (token) => {
-  await AsyncStorage.setItem('authToken', token);
-  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+export const setAuthToken = async (accessToken, refreshToken, cb) => {
+  await AsyncStorage.setItem('accessToken', accessToken);
+  await AsyncStorage.setItem('refreshToken', refreshToken);
+  api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  cb()
 };
 
-export const logoutUser = async (navigation) => {
-  await AsyncStorage.removeItem('authToken');
+export const logoutUser = async (cb) => {
+  await AsyncStorage.removeItem('accessToken');
+  await AsyncStorage.removeItem('refreshToken');
+  await AsyncStorage.removeItem('store');
   delete api.defaults.headers.common['Authorization'];
 
-  Alert.alert('Session expired', 'Please log in again.');
-
-  navigation.dispatch(
-    CommonActions.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    })
-  );
+  cb && cb();
 };
 
 api.interceptors.response.use(

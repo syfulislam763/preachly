@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadAuthToken } from './api';
 
 const AuthContext = createContext(null);
 
@@ -10,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const login = () => setIsAuthenticated(true);
   const completePersonalization = () => setIsPersonalized(true);
   const completeSubscription = () => setIsSubscribed(true);
-
+  
 
   const [store, setStore] = useState({})
 
@@ -18,8 +20,29 @@ export const AuthProvider = ({ children }) => {
     setStore({...store, ...data})
   }
 
+  const logout =  () => {
+    setIsAuthenticated(false);
+    setIsPersonalized(false);
+    setIsSubscribed(false);
+    setStore({});
+  };
+
+  useEffect(() => {
+    loadAuthToken((data) => { 
+      //console.log("AuthContext data", data);
+      if (data.accessToken) {
+        setIsAuthenticated(true);
+        setStore(data.store || {});
+
+      } else {
+        setIsAuthenticated(false);
+        setStore({});
+      }
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isPersonalized, isSubscribed, store, login, completePersonalization, completeSubscription,updateStore }}>
+    <AuthContext.Provider value={{ isAuthenticated, isPersonalized, isSubscribed, store, login,logout, completePersonalization, completeSubscription,updateStore }}>
       {children}
     </AuthContext.Provider>
   );

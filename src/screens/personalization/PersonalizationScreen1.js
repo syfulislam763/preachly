@@ -8,7 +8,70 @@ import { deepGreen, primaryText } from '../../components/Constant';
 import CustomSelect from '../../components/CustomSelect';
 import SelectableCard from '../../components/SelectableCard';
 import QuestionSlider from '../../components/QuestionSlider';
+import { onboarding_options } from './PersonalizationAPIs';
 
+const denominations = [
+   {
+        "id": 0,
+        "name": "None",
+        "is_active": true
+    },
+    {
+        "id": 11,
+        "name": "Other",
+        "is_active": true
+    },
+    {
+        "id": 10,
+        "name": "Orthodox",
+        "is_active": true
+    },
+    {
+        "id": 9,
+        "name": "Adventist",
+        "is_active": true
+    },
+    {
+        "id": 8,
+        "name": "Evangelical",
+        "is_active": true
+    },
+    {
+        "id": 7,
+        "name": "Lutheran",
+        "is_active": true
+    },
+    {
+        "id": 6,
+        "name": "Pentecostal",
+        "is_active": true
+    },
+    {
+        "id": 5,
+        "name": "Methodist",
+        "is_active": true
+    },
+    {
+        "id": 4,
+        "name": "Nondenominational",
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "name": "Baptist",
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "name": "Protestant",
+        "is_active": true
+    },
+    {
+        "id": 1,
+        "name": "Catholic",
+        "is_active": true
+    }
+]
 
 export default function PersonalizationScreen1({navigation}) {
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -23,7 +86,10 @@ export default function PersonalizationScreen1({navigation}) {
         
         <Text style={styles.title}>Select your denomination</Text>
 
-        <CustomSelect/>
+        <CustomSelect
+          items={denominations}
+          placeholder='Bible Version'
+        />
 
       </View>
 

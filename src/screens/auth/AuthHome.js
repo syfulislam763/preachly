@@ -12,6 +12,7 @@ import useLayoutDimention from '../../hooks/useLayoutDimention';
 import { googleSignIn, googleSignOut, googleLogin} from './AuthAPI';
 import { useNavigation } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
+import { onboarding_status } from '../personalization/PersonalizationAPIs';
 
 
 export default function AuthHome({}) {
@@ -39,10 +40,21 @@ export default function AuthHome({}) {
   
         setLoading(true)
         googleLogin(payload, (loginRes, isSuccess) => {
-          console.log(":ddf", loginRes)
+          
           if(isSuccess){
+            onboarding_status(loginRes?.data?.access, (statusRes, isOk) => {
+              setLoading(false)
+              if(isOk){
+                updateStore({...loginRes?.data, onboarding_completed:statusRes?.data?.onboarding_completed})
+                navigation.navigate("FinishAuthentication")
+              }else{
+    
+              }
+            })
+
             setLoading(false)
             updateStore(loginRes?.data)
+            
             navigation.navigate("FinishAuthentication")
           }else{
             console.log("falid login", loginRes)

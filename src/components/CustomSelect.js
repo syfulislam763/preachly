@@ -9,11 +9,17 @@ import {
   Image
 } from 'react-native';
 
-const CustomSelect = ({ items = [{label:'Default Title',value:0}], onSelect, placeholder = "Denomination" }) => {
+const CustomSelect = ({ items = [{"id": 0,"name": "Select Denomination","is_active": false}], onSelect, placeholder = "Denomination" }) => {
   const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState(false);
 
   const handleSelect = (item) => {
+    if(item.name === "None"){
+      setSelected(null);
+      onSelect && onSelect(null);
+      setVisible(false);
+      return;
+    }
     setSelected(item);
     onSelect && onSelect(item);
     setVisible(false);
@@ -23,7 +29,7 @@ const CustomSelect = ({ items = [{label:'Default Title',value:0}], onSelect, pla
     <View>
       <TouchableOpacity style={styles.dropdown} onPress={() => setVisible(true)}>
         <Text style={selected ? styles.selectedText : styles.placeholderText}>
-          {selected ? selected.label : placeholder}
+          {selected ? selected.name : placeholder}
         </Text>
 
         <Image 
@@ -36,18 +42,22 @@ const CustomSelect = ({ items = [{label:'Default Title',value:0}], onSelect, pla
         />
       </TouchableOpacity>
 
-      <Modal visible={visible} transparent animationType="fade">
+      <Modal statusBarTranslucent={true} visible={visible} transparent animationType="fade">
         <TouchableOpacity style={styles.modalOverlay} onPress={() => setVisible(false)}>
           <View style={styles.dropdownList}>
             <FlatList
-              data={items}
-              keyExtractor={(item) => item.value.toString()}
+              showsVerticalScrollIndicator={false}
+              data={items.sort( (a,b) => a.id - b.id )}
+              keyExtractor={(item) => item.name.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.dropdownItem}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text>{item.label}</Text>
+                  <Text style={{
+                    fontFamily:'NunitoSemiBold',
+                    fontSize: 18,
+                  }}>{item.name}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -77,8 +87,9 @@ const styles = StyleSheet.create({
     paddingLeft:5
   },
   selectedText: {
-    color: '#333',
-    fontSize: 16,
+    color: '#607373',
+    fontSize: 18,
+    fontFamily:'NunitoSemiBold',
   },
   icon: {
     fontSize: 16,
@@ -101,6 +112,8 @@ const styles = StyleSheet.create({
   dropdownItem: {
     paddingHorizontal: 16,
     paddingVertical: 12,
+    borderBottomWidth:0.5,
+    borderBottomColor: '#dddddd',
   },
 });
 

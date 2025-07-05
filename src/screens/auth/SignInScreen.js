@@ -28,6 +28,7 @@ import CommonButton from '../../components/CommonButton';
 import { login } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
+import { onboarding_status } from '../personalization/PersonalizationAPIs';
 
 export default function SignInScreen () {
   const { updateStore } = useAuth();
@@ -44,9 +45,16 @@ export default function SignInScreen () {
     setLoading(true)
     login(payload, (res, success) => {
       if(success){
-        setLoading(false)
-        updateStore(res?.data)
-        navigation.navigate("FinishAuthentication")
+      
+        onboarding_status(res?.data?.access, (statusRes, isOk) => {
+          setLoading(false)
+          if(isOk){
+            updateStore({...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed})
+            navigation.navigate("FinishAuthentication")
+          }else{
+
+          }
+        })
       }else{
         setLoading(false)
       }

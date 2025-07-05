@@ -1,15 +1,12 @@
-import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE } from "../../context/Paths";
+import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS } from "../../context/Paths";
 
-import axios from "axios";
+import api from "../../context/api";
 
 
-export const journey_reason = async (payload, token, cb) => {
+export const journey_reason = async (payload, cb) => {
   try {
-    const response = await axios.post(JOURNEY_REASON, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    //console.log("Journey Reason headers: ", api.defaults.headers);
+    const response = await api.post(JOURNEY_REASON, payload);
     cb(response.data, true);
   
   } catch (error) {
@@ -17,13 +14,9 @@ export const journey_reason = async (payload, token, cb) => {
   }
 }
 
-export const bible_familiarity = async (payload, token, cb) => {
+export const bible_familiarity = async (payload, cb) => {
   try {
-    const response = await axios.post(BIBLE_FAMILIARITY, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(BIBLE_FAMILIARITY, payload);
     cb(response.data, true);
 
   } catch (error) {
@@ -31,13 +24,9 @@ export const bible_familiarity = async (payload, token, cb) => {
   }
 }
 
-export const bible_version = async (payload, token, cb) => {
+export const bible_version = async (payload, cb) => {
   try {
-    const response = await axios.post(BIBLE_VERSION, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(BIBLE_VERSION, payload);
     cb(response.data, true);
 
   } catch (error) {
@@ -45,13 +34,9 @@ export const bible_version = async (payload, token, cb) => {
   }
 }
 
-export const denomination = async (payload, token, cb) => {
+export const denomination = async (payload, cb) => {
   try {
-    const response = await axios.post(DENOMINATION, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(DENOMINATION, payload);
     cb(response.data, true);
 
   } catch (error) {
@@ -59,13 +44,9 @@ export const denomination = async (payload, token, cb) => {
   }
 }
 
-export const faith_goal = async (payload, token, cb) => {
+export const faith_goal = async (payload, cb) => {
   try {
-    const response = await axios.post(FAITH_GOAL, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(FAITH_GOAL, payload);
     cb(response.data, true);
 
   } catch (error) {
@@ -73,13 +54,9 @@ export const faith_goal = async (payload, token, cb) => {
   }
 }
 
-export const tone_preference = async (payload, token, cb) => {
+export const tone_preference = async (payload, cb) => {
   try {
-    const response = await axios.post(TONE_PREFERENCE, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(TONE_PREFERENCE, payload);
     cb(response.data, true);
 
   } catch (error) {
@@ -87,13 +64,32 @@ export const tone_preference = async (payload, token, cb) => {
   }
 }   
 
-export const onboarding_complete = async (payload, token, cb) => {
+export const onboarding_complete = async (cb) => {
   try {
-    const response = await axios.post(ONBOARDING_COMPLETE, payload, {
+    const response = await api.post(ONBOARDING_COMPLETE);
+    cb(response.data, true);
+
+  } catch (error) {
+    cb(error, false);
+  }
+}
+
+export const onboarding_status = async (access,cb) => {
+  try {
+    const response = await api.get(ONBOARDING_STATUS, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${access}`
       },
-    });
+      });
+    cb(response.data, true);
+
+  } catch (error) {
+    cb(error, false);
+  }
+}
+export const onboarding_options = async (cb) => {
+  try {
+    const response = await api.get(ONBOARDING_OPTIONS);
     cb(response.data, true);
 
   } catch (error) {

@@ -10,6 +10,9 @@ import PreachlyScreen from '../screens/tabs/Preachly/PreachlyScreen';
 export default function RootNavigator() {
   
   const { isAuthenticated, isPersonalized, isSubscribed } = useAuth();
+  
+
+
 
   return !isAuthenticated?<AuthStack/>:!isPersonalized?<PersonalizationStack/>:<MainTabs/>
 
