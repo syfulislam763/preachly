@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image} from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,11 +9,32 @@ import WeeklyCalendar from '../../components/WeeklyCalendar';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 import { getStyles } from './PersonalizationScreen6Style';
+import { onboarding_complete } from './PersonalizationAPIs';
+import { useNavigation } from '@react-navigation/native';
+import Indicator from '../../components/Indicator';
 
-export default function PersonalizationScreen({navigation}) {
 
+export default function PersonalizationScreen() {
+  const navigation = useNavigation();
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+
+  const [loading, setLoading] = React.useState(false);
+  const { store,updateStore } = useAuth();
+
+  const handleSubmit = () => {
+    navigation.navigate("Notification");
+    setLoading(true);
+    onboarding_complete((data, success) => {
+      setLoading(false);
+      if (success) {
+        updateStore({onboarding_completed: true})
+        navigation.navigate("Notification");
+      } else {
+        console.error(data);
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -74,12 +95,17 @@ export default function PersonalizationScreen({navigation}) {
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Notification"}
+          route={""}
+          handler={handleSubmit}
           txtColor={primaryText}
           bold='bold'
           opacity={1}
       />
      
+
+     {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
+        <ActivityIndicator size="large"  />
+     </Indicator>}
     </View>
   );
 }

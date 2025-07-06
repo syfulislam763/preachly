@@ -8,9 +8,35 @@ import { deepGreen, primaryText } from '../../components/Constant';
 import QuestionSlider from '../../components/QuestionSlider';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 import {getStyles} from './personalizationScreen2Style'
+import { useNavigation } from '@react-navigation/native';
+import { faith_goal } from './PersonalizationAPIs';
+import { ActivityIndicator } from 'react-native';
+import Indicator from '../../components/Indicator';
 
-export default function PersonalizationScreen2({navigation}) {
+export default function PersonalizationScreen2() {
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const [selectedOptions, setSelectedOptions] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const navigation = useNavigation();
+
+  const handleSubmit = () => {
+    setLoading(true);
+    const allOptions = selectedOptions.map((id) => ({faith_goal_option: id}))
+    const payload = {
+      goals: allOptions
+    };
+    
+    faith_goal(payload, (data, success) => {
+      setLoading(false);
+      if (success) {
+        console.log("Faith Goals submitted successfully: ", data);
+        navigation.navigate("Personalization3");
+      } else {
+        console.error("Error submitting Faith Goals: ", data);
+      }
+    });
+  }
 
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
@@ -27,21 +53,32 @@ export default function PersonalizationScreen2({navigation}) {
         <Text style={styles.text}>We'll personalize recommendations based on your goals</Text>
 
 
-      <QuestionSlider/>
+      <QuestionSlider
+        savedOptions={selectedOptions}
+        setSavedOptions={setSelectedOptions}
+      />
         
 
        
       </View>
 
       <CommonButton
-          btnText={"Next Question"}
+          btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization3"}
+          route={""}
+          handler={handleSubmit}
           txtColor={primaryText}
           bold='bold'
-          opacity={1}
+          opacity={selectedOptions.length < 3 ? 0.5 : 1}
+          disabled={selectedOptions.length < 3 ? true : false}
       />
+
+      {loading && (
+        <Indicator>
+          <ActivityIndicator size="large"/>
+        </Indicator>
+      )}
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image} from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +9,9 @@ import CustomSelect from '../../components/CustomSelect';
 import SelectableCard from '../../components/SelectableCard';
 import QuestionSlider from '../../components/QuestionSlider';
 import { onboarding_options } from './PersonalizationAPIs';
-
+import Indicator from '../../components/Indicator';
+import { denomination } from './PersonalizationAPIs';
+import { useNavigation } from '@react-navigation/native';
 const denominations = [
    {
         "id": 0,
@@ -73,10 +75,26 @@ const denominations = [
     }
 ]
 
-export default function PersonalizationScreen1({navigation}) {
-    const [selectedIndex, setSelectedIndex] = useState(null);
-
-    
+export default function PersonalizationScreen1() {
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const navigation = useNavigation();
+    const handleDenomination = () => {
+        setLoading(true);
+        const payload = {
+            "denomination_option": selectedItem.id
+        }
+        denomination(payload, (data, success) => {
+            setLoading(false);
+            if (success) {
+                console.log("Denomination saved successfully", data);
+                navigation.navigate("Personalization2");
+            } else {
+                console.error("Error saving denomination", data);
+            }
+        });
+     
+    }
 
   return (
     <View style={styles.container}>
@@ -88,7 +106,10 @@ export default function PersonalizationScreen1({navigation}) {
 
         <CustomSelect
           items={denominations}
-          placeholder='Bible Version'
+          placeholder='Select Denomination'
+          onSelect={(item) => {
+            setSelectedItem(item)
+          }}
         />
 
       </View>
@@ -98,12 +119,17 @@ export default function PersonalizationScreen1({navigation}) {
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization2"}
+          route={""}
           txtColor={primaryText}
           bold='bold'
-          opacity={1}
+          handler={handleDenomination}
+          opacity={selectedItem === null ? 0.5 : 1}
+          disabled={selectedItem === null}
       />
       </View>
+      {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
+        <ActivityIndicator size="large" />
+      </Indicator>}
     </View>
   );
 }

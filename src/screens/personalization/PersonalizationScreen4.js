@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, ImageBackground, ActivityIndicator} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,21 +8,29 @@ import { deepGreen, primaryText } from '../../components/Constant';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 import { getStyles } from './PersonalizationScreen4Style';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
-
+import { useNavigation } from '@react-navigation/native';
+import Indicator from '../../components/Indicator';
+import { bible_familiarity} from './PersonalizationAPIs';
 const data = [
   {
+    title: "None",
+    id: 1,
     text1:"New to the Word? No problem!",
     text2:"",
     title:"Simplified Responses",
     caption:"Preachly will break things down in an easy-to-understand way, offering clear, simple explanations to help you build a strong foundation."
   },
-  {
+  { 
+    title: "A Little",
+    id: 2,
     text1:"A great foundation! Let's go deeper",
     text2:"You have some knowledge, and we'll build on it!",
     title:"In-Depth Responses",
     caption:"Preachly's answers will include context connections, and deeper insights to enrich your understanding"
   },
   {
+    title: "A Lot",
+    id: 3,
     text1:"Ready for the deep dive?",
     text2:"",
     title:"Multi-Argumentation Responses",
@@ -30,13 +38,27 @@ const data = [
   }
 ]
 
-export default function PersonalizationScreen({navigation}) {
+export default function PersonalizationScreen() {
 
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
-
+  const [isLoading, setIsLoading] = useState(false)
   const [index, setIndex] = useState(0)
-
+  const navigation = useNavigation();
+  const handleSubmit = () => {
+    const payload = {
+      "bible_familiarity_option": index+1
+    };
+    setIsLoading(true);
+    bible_familiarity(payload, (response, success) => {
+      setIsLoading(false);
+      if (success) {
+        navigation.navigate("Personalization5");
+      } else {
+        console.error("Error submitting bible familiarity:", response);
+      }
+    })
+  }
 
 
   return (
@@ -88,11 +110,13 @@ export default function PersonalizationScreen({navigation}) {
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization5"}
+          route={""}
+          handler={handleSubmit}
           txtColor={primaryText}
           bold='bold'
           opacity={1}
       />
+      {isLoading && <Indicator visible={isLoading} onClose={() => setIsLoading(false)}  ><ActivityIndicator size="large" /></Indicator>}
     </View>
   );
 }

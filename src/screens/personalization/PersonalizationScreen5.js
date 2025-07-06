@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image} from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,12 +8,69 @@ import { deepGreen, primaryText } from '../../components/Constant';
 import CustomSelect from '../../components/CustomSelect';
 import SelectableCard from '../../components/SelectableCard';
 import QuestionSlider from '../../components/QuestionSlider';
+import { useNavigation } from '@react-navigation/native';
+import { bible_version } from './PersonalizationAPIs';
+import Indicator from '../../components/Indicator';
 
 
-export default function PersonalizationScreen5({navigation}) {
+const bible_versions = [
+    {
+        "id": 5,
+        "name": "NLT (New Living Translation)",
+        "subtitle": null,
+        "is_active": true
+    },
+    {
+        "id": 4,
+        "name": "ESV (English Standard Version)",
+        "subtitle": null,
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "name": "ASV (American Standard Version)",
+        "subtitle": null,
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "name": "WEB (World English Bible)",
+        "subtitle": null,
+        "is_active": true
+    },
+    {
+        "id": 1,
+        "name": "KJV (King James Version)",
+        "subtitle": null,
+        "is_active": true
+    },
+    {
+        "id": 0,
+        "name": "None",
+        "is_active": true
+    },
+]
 
-
+export default function PersonalizationScreen5() {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const handleSubmit = () => {
+    setLoading(true);
+    const payload = {
+      "bible_version_option": selectedItem.id
+    }
     
+    bible_version(payload, (data, success) => {
+      if(success){
+        setLoading(false);
+        navigation.navigate("Personalization6");
+      }else{
+        setLoading(false);
+        console.error(data);
+      }
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -24,8 +81,13 @@ export default function PersonalizationScreen5({navigation}) {
         <Text style={styles.title}>Select your preferred Bible versioin</Text>
 
         <CustomSelect
-            placeholder='Bible Version'
+          items={bible_versions}
+          placeholder='Bible Version'
+          onSelect={(item) => {
+            setSelectedItem(item)
+          }}
         />
+       
 
       </View>
 
@@ -34,12 +96,15 @@ export default function PersonalizationScreen5({navigation}) {
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
-          route={"Personalization6"}
+          route={""}
+          handler={handleSubmit}
           txtColor={primaryText}
           bold='bold'
-          opacity={1}
+          opacity={selectedItem === null ? 0.5 : 1}
+          disabled={selectedItem === null}
       />
       </View>
+      {loading && <Indicator onClose={() => setLoading(false)} visible={loading}><ActivityIndicator size="large"  /></Indicator>}
     </View>
   );
 }

@@ -30,6 +30,7 @@ import Indicator from '../../components/Indicator';
 import Toast from 'react-native-toast-message';
 import { useNavigation, useRoute, } from '@react-navigation/native';
 import { handleToast } from './AuthAPI';
+import { ro } from 'date-fns/locale';
 
 export default function SignInScreen() {
   const { login } = useAuth();
@@ -66,6 +67,9 @@ export default function SignInScreen() {
               navigation.navigate("ConfirmationEmail", payload)
             })
           }else{
+            setEmail("")
+            navigation.setParams(null)
+            handleToast("error", "Use new email", 3000, () => {})
             console.log(res)
             setIsLoading(false)
           }
@@ -91,7 +95,7 @@ export default function SignInScreen() {
             }
           }else{
             setIsLoading(false)
-            console.log(res)
+            console.log(res, "error in signup")
           }
           
         })

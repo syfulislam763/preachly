@@ -24,7 +24,7 @@ export default function Notification({navigation}) {
 
       <View style={{paddingBottom:45}}>
         <CommonButton
-          btnText={"Button"}
+          btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
           route={"SubscriptionScreen"}

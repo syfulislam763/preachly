@@ -18,7 +18,7 @@ const WeeklyCalendar = () => {
   });
 
   const renderItem = ({ item }) => {
-    const isSelected = selectedDate === item.key;
+    const isSelected = false;//selectedDate === item.key
     const isToday = item.key === dayjs().format('YYYY-MM-DD');
 
     return (
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   },
   selectedDateCircle: {
     backgroundColor: '#005A55',
+    
   },
   todayDateCircle: {
     borderWidth: 2,

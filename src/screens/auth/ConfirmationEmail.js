@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
 import { 
+  deepGreen,
   lighgreen,
   lightgreen1,
   primaryText, 
@@ -45,11 +46,11 @@ export default function ConfirmationEmail() {
         <View style={styles.buttonContainer}>
           <CommonButton
             btnText={"Enter Confirmation Code"}
-            bgColor={lightgreen1}
+            bgColor={deepGreen}
             navigation={navigation}
             route={""}
             handler={() => navigation.navigate("ConfirmationCode", route.params)}
-            txtColor={"#2B4752"}
+            txtColor={"#fff"}
             opacity={1}
           />
         </View>

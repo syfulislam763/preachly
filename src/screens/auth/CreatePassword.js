@@ -33,6 +33,8 @@ import { onboarding_status } from '../personalization/PersonalizationAPIs';
 export default function CreatePassword() {
   const { updateStore } = useAuth();
   const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
+
   const route = useRoute()
   const navigation = useNavigation()
   
@@ -62,7 +64,9 @@ export default function CreatePassword() {
         })
         
       }else{
+        
         setLoading(false)
+        handleToast("error", "Enter valid password", 3000, () => {})
         console.log("error", res)
       }
     })
@@ -102,7 +106,7 @@ export default function CreatePassword() {
           <View style={styles.content}>
             <View style={{paddingTop:16}}></View>
             <Text style={styles.title}>Create a password</Text>
-            <Text style={styles.text}>The password must be longer than 8 characters, contain numbers and letters</Text>
+            <Text style={styles.text}>The password must be longer than 8 characters, contain numbers, letters, and special characters</Text>
             
             <CommonInput
               type='password'
@@ -112,20 +116,28 @@ export default function CreatePassword() {
               style={password.length>8?{...styles.input, borderColor:deepGreen}:styles.input}
               placeholderColor='#607373'
             />
+            <CommonInput
+              type='password'
+              placeholder="Re enter password"
+              value={rePassword}
+              onChangeText={(e) => setRePassword(e)}
+              style={rePassword.length>8?{...styles.input, borderColor:deepGreen}:styles.input}
+              placeholderColor='#607373'
+            />
           </View>
         </ScrollView>
 
         <View style={[styles.buttonContainer, { paddingBottom: keyboardOffset }]}>
           <CommonButton
             btnText={"Save"}
-            bgColor={password.length>8?deepGreen:lightgreen1}
+            bgColor={(password.length>8 && password === rePassword)?deepGreen:lightgreen1}
             navigation={navigation}
             route={""}
             handler={handleSignUpComplete}
-            txtColor={password.length>8?"white": deepGreen}
+            txtColor={(password.length>8 && password === rePassword)?lightgreen1: deepGreen}
             bold='bold'
             opacity={1}
-            disabled={password.length<=8}
+            disabled={password.length<=8 || password !== rePassword}
           />
         </View>
       </Pressable>
@@ -163,7 +175,7 @@ const styles = StyleSheet.create({
 
   },
   input: {
-    marginBottom: 20,
+    marginBottom: 5,
     marginTop:20,
     borderColor: '#ACC6C5',
   },
