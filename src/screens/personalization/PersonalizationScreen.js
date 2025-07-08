@@ -11,6 +11,7 @@ import Indicator from '../../components/Indicator';
 import { handleToast } from '../auth/AuthAPI';
 import { logoutUser } from '../../context/api';
 import { useAuth } from '../../context/AuthContext';
+import useStaticData from '../../hooks/useStaticData';
 
 export default function PersonalizationScreen() {
 
@@ -21,6 +22,7 @@ export default function PersonalizationScreen() {
   const [loading, setLoading] = useState(false);
   console.log("Store in PersonalizationScreen: ", store); 
   const navigation = useNavigation();
+  const {faith_journey_reasons} = useStaticData();
 
   const handleIsActive = () => {
     setCardOne(!cardOne)
@@ -79,13 +81,13 @@ export default function PersonalizationScreen() {
               isActive={cardOne}
               setIsActive={handleIsActive}
               img={require("../../../assets/img/card_bg1.png")}
-              text={"Clarity to overcome doubts"}
+              text={faith_journey_reasons[0].name}
             />
             <PhotoCard
               isActive={cardTwo}
               setIsActive={handleIsActive}
               img={require("../../../assets/img/card_bg2.png")}
-              text={"Confidence to share my beliefs"}
+              text={faith_journey_reasons[1].name}
             />
             
         </View>

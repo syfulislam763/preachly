@@ -1,3 +1,4 @@
+import { addWithOptions } from "date-fns/fp";
 import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS } from "../../context/Paths";
 
 import api from "../../context/api";
@@ -13,6 +14,14 @@ export const journey_reason = async (payload, cb) => {
     cb(error, false);
   }
 }
+export const get_journey_reason = async (cb) => {
+  try{
+    const res = await api.get(JOURNEY_REASON)
+    cb(res.data, true)
+  }catch(e){
+    cb(e, false)
+  }
+}
 
 export const bible_familiarity = async (payload, cb) => {
   try {
@@ -21,6 +30,15 @@ export const bible_familiarity = async (payload, cb) => {
 
   } catch (error) {
     cb(error, false);
+  }
+}
+
+export const get_bible_familiarity = async (cb) => {
+  try{
+    const res = await api.get(BIBLE_FAMILIARITY)
+    cb(res.data, true)
+  }catch(e){
+    cb(e, false)
   }
 }
 
@@ -33,6 +51,14 @@ export const bible_version = async (payload, cb) => {
     cb(error, false);
   }
 }
+export const get_bible_version = async (cb) => {
+  try{
+    const res = await api.get(BIBLE_VERSION)
+    cb(res.data, true)
+  }catch(error){
+    cb(error, false)
+  }
+}
 
 export const denomination = async (payload, cb) => {
   try {
@@ -41,6 +67,14 @@ export const denomination = async (payload, cb) => {
 
   } catch (error) {
     cb(error, false);
+  }
+}
+export const get_denomination = async (cb) => {
+  try{
+    const response = await api.get(DENOMINATION)
+    cb(response.data, true)
+  }catch(error){
+    cb(error, false)
   }
 }
 
@@ -53,6 +87,14 @@ export const faith_goal = async (payload, cb) => {
     cb(error, false);
   }
 }
+export const get_faith_goal = async (cb) => {
+  try{
+    const response = await api.get(FAITH_GOAL)
+    cb(response.data, true)
+  }catch(error){
+    cb(error, false)
+  }
+}
 
 export const tone_preference = async (payload, cb) => {
   try {
@@ -61,6 +103,15 @@ export const tone_preference = async (payload, cb) => {
 
   } catch (error) {
     cb(error, false);
+  }
+}
+export const get_tone_preference = async(cb) => {
+  try{
+    const response = await api.get(TONE_PREFERENCE)
+    cb(response.data, true)
+  }
+  catch (error){
+    cb(error, false)
   }
 }   
 

@@ -12,70 +12,11 @@ import { onboarding_options } from './PersonalizationAPIs';
 import Indicator from '../../components/Indicator';
 import { denomination } from './PersonalizationAPIs';
 import { useNavigation } from '@react-navigation/native';
-const denominations = [
-   {
-        "id": 0,
-        "name": "None",
-        "is_active": false
-    },
-    {
-        "id": 11,
-        "name": "Other",
-        "is_active": false
-    },
-    {
-        "id": 10,
-        "name": "Orthodox",
-        "is_active": false
-    },
-    {
-        "id": 9,
-        "name": "Adventist",
-        "is_active": false
-    },
-    {
-        "id": 8,
-        "name": "Evangelical",
-        "is_active": false
-    },
-    {
-        "id": 7,
-        "name": "Lutheran",
-        "is_active": false
-    },
-    {
-        "id": 6,
-        "name": "Pentecostal",
-        "is_active": false
-    },
-    {
-        "id": 5,
-        "name": "Methodist",
-        "is_active": false
-    },
-    {
-        "id": 4,
-        "name": "Nondenominational",
-        "is_active": false
-    },
-    {
-        "id": 3,
-        "name": "Baptist",
-        "is_active": false
-    },
-    {
-        "id": 2,
-        "name": "Protestant",
-        "is_active": false
-    },
-    {
-        "id": 1,
-        "name": "Catholic",
-        "is_active": false
-    }
-]
+import useStaticData from '../../hooks/useStaticData';
+
 
 export default function PersonalizationScreen1() {
+    const {denominations} = useStaticData()
     const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();

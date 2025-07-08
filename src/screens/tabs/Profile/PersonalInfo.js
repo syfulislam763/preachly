@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -60,6 +60,11 @@ const PersonalInfo = () => {
     // setBibleModalVisible(false);
 
   };
+
+
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <KeyboardAwareScrollView

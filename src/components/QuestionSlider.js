@@ -4,79 +4,12 @@ import { AntDesign } from '@expo/vector-icons'; // for arrows
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import useLayoutDimention from '../hooks/useLayoutDimention';
 import { getStyles } from './QuestionSliderStyle';
+import useStaticData from '../hooks/useStaticData';
 
-
-const faith_goal_questions = [
-      {
-        "id": 3,
-        "question": "What would help you feel more equipped to achieve your faith goals?",
-        "is_active": true,
-        "options": [
-            {
-                "id": 3,
-                "option": "Clear and inspired guidance rooted in scripture.",
-                "is_active": true
-            },
-            {
-                "id": 2,
-                "option": "Daily scripture insights that I can share with others or reflect on.",
-                "is_active": true
-            },
-            {
-                "id": 1,
-                "option": "Practical tools to respond to objections and questions about faith.",
-                "is_active": true
-            }
-        ]
-      },
-      {
-        "id": 2,
-        "question": "How do you hope to grow in your walk with God?",
-        "is_active": true,
-        "options": [
-            {
-                "id": 6,
-                "option": "I want to inspire and encourage others through my faith journey.",
-                "is_active": true
-            },
-            {
-                "id": 5,
-                "option": "I want to strengthen my understanding of scripture and apply it to my life.",
-                "is_active": true
-            },
-            {
-                "id": 4,
-                "option": "I want to learn how to speak about my faith with confidence and clarity.",
-                "is_active": true
-            }
-        ]
-      },
-      {
-        "id": 1,
-        "question": "What’s holding you back from confidently living and sharing your faith?",
-        "is_active": true,
-        "options": [
-            {
-                "id": 9,
-                "option": "I feel I need a deeper connection to God’s word before I can inspire others.",
-                "is_active": true
-            },
-            {
-                "id": 8,
-                "option": "I struggle to find the right words to share scripture effectively.",
-                "is_active": true
-            },
-            {
-                "id": 7,
-                "option": "I feel unsure how to respond to questions or doubts about my faith.",
-                "is_active": true
-            }
-        ]
-      }
-  ]
 
 
 export default function QuestionSlider({savedOptions, setSavedOptions}) {
+  const {faith_goal_questions} = useStaticData()
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()

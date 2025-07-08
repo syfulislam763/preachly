@@ -11,35 +11,11 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { useNavigation } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
 import { bible_familiarity} from './PersonalizationAPIs';
-const data = [
-  {
-    title: "None",
-    id: 1,
-    text1:"New to the Word? No problem!",
-    text2:"",
-    title:"Simplified Responses",
-    caption:"Preachly will break things down in an easy-to-understand way, offering clear, simple explanations to help you build a strong foundation."
-  },
-  { 
-    title: "A Little",
-    id: 2,
-    text1:"A great foundation! Let's go deeper",
-    text2:"You have some knowledge, and we'll build on it!",
-    title:"In-Depth Responses",
-    caption:"Preachly's answers will include context connections, and deeper insights to enrich your understanding"
-  },
-  {
-    title: "A Lot",
-    id: 3,
-    text1:"Ready for the deep dive?",
-    text2:"",
-    title:"Multi-Argumentation Responses",
-    caption:"Preachly will provide multi-layered explanations, exploring different perspectives, theological arguments, and scriptural connections to help you sharpen your understanding"
-  }
-]
+import useStaticData from '../../hooks/useStaticData';
+
 
 export default function PersonalizationScreen() {
-
+  const {bible_familiarity_data} = useStaticData()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const [isLoading, setIsLoading] = useState(false)
@@ -98,7 +74,7 @@ export default function PersonalizationScreen() {
         
         <Content
           styles={styles}
-          data={data[index]}
+          data={bible_familiarity_data[index]}
         />
         
 

@@ -11,47 +11,11 @@ import QuestionSlider from '../../components/QuestionSlider';
 import { useNavigation } from '@react-navigation/native';
 import { bible_version } from './PersonalizationAPIs';
 import Indicator from '../../components/Indicator';
+import useStaticData from '../../hooks/useStaticData';
 
-
-const bible_versions = [
-    {
-        "id": 5,
-        "name": "NLT (New Living Translation)",
-        "subtitle": null,
-        "is_active": true
-    },
-    {
-        "id": 4,
-        "name": "ESV (English Standard Version)",
-        "subtitle": null,
-        "is_active": true
-    },
-    {
-        "id": 3,
-        "name": "ASV (American Standard Version)",
-        "subtitle": null,
-        "is_active": true
-    },
-    {
-        "id": 2,
-        "name": "WEB (World English Bible)",
-        "subtitle": null,
-        "is_active": true
-    },
-    {
-        "id": 1,
-        "name": "KJV (King James Version)",
-        "subtitle": null,
-        "is_active": true
-    },
-    {
-        "id": 0,
-        "name": "None",
-        "is_active": true
-    },
-]
 
 export default function PersonalizationScreen5() {
+  const {bible_versions} = useStaticData()
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
