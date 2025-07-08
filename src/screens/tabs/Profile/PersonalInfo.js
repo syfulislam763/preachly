@@ -17,7 +17,24 @@ import CommonButton from '../../../components/CommonButton';
 import { deepGreen, lightgreen1 } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
+import { 
+  get_bible_version,
+  bible_version,
+  get_denomination,
+  denomination,
+  get_tone_preference,
+  tone_preference,
+  faith_goal,
+  get_faith_goal,
+  get_bible_familiarity,
+  bible_familiarity
 
+ } from '../../personalization/PersonalizationAPIs';
+ import ProfileImage from './PersonalInfoUtils/ProfileImage';
+ import DropdownModal from './PersonalInfoUtils/DropdownModal';
+ import useLayoutDimention from '../../../hooks/useLayoutDimention';
+ import { getStyles } from './PersonalInfoUtils/PersonalInfoStyle';
 
 const denominationOptions = [
   'Catholic',
@@ -34,6 +51,8 @@ const bibleVersion = [
 ];
 
 const PersonalInfo = () => {
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const navigation = useNavigation()
   const [selectedDenomination, setSelectedDenomination] = useState('Catholic');
   const [modalVisible, setModalVisible] = useState(false);
@@ -63,7 +82,7 @@ const PersonalInfo = () => {
 
 
   useEffect(() => {
-    
+
   }, [])
 
   return (
@@ -76,42 +95,7 @@ const PersonalInfo = () => {
 
     >
 
-      <View style={{
-        alignItems:'center',
-        paddingVertical:hp("1%"),
-        justifyContent:'center'
-      }}>
-        <Image 
-          source={require("../../../../assets/img/avatar.png")}
-          style={{
-            height:110,
-            width:110,
-            objectFit:'contain'
-          }}
-        />
-        <View style={{
-          flexDirection:'row',
-          alignItems:'center',
-          marginTop:hp("1%"),
-          marginBottom: hp("1%"),
-          justifyContent:'center',
-        }}>
-          <Text style={{
-            fontFamily:'NunitoSemiBold',
-            fontSize:16,
-            color:'#996F44',
-            marginRight:10
-          }}>Change photo</Text>
-          <Image
-            source={require("../../../../assets/img/PencilSimple.png")}
-            style={{
-              height:16,
-              width:16,
-              objectFit: 'contain'
-            }}
-          />
-        </View>
-      </View>
+      <ProfileImage/>
 
       <View style={styles.inputFieldCard}>
         <InfoRow label="Name" value={name} onChange={setName} />
@@ -154,14 +138,14 @@ const PersonalInfo = () => {
         />
       </View>
 
-      <DorpdownModal
+      <DropdownModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         handleChage={handleSelect}
         options={denominationOptions}
         selectedItem={selectedDenomination}
       />
-      <DorpdownModal
+      <DropdownModal
         isVisible={bibleModalVisible}
         onClose={() => setBibleModalVisible(false)}
         handleChage={handleSelect1}
@@ -194,61 +178,6 @@ const DropdownRow = ({ label, value, onPress }) => (
       <Text style={styles.value} numberOfLines={1}>{value}</Text>
     </View>
   </TouchableOpacity>
-);
-
-const DorpdownModal = ({ isVisible, onClose, handleChage, options, selectedItem }) => (
-  <Modal
-    visible={isVisible}
-    transparent={true}
-    animationType="slide"
-    onRequestClose={onClose}
-    presentationStyle='overFullScreen'
-    statusBarTranslucent={true}
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalContainer}>
-        <View style={{
-          alignItems:'center',
-          justifyContent:'center',
-          width:'100%'
-        }}>
-          <View 
-            style={{
-              backgroundColor:'#ACC6C5',
-              height:6,
-              width:50,
-              borderRadius: 2
-            }}
-          />
-        </View>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={options}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.optionRow}
-              onPress={() => handleChage(item)}
-            >
-              <Text style={styles.optionText}>{item}</Text>
-              <View style={[
-                styles.radioCircle,
-                selectedItem === item && {borderColor:'#005A55'}
-              ]}>
-                <View style={selectedItem === item? styles.radioSelected:{}} />
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-        <TouchableOpacity
-          style={styles.selectBtn}
-          onPress={onClose}
-        >
-          <Text style={styles.selectBtnText}>Select</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </Modal>
 );
 
 const styles = StyleSheet.create({

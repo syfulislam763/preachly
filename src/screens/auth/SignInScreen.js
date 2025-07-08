@@ -29,6 +29,7 @@ import { handleToast, login } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAuthToken } from '../../context/api';
 
 export default function SignInScreen () {

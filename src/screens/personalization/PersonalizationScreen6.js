@@ -12,7 +12,8 @@ import { getStyles } from './PersonalizationScreen6Style';
 import { onboarding_complete } from './PersonalizationAPIs';
 import { useNavigation } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
-
+import { setAuthToken } from '../../context/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PersonalizationScreen() {
   const navigation = useNavigation();
@@ -28,7 +29,11 @@ export default function PersonalizationScreen() {
     onboarding_complete((data, success) => {
       setLoading(false);
       if (success) {
-        updateStore({onboarding_completed: true})
+        const temp = {...store, onboarding_completed: true}
+        updateStore(temp)
+        setAuthToken(store?.access, store?.refresh, async () => {
+          await AsyncStorage.setItem('store', JSON.stringify(temp));
+        })
         navigation.navigate("Notification");
       } else {
         console.error(data);
