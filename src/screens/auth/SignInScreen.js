@@ -25,7 +25,7 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-import { login } from './AuthAPI';
+import { handleToast, login } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
@@ -52,11 +52,13 @@ export default function SignInScreen () {
             updateStore({...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed})
             navigation.navigate("FinishAuthentication")
           }else{
-
+            handleToast("error", "onboarding status error", 3000, () => {})
           }
         })
       }else{
         setLoading(false)
+        console.log(res.response)
+        handleToast("error", "Something went wrong, try again!", 3000, () => {})
       }
     })
   }

@@ -46,7 +46,7 @@ const data = [
     description: `Focuses on meaning and growth through challenges, using affirming and positive language`,
     quote:`“It’s not always easy to understand, but God allows challenges so we can grow stronger in faith and closer to Him.”`,
     icon: require("../../../assets/img/24-leaf.png"),
-    id: 5,
+    id: 4,
     is_active: true
   },
   {
@@ -54,7 +54,7 @@ const data = [
     description: `Highlights hope and joy even in adversity, emphasizing God’s ongoing provision`,
     quote: `“Even in a broken world, God’s love shines through. His plan for good will always outweigh the pain we see now.”`,
     icon: require("../../../assets/img/24-sunset.png"),
-    id: 6,
+    id: 5,
     is_active: true
   },
   {
@@ -62,7 +62,7 @@ const data = [
     description: `Appeals to logic and reason, using well-structured arguments and historical/theological insights.`,
     quote: `“Sin entered through humanity’s choices, but God’s plan through Jesus shows us the depth of His justice and mercy.”`,
     icon: require("../../../assets/img/24-leaf.png"),
-    id: 4,
+    id: 6,
     is_active: true
   },
 
