@@ -29,9 +29,10 @@ import { handleToast, login } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
+import { setAuthToken } from '../../context/api';
 
 export default function SignInScreen () {
-  const { updateStore } = useAuth();
+  const context = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false)
@@ -42,15 +43,33 @@ export default function SignInScreen () {
       email: email,
       password: password
     }
+    
     setLoading(true)
     login(payload, (res, success) => {
+      
       if(success){
       
         onboarding_status(res?.data?.access, (statusRes, isOk) => {
           setLoading(false)
           if(isOk){
-            updateStore({...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed})
-            navigation.navigate("FinishAuthentication")
+            const store = {...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed}
+            
+            if(store?.onboarding_completed){
+              context.updateStore(store)
+              setAuthToken(store?.access, store?.refresh, async () => {
+                await AsyncStorage.setItem('store', JSON.stringify(store));
+              })
+              context.login()
+            }else{
+              
+              context.updateStore(store)
+              setAuthToken(store?.access, store?.refresh, async () => {
+                await AsyncStorage.setItem('store', JSON.stringify(store));
+              })
+              navigation.navigate("FinishAuthentication")
+            }
+           
+            
           }else{
             handleToast("error", "onboarding status error", 3000, () => {})
           }

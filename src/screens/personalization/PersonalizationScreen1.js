@@ -16,62 +16,62 @@ const denominations = [
    {
         "id": 0,
         "name": "None",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 11,
         "name": "Other",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 10,
         "name": "Orthodox",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 9,
         "name": "Adventist",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 8,
         "name": "Evangelical",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 7,
         "name": "Lutheran",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 6,
         "name": "Pentecostal",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 5,
         "name": "Methodist",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 4,
         "name": "Nondenominational",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 3,
         "name": "Baptist",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 2,
         "name": "Protestant",
-        "is_active": true
+        "is_active": false
     },
     {
         "id": 1,
         "name": "Catholic",
-        "is_active": true
+        "is_active": false
     }
 ]
 

@@ -14,12 +14,12 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function PersonalizationScreen() {
 
-  const { logout } = useAuth();
+  const { logout, store } = useAuth();
 
   const [cardOne, setCardOne] = useState(true)
   const [cardTwo, setCardTwo] = useState(false)
   const [loading, setLoading] = useState(false);
-
+  console.log("Store in PersonalizationScreen: ", store); 
   const navigation = useNavigation();
 
   const handleIsActive = () => {

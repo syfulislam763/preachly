@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import ProgressBar from '../../components/ProgressBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-import { deepGreen, primaryText } from '../../components/Constant';
+import { deepGreen, primaryText, lightgreen1 } from '../../components/Constant';
 import CustomSelect from '../../components/CustomSelect';
 import SelectableCard from '../../components/SelectableCard';
 import QuestionSlider from '../../components/QuestionSlider';
@@ -24,6 +24,16 @@ export default function Notification({navigation}) {
 
       <View style={{paddingBottom:45}}>
         <CommonButton
+          btnText={"Skip"}
+          bgColor={lightgreen1}
+          navigation={navigation}
+          route={"SubscriptionScreen"}
+          txtColor={deepGreen}
+          bold='bold'
+          opacity={1}
+        />
+        <View style={{height:10}}/>
+        <CommonButton
           btnText={"Continue"}
           bgColor={deepGreen}
           navigation={navigation}
@@ -31,7 +41,7 @@ export default function Notification({navigation}) {
           txtColor={primaryText}
           bold='bold'
           opacity={1}
-      />
+        />
       </View>
     </SafeAreaView>
   );

@@ -23,7 +23,7 @@ export default function PersonalizationScreen() {
   const { store,updateStore } = useAuth();
 
   const handleSubmit = () => {
-    navigation.navigate("Notification");
+
     setLoading(true);
     onboarding_complete((data, success) => {
       setLoading(false);

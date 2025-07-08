@@ -28,5 +28,5 @@ export const ONBOARDING_COMPLETE = ONBOARDING+"/complete/"
 export const ONBOARDING_STATUS = ONBOARDING+"/status/"
 export const ONBOARDING_OPTIONS = ONBOARDING+"/options/"
 
-
-
+//Profile API
+export const PROFILE_UPDATE = "/auth/profile/update/"
