@@ -38,6 +38,7 @@ import {
  import useStaticData from '../../../hooks/useStaticData';
  import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
+import { useAuth } from '../../../context/AuthContext';
 
 const PersonalInfo = () => {
   useLogout()
@@ -48,7 +49,7 @@ const PersonalInfo = () => {
     faith_journey_reasons,
     bible_familiarity_data
   } = useStaticData()
-
+  const {store, updateStore} = useAuth()
   const route = useRoute()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
@@ -91,45 +92,18 @@ const PersonalInfo = () => {
   }
 
 
+  const handleSaveUserInfo = () => {
+    //navigation.goBack()
+  }
+
+
   useEffect(() => {
-    get_denomination((res, success) => {
-      if(success){
-        const temp = denominations.filter(item => item.id == res.data?.denomination_option)
-        setSelectedDenomination({...temp[0], is_active:true})
-      }
-    })
-    get_bible_version((res, success) => {
-      if(success){
-        const temp = bible_versions.filter(item => item.id == res?.data?.bible_version_option)
-        setSelectedBibleVersion({...temp[0], is_active:true})
-      }else{
-
-      }
-    })
-    get_tone_preference((res, success) => {
-      if(success){
-        const temp = tone_preference_data.filter(item => item.id === res.data.tone_preference_option)
-        setTone({...temp[0], is_active:true})
-      }else{
-
-      }
-    })
-    get_journey_reason((res, success) => {
-      if(success){
-        const temp = faith_journey_reasons.filter(item => item.id === res.data.journey_reason)
-        setFaithGoal({...temp[0], is_active:true})
-      }else{
-
-      }
-    })
-    get_bible_familiarity((res, success) => {
-      if(success){
-        const temp = bible_familiarity_data.filter(item => item.id === res.data.bible_familiarity_option )
-        setAnswer({...temp[0], is_active:true})
-      }else{
-
-      }
-    })
+    setSelectedDenomination(store?.profileSettingData?.denomination)
+    setSelectedBibleVersion(store?.profileSettingData?.bible_version)
+    setTone(store?.profileSettingData?.tone_preference)
+    setFaithGoal(store?.profileSettingData?.faith_reason)
+    setAnswer(store?.profileSettingData?.bible_familiarity)
+    
   }, [])
 
   useEffect(()=>{
@@ -151,10 +125,10 @@ const PersonalInfo = () => {
       <ProfileImage/>
 
       <View style={styles.inputFieldCard}>
-        <InfoRow label="Name" value={name} onChange={setName} />
+        <InfoRow label="Name" value={name} onChange={setName} isEditable={editMode} />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
-        <InfoRow label="Date of birth" value={dob} onChange={setDob} />
-        <InfoRow label="Email" value={email} onChange={setEmail} />
+        <InfoRow isEditable={editMode} label="Date of birth" value={dob} onChange={setDob} />
+        <InfoRow isEditable={editMode} label="Email" value={email} onChange={setEmail} />
       </View>
 
       <View style={styles.card}>
@@ -199,7 +173,8 @@ const PersonalInfo = () => {
           txtColor={"white"}
           handler={() => {
             if(editMode){
-              navigation.goBack()
+
+              handleSaveUserInfo()
             
             }else{
               navigation.navigate("EditPersonalInfo", {editMode:true})
@@ -251,7 +226,7 @@ const PersonalInfo = () => {
   );
 };
 
-const InfoRow = ({ label, value, onChange }) => (
+const InfoRow = ({ label, value, onChange, isEditable=true }) => (
   <View style={styles.inputFieldRow}>
     <Text style={styles.inputFieldLabel}>{label}</Text>
     <TextInput
@@ -260,7 +235,7 @@ const InfoRow = ({ label, value, onChange }) => (
       onChangeText={onChange}
       placeholder={`Enter ${label.toLowerCase()}`}
       textAlign="right"
-      editable={true}
+      editable={isEditable}
       returnKeyType="done"
     />
   </View>
