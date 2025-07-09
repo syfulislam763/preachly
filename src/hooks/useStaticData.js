@@ -136,6 +136,7 @@ export const useStaticData = () => {
     const tone_preference_data = [
         {
             title: 'Clear and Hopeful',
+            name: 'Clear and Hopeful',
             description: `Simple, direct, and encouraging. Speaks to God’s love and faithfulness in an easily understood way.`,
             quote: `"God allows us to choose because He loves us deeply. Even in our struggles, His grace is always enough.”`,
             icon: require("../../assets/img/24-leaf.png"),
@@ -144,6 +145,7 @@ export const useStaticData = () => {
         },
         {
             title: `Dynamic and Powerful`,
+            name: `Dynamic and Powerful`,
             description: `Emotive, bold, and filled with vivid imagery. Designed to inspire and energize`,
             quote: `“Sin may exist, but so does God’s unstoppable power to redeem, restore, and turn every story into a victory.”`,
             icon: require("../../assets/img/24-sunset.png"),
@@ -152,6 +154,7 @@ export const useStaticData = () => {
         },
         {
             title: `Practical and Everyday`,
+            name: `Practical and Everyday`,
             description: `Grounded and solution-oriented, focusing on how faith applies to daily life`,
             quote: `“Sometimes life feels messy, but God uses even our mistakes to shape us and teach us how to walk in His ways.”`,
             icon: require("../../assets/img/24-leaf.png"),
@@ -162,6 +165,7 @@ export const useStaticData = () => {
 
         {
             title: `Encouraging and Purposeful`,
+            name: `Encouraging and Purposeful`,
             description: `Focuses on meaning and growth through challenges, using affirming and positive language`,
             quote:`“It’s not always easy to understand, but God allows challenges so we can grow stronger in faith and closer to Him.”`,
             icon: require("../../assets/img/24-leaf.png"),
@@ -170,6 +174,7 @@ export const useStaticData = () => {
         },
         {
             title: `Uplifting and Optimistic`,
+            name: `Uplifting and Optimistic`,
             description: `Highlights hope and joy even in adversity, emphasizing God’s ongoing provision`,
             quote: `“Even in a broken world, God’s love shines through. His plan for good will always outweigh the pain we see now.”`,
             icon: require("../../assets/img/24-sunset.png"),
@@ -178,6 +183,7 @@ export const useStaticData = () => {
         },
         {
             title: `Scholarly and Rational`,
+            name: `Scholarly and Rational`,
             description: `Appeals to logic and reason, using well-structured arguments and historical/theological insights.`,
             quote: `“Sin entered through humanity’s choices, but God’s plan through Jesus shows us the depth of His justice and mercy.”`,
             icon: require("../../assets/img/24-leaf.png"),
@@ -187,6 +193,7 @@ export const useStaticData = () => {
 
         {
             title: `Warm and Relatable`,
+            name: `Warm and Relatable`,
             description: `Conversational, empathetic, and emotionally resonant. Speaks to the heart with compassion.`,
             quote: `“That’s a tough question—it’s okay to wrestle with it. What matters
         most is knowing God is with you, no matter what.”`,
@@ -196,6 +203,7 @@ export const useStaticData = () => {
         },
         {
             title: `Passionate and Empowering`,
+            name: `Passionate and Empowering`,
             description: `Focused on spiritual growth and perseverance, emphasizing strength and action`,
             quote: `“Sin doesn’t define us—God’s purpose does. You have the power to
         walk boldly in the freedom He’s given you.”`,
@@ -206,29 +214,32 @@ export const useStaticData = () => {
     ];
     const bible_familiarity_data = [
         {
-            title: "None",
+            label: "None",
             id: 1,
             text1:"New to the Word? No problem!",
             text2:"",
             title:"Simplified Responses",
+            name: "Simplified Responses",
             caption:"Preachly will break things down in an easy-to-understand way, offering clear, simple explanations to help you build a strong foundation.",
             is_active: false
         },
         { 
-            title: "A Little",
+            label: "A Little",
             id: 2,
             text1:"A great foundation! Let's go deeper",
             text2:"You have some knowledge, and we'll build on it!",
             title:"In-Depth Responses",
+            name: "In-Depth Responses",
             caption:"Preachly's answers will include context connections, and deeper insights to enrich your understanding",
             is_active: false
         },
         {
-            title: "A Lot",
+            label: "A Lot",
             id: 3,
             text1:"Ready for the deep dive?",
             text2:"",
             title:"Multi-Argumentation Responses",
+            name: "Multi-Argumentation Responses",
             caption:"Preachly will provide multi-layered explanations, exploring different perspectives, theological arguments, and scriptural connections to help you sharpen your understanding",
             is_active: false
         }

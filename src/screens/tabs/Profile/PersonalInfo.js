@@ -25,8 +25,8 @@ import {
   denomination,
   get_tone_preference,
   tone_preference,
-  faith_goal,
-  get_faith_goal,
+  get_journey_reason,
+  journey_reason,
   get_bible_familiarity,
   bible_familiarity
 
@@ -35,39 +35,41 @@ import {
  import DropdownModal from './PersonalInfoUtils/DropdownModal';
  import useLayoutDimention from '../../../hooks/useLayoutDimention';
  import { getStyles } from './PersonalInfoUtils/PersonalInfoStyle';
-
-const denominationOptions = [
-  'Catholic',
-  'Protestant',
-  'Baptist',
-  'Nondenominational',
-  'Methodist',
-];
-
-const bibleVersion = [
-  'Revised Standard Version Catholic Edition [RSVCE]',
-  'New International Version (NIV)',
-  'Christian Standard Bible (CSB)'
-];
+ import useStaticData from '../../../hooks/useStaticData';
+ import useLogout from '../../../hooks/useLogout'
+import { useRoute } from '@react-navigation/native';
 
 const PersonalInfo = () => {
+  useLogout()
+  const {
+    denominations,
+    bible_versions,
+    tone_preference_data,
+    faith_journey_reasons,
+    bible_familiarity_data
+  } = useStaticData()
+
+  const route = useRoute()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const navigation = useNavigation()
-  const [selectedDenomination, setSelectedDenomination] = useState('Catholic');
+  const [editMode, setEditMode] = useState(false)
+  
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [selectedBibleVersion, setSelectedBibleVersion] = useState('Revised Standard Version Catholic Edition [RSVCE]');
   const [bibleModalVisible, setBibleModalVisible] = useState(false);
+  const [toneModalVisible, setToneModalVisible] = useState(false)
+  const [faithGoalVisible, setFaithGoalVisible] = useState(false)
+  const [depthAnsVisible, setDepthAnsVisible] = useState(false)
 
   const [name, setName] = useState('Alice');
   const [dob, setDob] = useState('21.12.2001');
   const [email, setEmail] = useState('example@gmail.com');
 
-
-  const [tone, setTone] = useState('Clear and Hopeful');
-  const [faithGoal, setFaithGoal] = useState('Confidence to share my beliefs');
-  const [Answer, setAnswer] = useState('In-Depth answers');
+  const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
+  const [selectedDenomination, setSelectedDenomination] = useState({});
+  const [tone, setTone] = useState({});
+  const [faithGoal, setFaithGoal] = useState({});
+  const [Answer, setAnswer] = useState({});
 
   const handleSelect = (option) => {
     setSelectedDenomination(option);
@@ -76,14 +78,65 @@ const PersonalInfo = () => {
 
   const handleSelect1 = (option) => {
     setSelectedBibleVersion(option);
-    // setBibleModalVisible(false);
-
+    // setBibleModalVisible(false)
   };
+  const handleTone = (option) => {
+    setTone(option)
+  }
+  const handleFaithGoal = (option) => {
+    setFaithGoal(option)
+  }
+  const handleAnswer = (option) => {
+    setAnswer(option)
+  }
 
 
   useEffect(() => {
+    get_denomination((res, success) => {
+      if(success){
+        const temp = denominations.filter(item => item.id == res.data?.denomination_option)
+        setSelectedDenomination({...temp[0], is_active:true})
+      }
+    })
+    get_bible_version((res, success) => {
+      if(success){
+        const temp = bible_versions.filter(item => item.id == res?.data?.bible_version_option)
+        setSelectedBibleVersion({...temp[0], is_active:true})
+      }else{
 
+      }
+    })
+    get_tone_preference((res, success) => {
+      if(success){
+        const temp = tone_preference_data.filter(item => item.id === res.data.tone_preference_option)
+        setTone({...temp[0], is_active:true})
+      }else{
+
+      }
+    })
+    get_journey_reason((res, success) => {
+      if(success){
+        const temp = faith_journey_reasons.filter(item => item.id === res.data.journey_reason)
+        setFaithGoal({...temp[0], is_active:true})
+      }else{
+
+      }
+    })
+    get_bible_familiarity((res, success) => {
+      if(success){
+        const temp = bible_familiarity_data.filter(item => item.id === res.data.bible_familiarity_option )
+        setAnswer({...temp[0], is_active:true})
+      }else{
+
+      }
+    })
   }, [])
+
+  useEffect(()=>{
+    if(route.params?.editMode){
+      setEditMode(true)
+    }
+  }, [route.params])
 
   return (
     <KeyboardAwareScrollView
@@ -107,32 +160,51 @@ const PersonalInfo = () => {
       <View style={styles.card}>
         <DropdownRow
           label="Denomination"
-          value={selectedDenomination}
-          onPress={() => setModalVisible(true)}
+          value={selectedDenomination?.name}
+          onPress={() => setModalVisible(editMode)}
         />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
         <DropdownRow
           label="Bible"
-          value={selectedBibleVersion}
-          onPress={() => setBibleModalVisible(true)}
+          value={selectedBibleVersion.name}
+          onPress={() => setBibleModalVisible(editMode)}
         />
       </View>
-
-      <View style={styles.inputFieldCard}>
-        <InfoRow label="Tone" value={tone} onChange={setTone} />
+      <View style={styles.card}>
+        <DropdownRow
+          label="Tone"
+          value={tone?.name}
+          onPress={() => setToneModalVisible(editMode)}
+        />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
-        <InfoRow label="Faith Goal" value={faithGoal} onChange={setFaithGoal} />
-        <InfoRow label="Answer depth" value={Answer} onChange={setAnswer} />
+        <DropdownRow
+          label="Faith Goal"
+          value={faithGoal.name}
+          onPress={() => setFaithGoalVisible(editMode)}
+        />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <DropdownRow
+          label="Answer Depth"
+          value={Answer.name}
+          onPress={() => setDepthAnsVisible(editMode)}
+        />
       </View>
 
       <View style={{margin:20}}>
         <CommonButton
-          btnText={"Edit Info"}
+          btnText={route.params?.editMode ?"Save Info":"Edit Info"}
           bgColor={deepGreen}
           navigation={navigation}
           route={""}
           txtColor={"white"}
-          handler={() => {}}
+          handler={() => {
+            if(editMode){
+              navigation.goBack()
+            
+            }else{
+              navigation.navigate("EditPersonalInfo", {editMode:true})
+            }
+          }}
           bold='bold'
           opacity={1}
         />
@@ -142,16 +214,39 @@ const PersonalInfo = () => {
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         handleChage={handleSelect}
-        options={denominationOptions}
+        options={denominations.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
         selectedItem={selectedDenomination}
       />
       <DropdownModal
         isVisible={bibleModalVisible}
         onClose={() => setBibleModalVisible(false)}
         handleChage={handleSelect1}
-        options={bibleVersion}
+        options={bible_versions.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
         selectedItem={selectedBibleVersion}
       />
+
+      <DropdownModal
+        isVisible={toneModalVisible}
+        onClose={() => setToneModalVisible(false)}
+        handleChage={handleTone}
+        options={tone_preference_data}
+        selectedItem={tone}
+      />
+      <DropdownModal
+        isVisible={faithGoalVisible}
+        onClose={() => setFaithGoalVisible(false)}
+        handleChage={handleFaithGoal}
+        options={faith_journey_reasons}
+        selectedItem={faithGoal}
+      />
+      <DropdownModal
+        isVisible={depthAnsVisible}
+        onClose={() => setDepthAnsVisible(false)}
+        handleChage={handleAnswer}
+        options={bible_familiarity_data}
+        selectedItem={Answer}
+      />
+      
     </KeyboardAwareScrollView>
   );
 };
@@ -181,27 +276,11 @@ const DropdownRow = ({ label, value, onPress }) => (
 );
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    paddingBottom: 0,
-    backgroundColor:'#fff'
-  },
-  card: {
-    backgroundColor: '#edf4f5',
-    paddingVertical:6,
-    paddingHorizontal:20,
-    borderRadius: 12,
-    marginHorizontal:20,
-    marginVertical:15
-  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
-    // borderBottomWidth: 1,
-    // borderColor: '#dce3e4',
-
   },
   label: {
     fontSize: 16,
@@ -220,72 +299,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: '#00000055',
-    justifyContent: 'flex-end',
-
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: hp('60%'),
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 20,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
-
-    paddingVertical: 17,
-   
-  },
-  optionText: {
-    fontFamily:'NunitoBold',
-    fontSize: 18,
-    color: '#0B172A',
-    flex: 1,
-  },
-  radioCircle: {
-    height: 30,
-    width: 30,
-    borderRadius: 30/2,
-    borderWidth: 2,
-    borderColor: '#3F5862',
-    marginLeft: 10,
-    alignItems:'center',
-    justifyContent:'center'
-  },
-  radioSelected: {
-    backgroundColor: '#005A55',
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-  },
-  selectBtn: {
-    backgroundColor: '#96b8b9',
-    paddingVertical: hp("2%"),
-    borderRadius: 27,
-    alignItems: 'center',
-    marginTop: hp("1%"),
-    marginBottom : hp("1%")
-  },
-  selectBtnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  inputFieldCard: {
-    backgroundColor: '#f0f6f7',
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginHorizontal:20,
-    elevation: 0,
-  },
+ 
   inputFieldRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -65,6 +65,25 @@ export default function ProfileStack() {
         },
         headerLeft: () => <BackButton navigation={navigation}/>
       })} name="PersonalInfo" component={PersonalInfo} />
+
+      <Stack.Screen options={({navigation}) => ({
+        title: 'Edit Personal Info',
+        headerTitleAlign: "center",
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: 'NunitoSemiBold',
+          color: '#0b172A',
+          fontSize: 18
+        },
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+          backgroundColor: '#fff',
+        },
+        headerLeft: () => <BackButton navigation={navigation}/>
+      })} name="EditPersonalInfo" component={PersonalInfo} />
+
       <Stack.Screen options={({navigation}) => ({
         title: 'Subscription',
         headerTitleAlign: "center",

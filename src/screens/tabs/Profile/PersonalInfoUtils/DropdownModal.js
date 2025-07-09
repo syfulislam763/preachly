@@ -30,18 +30,18 @@ const DropdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
         <FlatList
           showsVerticalScrollIndicator={false}
           data={options}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.optionRow}
               onPress={() => handleChage(item)}
             >
-              <Text style={styles.optionText}>{item}</Text>
+              <Text style={styles.optionText}>{item?.name}</Text>
               <View style={[
                 styles.radioCircle,
-                selectedItem === item && {borderColor:'#005A55'}
+                selectedItem.name === item?.name && {borderColor:'#005A55'}
               ]}>
-                <View style={selectedItem === item? styles.radioSelected:{}} />
+                <View style={selectedItem.name === item.name? styles.radioSelected:{}} />
               </View>
             </TouchableOpacity>
           )}
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   selectBtn: {
-    backgroundColor: '#96b8b9',
+    backgroundColor: '#005A55',
     paddingVertical: hp("2%"),
     borderRadius: 27,
     alignItems: 'center',

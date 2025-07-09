@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateStore = (data) => {
     setStore({...store, ...data})
+    console.log("store, ", store)
   }
 
   const logout =  () => {
@@ -26,10 +27,11 @@ export const AuthProvider = ({ children }) => {
     setIsSubscribed(false);
     setStore({});
   };
+  
 
   useEffect(() => {
     loadAuthToken((data) => { 
-      //console.log("AuthContext data", data);
+      console.log("AuthContext data", data);
       if (data.accessToken) {
         setIsAuthenticated(true);
         setStore(data.store || {});

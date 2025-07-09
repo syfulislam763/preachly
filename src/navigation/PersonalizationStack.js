@@ -28,7 +28,8 @@ const Stack = createNativeStackNavigator();
 export default function PersonalizationStack() {
 
   const {store} = useAuth()
-
+  console.log("store from stack => ", store
+  )
   return (
     <Stack.Navigator>
 

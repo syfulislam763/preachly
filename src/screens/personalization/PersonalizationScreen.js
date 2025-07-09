@@ -20,7 +20,7 @@ export default function PersonalizationScreen() {
   const [cardOne, setCardOne] = useState(true)
   const [cardTwo, setCardTwo] = useState(false)
   const [loading, setLoading] = useState(false);
-  console.log("Store in PersonalizationScreen: ", store); 
+
   const navigation = useNavigation();
   const {faith_journey_reasons} = useStaticData();
 
