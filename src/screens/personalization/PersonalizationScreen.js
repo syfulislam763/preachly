@@ -32,7 +32,7 @@ export default function PersonalizationScreen() {
   const handleJourneyReason = () => {
     const payload = {
       "journey_reason": 1
-    }
+    } 
     if(cardOne) {
       payload.journey_reason = 1
     }else if(cardTwo) {

@@ -18,6 +18,7 @@ import SettingHome from '../../screens/tabs/Profile/SettingHome'
 import PersonalInfo from '../../screens/tabs/Profile/PersonalInfo'
 import ProfileSubscription from '../../screens/tabs/Profile/ProfileSubscription'
 import AboutApp from '../../screens/tabs/Profile/AboutApp'
+import DatePickerButton from '../../screens/tabs/Profile/PersonalInfoUtils/DatePickerButton';
 
 const Stack = createNativeStackNavigator();
 
@@ -65,6 +66,7 @@ export default function ProfileStack() {
         },
         headerLeft: () => <BackButton navigation={navigation}/>
       })} name="PersonalInfo" component={PersonalInfo} />
+      {/* {} */}
 
       <Stack.Screen options={({navigation}) => ({
         title: 'Edit Personal Info',

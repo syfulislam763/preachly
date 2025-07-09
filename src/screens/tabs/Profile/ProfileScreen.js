@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Dimensions} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, Dimensions, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WeeklyCalendar from '../../../components/WeeklyCalendar';
 import { useNavigation } from '@react-navigation/native';
@@ -24,6 +24,7 @@ import {
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
+import Indicator from '../../../components/Indicator'
 
 
 const ProfileScreen = () => {
@@ -41,10 +42,12 @@ const ProfileScreen = () => {
   const navigation = useNavigation()
 
   const {isSmall, isMedium,isLarge, isFold} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    console.log("hey i called up")
+
+      setLoading(true)
       get_denomination((res, success) => {
         if(success){
           const denomination = denominations.filter(item => item.id == res.data?.denomination_option)
@@ -72,19 +75,31 @@ const ProfileScreen = () => {
                                 faith_reason: faith_reason[0] || {},
                                 bible_familiarity: bible_familiarity[0] || {},
                               }
-                              
+                              setLoading(false)
                               updateStore({profileSettingData})
 
+                            }else{
+                              setLoading(false)
                             }
                           })
+                        }else{
+                          setLoading(false)
                         }
                       })
+                    }else{
+                      setLoading(false)
                     }
                   })
+                }else{
+                  setLoading(false)
                 }
               })
+            }else{
+              setLoading(false)
             }
           })
+        }else{
+          setLoading(false)
         }
       })
       
@@ -214,7 +229,9 @@ const ProfileScreen = () => {
 
 
 
-
+      {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
+        <ActivityIndicator size={"large"}/>
+      </Indicator>}
 
     </View>
   );

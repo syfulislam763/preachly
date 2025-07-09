@@ -19,15 +19,10 @@ import { useNavigation } from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
 import { 
-  get_bible_version,
   bible_version,
-  get_denomination,
   denomination,
-  get_tone_preference,
   tone_preference,
-  get_journey_reason,
   journey_reason,
-  get_bible_familiarity,
   bible_familiarity
 
  } from '../../personalization/PersonalizationAPIs';
@@ -39,6 +34,7 @@ import {
  import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
+import { isDate } from 'date-fns';
 
 const PersonalInfo = () => {
   useLogout()
@@ -65,6 +61,7 @@ const PersonalInfo = () => {
   const [name, setName] = useState('Alice');
   const [dob, setDob] = useState('21.12.2001');
   const [email, setEmail] = useState('example@gmail.com');
+  const [img, setImg] = useState("");
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
   const [selectedDenomination, setSelectedDenomination] = useState({});
@@ -94,10 +91,69 @@ const PersonalInfo = () => {
 
   const handleSaveUserInfo = () => {
     //navigation.goBack()
+    const faith_reason_payload = {
+      "journey_reason": faithGoal?.id
+    }
+    const denomination_payload = {
+      "denomination_option": selectedDenomination?.id
+    }
+    const tone_preference_payload = {
+      "tone_preference_option": tone?.id
+    };
+    const bible_familiarity_payload = {
+      "bible_familiarity_option": Answer?.id
+    };
+    const  bible_version_payload = {
+      "bible_version_option": selectedBibleVersion?.id
+    }
+    const profileInfo_payload = {
+      "email": email,
+      "name": name,
+      "date_of_birth": dob,
+      "profile_picture": img,
+      "remove_profile_picture": false
+    }
+     
+    denomination(denomination_payload, (res, success) => {
+      if(success){
+        bible_version(bible_version_payload, (res1, success1) => {
+          if(success1){
+            tone_preference(tone_preference_payload, (res2, success2) => {
+              if(success2){
+                journey_reason(faith_reason_payload, (res3, success3) => {
+                  if(success3){
+                    bible_familiarity(bible_familiarity_payload, (res4, success4) => {
+                      if(success4){
+                        update_profile_info(profileInfo_payload, (res5, success5) => {
+                          if(success5){
+
+                          }
+                        })
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+
+
+
+
+    
+
+
+
   }
 
 
   useEffect(() => {
+    setName(store?.profileSettingData?.userInfo?.name)
+    setDob(store?.profileSettingData?.userInfo?.date_of_birth)
+    setEmail(store?.profileSettingData?.userInfo?.email)
     setSelectedDenomination(store?.profileSettingData?.denomination)
     setSelectedBibleVersion(store?.profileSettingData?.bible_version)
     setTone(store?.profileSettingData?.tone_preference)
@@ -127,7 +183,7 @@ const PersonalInfo = () => {
       <View style={styles.inputFieldCard}>
         <InfoRow label="Name" value={name} onChange={setName} isEditable={editMode} />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
-        <InfoRow isEditable={editMode} label="Date of birth" value={dob} onChange={setDob} />
+        <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={setDob} />
         <InfoRow isEditable={editMode} label="Email" value={email} onChange={setEmail} />
       </View>
 
@@ -140,7 +196,7 @@ const PersonalInfo = () => {
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
         <DropdownRow
           label="Bible"
-          value={selectedBibleVersion.name}
+          value={selectedBibleVersion?.name}
           onPress={() => setBibleModalVisible(editMode)}
         />
       </View>
@@ -153,13 +209,13 @@ const PersonalInfo = () => {
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
         <DropdownRow
           label="Faith Goal"
-          value={faithGoal.name}
+          value={faithGoal?.name}
           onPress={() => setFaithGoalVisible(editMode)}
         />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
         <DropdownRow
           label="Answer Depth"
-          value={Answer.name}
+          value={Answer?.name}
           onPress={() => setDepthAnsVisible(editMode)}
         />
       </View>
@@ -226,14 +282,15 @@ const PersonalInfo = () => {
   );
 };
 
-const InfoRow = ({ label, value, onChange, isEditable=true }) => (
+const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
   <View style={styles.inputFieldRow}>
     <Text style={styles.inputFieldLabel}>{label}</Text>
     <TextInput
       style={styles.inputField}
       value={value}
+      keyboardType={isDate?'numeric':'default'}
       onChangeText={onChange}
-      placeholder={`Enter ${label.toLowerCase()}`}
+      placeholder={isDate?"dd.month.year":`Enter ${label.toLowerCase()}`}
       textAlign="right"
       editable={isEditable}
       returnKeyType="done"
