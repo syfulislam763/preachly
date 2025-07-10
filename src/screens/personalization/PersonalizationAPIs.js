@@ -1,5 +1,5 @@
 import { addWithOptions } from "date-fns/fp";
-import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS } from "../../context/Paths";
+import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS,ONBOARDING_USER_DATA } from "../../context/Paths";
 
 import api from "../../context/api";
 
@@ -145,5 +145,23 @@ export const onboarding_options = async (cb) => {
 
   } catch (error) {
     cb(error, false);
+  }
+}
+
+export const get_onboarding_user_data = async(cb) => {
+  try{
+    const response = await api.get(ONBOARDING_USER_DATA);
+    cb(response.data, true)
+  }catch(error){
+    cb(error, false)
+  }
+}
+
+export const post_onboarding_user_data = async(payload, cb) => {
+  try{  
+    const response = await api.patch(ONBOARDING_USER_DATA, payload)
+    cb(response.data, true)
+  }catch(error){
+    cb(error, false)
   }
 }

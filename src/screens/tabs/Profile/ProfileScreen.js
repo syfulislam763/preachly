@@ -9,17 +9,9 @@ import { getStyles } from './ProfileScreenStyle';
 import { useAuth } from '../../../context/AuthContext';
 import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
 import { 
-  get_bible_version,
-  bible_version,
-  get_denomination,
-  denomination,
-  get_tone_preference,
-  tone_preference,
-  get_journey_reason,
-  journey_reason,
-  get_bible_familiarity,
-  bible_familiarity
-
+  
+  get_onboarding_user_data
+  
 } from '../../personalization/PersonalizationAPIs';
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
@@ -46,54 +38,39 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+      /*
+        data?.denomination_option
+        data?.bible_version_option
+        data.tone_preference_option
+        data.journey_reason
+        data.bible_familiarity_option
 
+        const userInfo = res5?.data;
+      */
       setLoading(true)
-      get_denomination((res, success) => {
+      get_onboarding_user_data((res, success) => {
         if(success){
-          const denomination = denominations.filter(item => item.id == res.data?.denomination_option)
-          get_bible_version((res1, success1) => {
+          get_profile_info((res1, success1) => {
             if(success1){
-              const bible_version = bible_versions.filter(item => item.id == res1?.data?.bible_version_option)
-              get_tone_preference((res2, success2) => {
-                if(success2){
-                  const tone_preference = tone_preference_data.filter(item => item.id === res2.data.tone_preference_option)
-                  get_journey_reason((res3, success3) => {
-                    if(success3){
-                      const faith_reason = faith_journey_reasons.filter(item => item.id === res3.data.journey_reason)
-                      get_bible_familiarity((res4, success4) => {
-                        if(success4){
-                          const bible_familiarity = bible_familiarity_data.filter(item => item.id === res4.data.bible_familiarity_option )
-                          get_profile_info((res5, success5) => {
-                            if(success5){
-                              const userInfo = res5?.data;
 
-                              const profileSettingData = {
-                                userInfo:userInfo || {},
-                                denomination: denomination[0] || {},
-                                bible_version: bible_version[0] || {},
-                                tone_preference: tone_preference[0] || {},
-                                faith_reason: faith_reason[0] || {},
-                                bible_familiarity: bible_familiarity[0] || {},
-                              }
-                              setLoading(false)
-                              updateStore({profileSettingData})
+              const userInfo = res1?.data
+              const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
+              const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
+              const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
+              const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
+              const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
 
-                            }else{
-                              setLoading(false)
-                            }
-                          })
-                        }else{
-                          setLoading(false)
-                        }
-                      })
-                    }else{
-                      setLoading(false)
-                    }
-                  })
-                }else{
-                  setLoading(false)
-                }
-              })
+
+              const profileSettingData = {
+                userInfo:userInfo || {},
+                denomination: denomination[0] || {},
+                bible_version: bible_version[0] || {},
+                tone_preference: tone_preference[0] || {},
+                faith_reason: faith_reason[0] || {},
+                bible_familiarity: bible_familiarity[0] || {},
+              }
+              setLoading(false)
+              updateStore({profileSettingData})
             }else{
               setLoading(false)
             }
@@ -102,7 +79,6 @@ const ProfileScreen = () => {
           setLoading(false)
         }
       })
-      
 
 
 

@@ -19,6 +19,7 @@ import PersonalInfo from '../../screens/tabs/Profile/PersonalInfo'
 import ProfileSubscription from '../../screens/tabs/Profile/ProfileSubscription'
 import AboutApp from '../../screens/tabs/Profile/AboutApp'
 import DatePickerButton from '../../screens/tabs/Profile/PersonalInfoUtils/DatePickerButton';
+import ConfirmationCode from '../../screens/auth/ConfirmationCode';
 
 const Stack = createNativeStackNavigator();
 
@@ -139,6 +140,26 @@ export default function ProfileStack() {
         },
         headerLeft: () => <BackButton navigation={navigation}/>
       })} name="ProfileNotification" component={ProfileNotification} />
+
+      <Stack.Screen options={({navigation}) => ({
+        title: '',
+        headerTitleAlign: "center",
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: 'NunitoSemiBold',
+          color: '#0b172A',
+          fontSize: 18
+        },
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+          backgroundColor: '#fff',
+        },
+        headerLeft: () => <BackButton navigation={navigation}/>
+      })} name="ConfirmEmail" component={ConfirmationCode} />
+
+
 
       <Stack.Screen options={({navigation}) => ({
         headerShown:false,

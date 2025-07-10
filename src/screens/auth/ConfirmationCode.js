@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Pressable, 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { deepGreen, lighgreen } from '../../components/Constant';
 import OTPInput from '../../components/OTPInput';
-import {verify_email, resentOTP, handleToast} from './AuthAPI'
+import {verify_email, resentOTP, handleToast, verify_change_email} from './AuthAPI'
 import Indicator from '../../components/Indicator'
 import { useNavigation, useRoute , CommonActions} from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
@@ -12,15 +12,46 @@ const ConfirmationCode = ({ }) => {
   const [isLoading, setIsloading] = useState(false)
   const route = useRoute()
   const navigation = useNavigation()
-  const {email} = route.params
+  const {email, change, profileSettingData} = route.params
   const {updateStore} = useAuth()
 
+  const changeEmailVerify = (otp) => {
+    setIsloading(true)
+    verify_change_email({otp: otp}, (res, success) => {
+      if(success){
+          console.log("updated email -> ", res)
+          console.log("updated email1 -> ", res)
+          updateStore({profileSettingData})
+         handleToast("info", "Email Changed!",2000, () => {
+              // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
+              navigation.dispatch(state => {
+              
+              const routes = state.routes.slice(0,-3);
+              
+              routes.push({
+                name: 'PersonalInfo',
+                params: {editMode:false}
+              });
+              
+              return CommonActions.reset({
+                ...state,
+                index: routes.length - 1,
+                routes
+              });
+            });
+          })
+      }else{
+        console.log(res)
+        navigation.goBack()
+      }
+      setIsloading(false)
+    })
+  }
   const handleComplete = (otp) => {
     setIsloading(true)
     const payload = {...route.params, otp: otp}
     console.log(payload, " -> payload")
     verify_email(payload, (res, isSuccess) => {
-      console.log(res, "res")
       if(isSuccess){
         
         setIsloading(false)
@@ -72,7 +103,13 @@ const ConfirmationCode = ({ }) => {
         <OTPInput 
           length={4}
           onChange={(otp) => console.log('OTP changed:', otp)}
-          onComplete={(otp) => handleComplete(otp)}
+          onComplete={(otp) => {
+            if(change){
+              changeEmailVerify(otp)
+            }else{
+              handleComplete(otp)
+            }
+          }}
           error={false}
           focusColor="#005A55"
           errorColor="#B00020"

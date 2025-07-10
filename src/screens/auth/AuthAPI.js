@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ROOT_URL, SIGNUP, VERIFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN , PROFILE_UPDATE} from "../../context/Paths";
+import { ROOT_URL, SIGNUP, VERIFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN , PROFILE_UPDATE, VERIFY_CHANGE_EMAIL} from "../../context/Paths";
 import Toast from "react-native-toast-message";
 import {
   GoogleSignin,
@@ -142,10 +142,24 @@ export const get_profile_info = async(cb) => {
 }
 export const update_profile_info = async(payload, cb) => {
     try{
-        const res = await api.put(PROFILE_UPDATE, payload)
+        const res = await api.patch(PROFILE_UPDATE, payload, {
+            headers:{
+                Accept: '*/*',
+                "Content-Type": 'multipart/form-data',
+            }
+        })
         cb(res.data, true)
     }catch(e){
         cb(e, false)
+    }
+}
+
+export const verify_change_email = async(payload, cb) => {
+    try{
+        const res = await api.post(VERIFY_CHANGE_EMAIL, payload)
+        cb(res.data, true)
+    }catch(error){
+        cb(error, false)
     }
 }
 

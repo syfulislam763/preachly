@@ -9,6 +9,7 @@ import {
   TextInput,
   Platform,
   Image,
+  ActivityIndicator
 } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -19,12 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
 import { 
-  bible_version,
-  denomination,
-  tone_preference,
-  journey_reason,
-  bible_familiarity
-
+  post_onboarding_user_data
  } from '../../personalization/PersonalizationAPIs';
  import ProfileImage from './PersonalInfoUtils/ProfileImage';
  import DropdownModal from './PersonalInfoUtils/DropdownModal';
@@ -34,7 +30,8 @@ import {
  import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
-import { isDate } from 'date-fns';
+import Indicator from '../../../components/Indicator';
+
 
 const PersonalInfo = () => {
   useLogout()
@@ -68,6 +65,7 @@ const PersonalInfo = () => {
   const [tone, setTone] = useState({});
   const [faithGoal, setFaithGoal] = useState({});
   const [Answer, setAnswer] = useState({});
+  const [loading, setLoading] = useState(false)
 
   const handleSelect = (option) => {
     setSelectedDenomination(option);
@@ -91,60 +89,79 @@ const PersonalInfo = () => {
 
   const handleSaveUserInfo = () => {
     //navigation.goBack()
-    const faith_reason_payload = {
-      "journey_reason": faithGoal?.id
-    }
-    const denomination_payload = {
-      "denomination_option": selectedDenomination?.id
-    }
-    const tone_preference_payload = {
-      "tone_preference_option": tone?.id
-    };
-    const bible_familiarity_payload = {
-      "bible_familiarity_option": Answer?.id
-    };
-    const  bible_version_payload = {
-      "bible_version_option": selectedBibleVersion?.id
-    }
-    const profileInfo_payload = {
-      "email": email,
-      "name": name,
-      "date_of_birth": dob,
-      "profile_picture": img,
-      "remove_profile_picture": false
-    }
-     
-    denomination(denomination_payload, (res, success) => {
-      if(success){
-        bible_version(bible_version_payload, (res1, success1) => {
-          if(success1){
-            tone_preference(tone_preference_payload, (res2, success2) => {
-              if(success2){
-                journey_reason(faith_reason_payload, (res3, success3) => {
-                  if(success3){
-                    bible_familiarity(bible_familiarity_payload, (res4, success4) => {
-                      if(success4){
-                        update_profile_info(profileInfo_payload, (res5, success5) => {
-                          if(success5){
-
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              }
-            })
-          }
-        })
+    const payload  = {
+      journey_reason: {
+        "journey_reason": faithGoal?.id
+      },
+      denomination: {
+        "denomination_option": selectedDenomination?.id
+      },
+      tone_preference: {
+        "tone_preference_option": tone?.id
+      },
+      bible_familiarity: {
+        "bible_familiarity_option": Answer?.id
+      },
+      bible_version: {
+        "bible_version_option": selectedBibleVersion?.id
       }
-    })
+    }
+    const oldEmail = store?.profileSettingData?.userInfo?.email
+    const profileInfo_payload = new FormData();
+    if(oldEmail != email)
+      profileInfo_payload.append("email", email);
 
-
-
-
+    profileInfo_payload.append("name", name);
+    profileInfo_payload.append("date_of_birth", dob);
+    profileInfo_payload.append("profile_picture", "")
     
 
+    // const profileInfo_payload = {
+    //   email: email,
+    //   name: name,
+    // }
+
+    console.log(profileInfo_payload)
+
+    // return 0;
+ 
+    setLoading(true)
+    post_onboarding_user_data(payload, (res, success) => {
+      if(success){
+        update_profile_info(profileInfo_payload, (response, isOk) => {
+          if(isOk){            
+            const profileSettingData = {
+              userInfo:response?.data || {},
+              denomination: selectedDenomination || {},
+              bible_version: selectedBibleVersion || {},
+              tone_preference: tone || {},
+              faith_reason: faithGoal || {},
+              bible_familiarity: Answer || {},
+            }
+            const oldEmail = store?.profileSettingData?.userInfo?.email
+            setLoading(false)
+
+            if(oldEmail != email){
+
+              
+              navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData:{...profileSettingData, userInfo: {...profileSettingData.userInfo, email: email}}})
+            }else{
+              updateStore({profileSettingData})
+              navigation.goBack()
+            }
+
+          }else{
+            console.log(profileInfo_payload)
+            console.log("update profile -> ",response.message)
+            setLoading(false)
+          }
+        })
+      }else{
+        console.log("update onboarding -> ", res)
+        setLoading(false)
+      }
+    })
+     
 
 
   }
@@ -160,7 +177,7 @@ const PersonalInfo = () => {
     setFaithGoal(store?.profileSettingData?.faith_reason)
     setAnswer(store?.profileSettingData?.bible_familiarity)
     
-  }, [])
+  }, [store, route.params])
 
   useEffect(()=>{
     if(route.params?.editMode){
@@ -278,6 +295,9 @@ const PersonalInfo = () => {
         selectedItem={Answer}
       />
       
+      {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
+        <ActivityIndicator size={"large"}/>
+      </Indicator>}
     </KeyboardAwareScrollView>
   );
 };
