@@ -31,7 +31,12 @@
       "expo-font",
       "@react-native-google-signin/google-signin",
       "expo-audio",
-      "expo-image-picker"
+       [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
     ]
   }
 }
