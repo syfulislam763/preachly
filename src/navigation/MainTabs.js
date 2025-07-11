@@ -37,7 +37,7 @@ export default function MainTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => { 
         const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-        const hiddenRoutes = ['WeeklyCheckIn', 'CurrentGoals', 'RegularCheckIn', 'PorfileFaith', 'ProfileNotification', 'SettingHome', 'PersonalInfo', 'ProfileSubscription', 'EditPersonalInfo']
+        const hiddenRoutes = ['WeeklyCheckIn', 'CurrentGoals', 'RegularCheckIn', 'PorfileFaith', 'ProfileNotification', 'SettingHome', 'PersonalInfo', 'ProfileSubscription', 'EditPersonalInfo', 'ConfirmEmail']
         const shouldHideTabBar = hiddenRoutes.includes(routeName);
         return {
           headerShown: false,

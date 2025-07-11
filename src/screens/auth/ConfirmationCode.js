@@ -20,9 +20,9 @@ const ConfirmationCode = ({ }) => {
     verify_change_email({otp: otp}, (res, success) => {
       if(success){
           console.log("updated email -> ", res)
-          console.log("updated email1 -> ", res)
+          console.log("updated email1 -> ", profileSettingData)
           updateStore({profileSettingData})
-         handleToast("info", "Email Changed!",2000, () => {
+          handleToast("info", "Email Changed!",2000, () => {
               // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
               navigation.dispatch(state => {
               

@@ -106,14 +106,22 @@ const PersonalInfo = () => {
         "bible_version_option": selectedBibleVersion?.id
       }
     }
-    const oldEmail = store?.profileSettingData?.userInfo?.email
+    const oldEmail = store?.profileSettingData?.userInfo?.email;
+    const oldDOB = store?.profileSettingData?.userInfo?.date_of_birth;
+    const oldName = store?.profileSettingData?.userInfo?.name;
+    const oldImage = store?.profileSettingData.userInfo?.profile_picture;
     const profileInfo_payload = new FormData();
     if(oldEmail != email)
       profileInfo_payload.append("email", email);
 
-    profileInfo_payload.append("name", name);
-    profileInfo_payload.append("date_of_birth", dob);
-    profileInfo_payload.append("profile_picture", "")
+    if(oldDOB != dob)
+      profileInfo_payload.append("date_of_birth", dob);
+
+    if(oldName != name)
+      profileInfo_payload.append("name", name);
+    
+    if(oldImage != img)
+      profileInfo_payload.append("profile_picture", img)
     
 
     // const profileInfo_payload = {
@@ -131,7 +139,7 @@ const PersonalInfo = () => {
         update_profile_info(profileInfo_payload, (response, isOk) => {
           if(isOk){            
             const profileSettingData = {
-              userInfo:response?.data || {},
+              userInfo:{...response?.data?.profile, email: response?.data?.temp_email} || {},
               denomination: selectedDenomination || {},
               bible_version: selectedBibleVersion || {},
               tone_preference: tone || {},
@@ -144,7 +152,7 @@ const PersonalInfo = () => {
             if(oldEmail != email){
 
               
-              navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData:{...profileSettingData, userInfo: {...profileSettingData.userInfo, email: email}}})
+              navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData})
             }else{
               updateStore({profileSettingData})
               navigation.goBack()
