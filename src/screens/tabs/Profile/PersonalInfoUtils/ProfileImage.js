@@ -1,8 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
-import { View, Image, Text } from 'react-native'
+import { View, Image, Text, Pressable } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { handleToast } from '../../../auth/AuthAPI';
 
 const ProfileImage = () => {
+
+    const [image, setImage] = useState(null);
+
+    const pickImage = async () => {
+        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if(status != 'granted'){
+            handleToast("error", "Permission denied", 2000, ()=>{}, ()=>{});
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing:true,
+            quality:1
+        })
+
+        if(!result.canceled){
+            setImage(result.assets[0]);
+            console.log("image details ->", result)
+        }
+
+    }
+
+
+    console.log(image)
+
+
+
+
+
   return (
     <>
         <View style={{
@@ -18,7 +50,9 @@ const ProfileImage = () => {
                 objectFit:'contain'
                 }}
             />
-            <View style={{
+            <Pressable 
+                onPress={pickImage}
+            style={{
                 flexDirection:'row',
                 alignItems:'center',
                 marginTop:hp("1%"),
@@ -39,7 +73,7 @@ const ProfileImage = () => {
                     objectFit: 'contain'
                 }}
                 />
-            </View>
+            </Pressable>
     </View>
     </>
   )
