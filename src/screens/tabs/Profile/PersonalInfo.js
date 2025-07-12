@@ -9,7 +9,8 @@ import {
   TextInput,
   Platform,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  Keyboard
 } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -58,7 +59,7 @@ const PersonalInfo = () => {
   const [name, setName] = useState('Alice');
   const [dob, setDob] = useState('21.12.2001');
   const [email, setEmail] = useState('example@gmail.com');
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState(null);
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
   const [selectedDenomination, setSelectedDenomination] = useState({});
@@ -68,21 +69,26 @@ const PersonalInfo = () => {
   const [loading, setLoading] = useState(false)
 
   const handleSelect = (option) => {
+    Keyboard.dismiss();
     setSelectedDenomination(option);
     // setModalVisible(false);
   };
 
   const handleSelect1 = (option) => {
+    Keyboard.dismiss();
     setSelectedBibleVersion(option);
     // setBibleModalVisible(false)
   };
   const handleTone = (option) => {
+    Keyboard.dismiss();
     setTone(option)
   }
   const handleFaithGoal = (option) => {
+    Keyboard.dismiss();
     setFaithGoal(option)
   }
   const handleAnswer = (option) => {
+    Keyboard.dismiss();
     setAnswer(option)
   }
 
@@ -129,7 +135,8 @@ const PersonalInfo = () => {
     //   name: name,
     // }
 
-    console.log(profileInfo_payload)
+    console.log("profile info->", profileInfo_payload)
+    console.log("onboarding -> ", payload)
 
     // return 0;
  
@@ -139,7 +146,7 @@ const PersonalInfo = () => {
         update_profile_info(profileInfo_payload, (response, isOk) => {
           if(isOk){            
             const profileSettingData = {
-              userInfo:{...response?.data?.profile, email: response?.data?.temp_email} || {},
+              userInfo:{...response?.data} || {},
               denomination: selectedDenomination || {},
               bible_version: selectedBibleVersion || {},
               tone_preference: tone || {},
@@ -150,10 +157,11 @@ const PersonalInfo = () => {
             setLoading(false)
 
             if(oldEmail != email){
-
+              profileSettingData['userInfo'] = {...response?.data?.profile, email: response?.data?.temp_email}
               
               navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData})
             }else{
+              console.log("----", profileSettingData)
               updateStore({profileSettingData})
               navigation.goBack()
             }
@@ -179,6 +187,7 @@ const PersonalInfo = () => {
     setName(store?.profileSettingData?.userInfo?.name)
     setDob(store?.profileSettingData?.userInfo?.date_of_birth)
     setEmail(store?.profileSettingData?.userInfo?.email)
+    setImg(store?.profileSettingData?.userInfo?.profile_picture)
     setSelectedDenomination(store?.profileSettingData?.denomination)
     setSelectedBibleVersion(store?.profileSettingData?.bible_version)
     setTone(store?.profileSettingData?.tone_preference)
@@ -200,10 +209,13 @@ const PersonalInfo = () => {
       extraScrollHeight={190}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-
     >
 
-      <ProfileImage/>
+      <ProfileImage
+          onChange={(image) => setImg({})}
+          disabled={!editMode}
+          uri={img}
+      />
 
       <View style={styles.inputFieldCard}>
         <InfoRow label="Name" value={name} onChange={setName} isEditable={editMode} />
@@ -327,7 +339,10 @@ const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
 );
 
 const DropdownRow = ({ label, value, onPress }) => (
-  <TouchableOpacity style={styles.row} onPress={onPress}>
+  <TouchableOpacity style={styles.row} onPress={() => {
+    onPress();
+    Keyboard.dismiss();
+  }}>
     <Text style={styles.label}>{label}</Text>
     <View style={styles.valueContainer}>
       <Text style={styles.value} numberOfLines={1}>{value}</Text>

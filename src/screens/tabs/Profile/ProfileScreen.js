@@ -29,13 +29,14 @@ const ProfileScreen = () => {
     bible_familiarity_data
   } = useStaticData()
 
-  const {updateStore} = useAuth()
+  const {updateStore, store} = useAuth()
 
   const navigation = useNavigation()
 
   const {isSmall, isMedium,isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const [loading, setLoading] = useState(false)
+  const [uri, setUri] = useState(null)
 
   useEffect(() => {
       /*
@@ -102,7 +103,7 @@ const ProfileScreen = () => {
 
           <View style={styles.profileContainer}>
             <Image 
-              source={require("../../../../assets/img/userProfile.png")}
+              source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/userProfile.png")}
               style={styles.profileImage}
             />
             <Text style={styles.profileText}>Alice Fox</Text>

@@ -4,7 +4,7 @@ import { View, Image, Text, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { handleToast } from '../../../auth/AuthAPI';
 
-const ProfileImage = () => {
+const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
 
     const [image, setImage] = useState(null);
 
@@ -16,22 +16,20 @@ const ProfileImage = () => {
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaType,
             allowsEditing:true,
             quality:1
         })
 
         if(!result.canceled){
             setImage(result.assets[0]);
-            console.log("image details ->", result)
+            onChange(result.assets[0])
+            console.log("image ->", result.assets[0])
+        }else{
+            onChange({})
         }
 
     }
-
-
-    console.log(image)
-
-
 
 
 
@@ -42,16 +40,28 @@ const ProfileImage = () => {
             paddingVertical:hp("1%"),
             justifyContent:'center'
         }}>
-            <Image 
-                source={require("../../../../../assets/img/avatar.png")}
-                style={{
-                height:110,
+            <View style={{
                 width:110,
-                objectFit:'contain'
-                }}
-            />
+                height:110,
+                borderRadius: 110/2,
+                alignItems:'center',
+                justifyContent:'center',
+                backgroundColor:'red',
+                objectFit:'contain',
+                overflow:'hidden'
+            }}>
+                <Image 
+                    source={uri?{uri:uri}:require("../../../../../assets/img/avatar.png")}
+                    style={{
+                        height: 110,
+                        width:110,
+                        objectFit:'cover',
+                    }}
+                />
+            </View>
             <Pressable 
-                onPress={pickImage}
+            onPress={pickImage}
+            disabled={disabled}
             style={{
                 flexDirection:'row',
                 alignItems:'center',
