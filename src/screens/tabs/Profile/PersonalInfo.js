@@ -60,6 +60,7 @@ const PersonalInfo = () => {
   const [dob, setDob] = useState('21.12.2001');
   const [email, setEmail] = useState('example@gmail.com');
   const [img, setImg] = useState(null);
+  const [imageData, setImageData] = useState({})
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
   const [selectedDenomination, setSelectedDenomination] = useState({});
@@ -116,7 +117,9 @@ const PersonalInfo = () => {
     const oldDOB = store?.profileSettingData?.userInfo?.date_of_birth;
     const oldName = store?.profileSettingData?.userInfo?.name;
     const oldImage = store?.profileSettingData.userInfo?.profile_picture;
+
     const profileInfo_payload = new FormData();
+
     if(oldEmail != email)
       profileInfo_payload.append("email", email);
 
@@ -127,7 +130,11 @@ const PersonalInfo = () => {
       profileInfo_payload.append("name", name);
     
     if(oldImage != img)
-      profileInfo_payload.append("profile_picture", img)
+      profileInfo_payload.append("profile_picture", {
+        uri: imageData?.uri,
+        name: imageData?.fileName,
+        type: imageData?.mimeType
+      })
     
 
     // const profileInfo_payload = {
@@ -161,7 +168,7 @@ const PersonalInfo = () => {
               
               navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData})
             }else{
-              console.log("----", profileSettingData)
+              console.log("----", profileSettingData.userInfo.profile_picture)
               updateStore({profileSettingData})
               navigation.goBack()
             }
@@ -212,7 +219,10 @@ const PersonalInfo = () => {
     >
 
       <ProfileImage
-          onChange={(image) => setImg({})}
+          onChange={(image) => {
+            setImg(image.uri)
+            setImageData(image)
+          }}
           disabled={!editMode}
           uri={img}
       />

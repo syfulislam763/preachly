@@ -16,10 +16,24 @@ export const AuthProvider = ({ children }) => {
 
   const [store, setStore] = useState({})
 
-  const updateStore = (data) => {
-    setStore({...store, ...data})
-    console.log("store, ", store)
+  const updateStore = (data, control=true) => {
+    if(control){
+      setStore({...store, ...data})
+    }
+    else{
+      setStore(data)
+    }
+    
   }
+
+  const setLocalStorage = async () => {
+    await AsyncStorage.setItem('store', JSON.stringify(store));
+  }
+
+  useEffect(() => {
+    setLocalStorage()
+  }, [store]);
+
 
   const logout =  () => {
     setIsAuthenticated(false);

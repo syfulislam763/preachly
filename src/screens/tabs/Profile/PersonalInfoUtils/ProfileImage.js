@@ -6,8 +6,7 @@ import { handleToast } from '../../../auth/AuthAPI';
 
 const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
 
-    const [image, setImage] = useState(null);
-
+    
     const pickImage = async () => {
         const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if(status != 'granted'){
@@ -22,7 +21,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
         })
 
         if(!result.canceled){
-            setImage(result.assets[0]);
+           
             onChange(result.assets[0])
             console.log("image ->", result.assets[0])
         }else{
@@ -32,7 +31,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
     }
 
 
-
+    console.log("profile image -> ", uri)
   return (
     <>
         <View style={{
@@ -46,7 +45,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
                 borderRadius: 110/2,
                 alignItems:'center',
                 justifyContent:'center',
-                backgroundColor:'red',
+                backgroundColor:'green',
                 objectFit:'contain',
                 overflow:'hidden'
             }}>

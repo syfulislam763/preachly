@@ -90,6 +90,7 @@ const ProfileScreen = () => {
   
 
 
+    console.log("picture -> ", store?.profileSettingData?.userInfo?.profile_picture)
 
 
 
@@ -102,11 +103,30 @@ const ProfileScreen = () => {
           />
 
           <View style={styles.profileContainer}>
-            <Image 
+            <View style={{
+                width:110,
+                height:110,
+                borderRadius: 110/2,
+                alignItems:'center',
+                justifyContent:'center',
+                backgroundColor:'green',
+                objectFit:'contain',
+                overflow:'hidden'
+            }}>
+                <Image 
+                    source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/userProfile.png")}
+                    style={{
+                        height: 110,
+                        width:110,
+                        objectFit:'cover',
+                    }}
+                />
+            </View>
+            {/* <Image 
               source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/userProfile.png")}
               style={styles.profileImage}
-            />
-            <Text style={styles.profileText}>Alice Fox</Text>
+            /> */}
+            <Text style={styles.profileText}>{store?.profileSettingData?.userInfo?.name  || "User"}</Text>
           </View>
 
           <View style={styles.iconContainer}>
