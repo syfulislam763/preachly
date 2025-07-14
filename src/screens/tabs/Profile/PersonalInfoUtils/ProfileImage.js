@@ -45,7 +45,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
                 borderRadius: 110/2,
                 alignItems:'center',
                 justifyContent:'center',
-                backgroundColor:'green',
+                backgroundColor:'white',
                 objectFit:'contain',
                 overflow:'hidden'
             }}>

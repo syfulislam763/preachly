@@ -224,7 +224,7 @@ const PersonalInfo = () => {
             setImageData(image)
           }}
           disabled={!editMode}
-          uri={img}
+          uri={img?img:store?.profileSettingData?.userInfo?.profile_picture}
       />
 
       <View style={styles.inputFieldCard}>

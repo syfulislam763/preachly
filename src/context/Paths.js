@@ -1,6 +1,6 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "https://large-ave-pursuit-kim.trycloudflare.com"
+export const BASE_URL = "https://makeup-isaac-murray-survivors.trycloudflare.com"
 
 export const URL_CATEGORY = "/api"
 export const ROOT_URL = BASE_URL+URL_CATEGORY

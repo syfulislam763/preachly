@@ -2,15 +2,25 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
 
+
+
+
 const HomepageHeader = () => {
+
+
+
+
+
   return (
     <View style={styles.container}>
       {/* Left: Profile Picture and Greeting */}
       <View style={styles.leftSection}>
-        <Image
-          source={require('../../assets/img/avatar.png')} 
-          style={styles.avatar}
-        />
+        <View>
+          <Image
+            source={require('../../assets/img/avatar.png')} 
+            style={styles.avatar}
+          />
+        </View>
         <View>
           <Text style={styles.welcome}>Welcome back,</Text>
           <Text style={styles.welcome}>Alice!</Text>

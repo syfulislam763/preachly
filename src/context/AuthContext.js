@@ -26,13 +26,13 @@ export const AuthProvider = ({ children }) => {
     
   }
 
-  const setLocalStorage = async () => {
-    await AsyncStorage.setItem('store', JSON.stringify(store));
-  }
+  // const setLocalStorage = async () => {
+  //   await AsyncStorage.setItem('store', JSON.stringify(store));
+  // }
 
-  useEffect(() => {
-    setLocalStorage()
-  }, [store]);
+  // useEffect(() => {
+  //   setLocalStorage()
+  // }, [store]);
 
 
   const logout =  () => {
@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
   
 
   useEffect(() => {
+
     loadAuthToken((data) => { 
       console.log("AuthContext data", data);
       if (data.accessToken) {

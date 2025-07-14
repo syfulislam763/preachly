@@ -1,10 +1,22 @@
-import React from 'react';
-import { View, Text, ScrollView, ImageBackground, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, ImageBackground, StyleSheet, Image, ActivityIndicator } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HomepageHeader from '../../../components/HomepageHeader';
+import { loadAuthToken } from '../../../context/api';
+import Indicator from '../../../components/Indicator';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function HomeScreen() {
+  const [loading,setLoading] = useState(false)
+  const {store, updateStore} = useAuth()
+
+  useEffect(() => {
+    
+  }, []);
+
+
+
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff', paddingHorizontal:20}}>
         <HomepageHeader/>
@@ -128,6 +140,9 @@ export default function HomeScreen() {
           
 
         </ScrollView>
+        {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </SafeAreaView>
   );
 }
