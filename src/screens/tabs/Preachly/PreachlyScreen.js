@@ -51,7 +51,10 @@ export default function PreachlyScreen() {
             marginBottom:20
           }}
         >
-          <Text style={styles.headerText1}>Joshua 19</Text>
+          <Pressable onPress={() =>  setOpenChapterList(true)}>
+            <Text style={styles.headerText1}>Joshua 19</Text>
+          </Pressable>
+          
 
           <Pressable onPress={()=>setOpenBibleVersion(true)}>
             <Text style={styles.headerText2}>RSVCE</Text>
@@ -61,12 +64,12 @@ export default function PreachlyScreen() {
           ...styles.commonHeaderStyle,
           marginBottom:20
         }}>
-          <Pressable onPress={() =>  setOpenChapterList(true)}>
-            <Image
-              source={require("../../../../assets/img/24-smallcaps.png")}
-              style={{...styles.icon, marginRight:20}}
-            />
-          </Pressable>
+          
+          <Image
+            source={require("../../../../assets/img/24-smallcaps.png")}
+            style={{...styles.icon, marginRight:20}}
+          />
+     
           <Pressable onPress={() => setOpenSearch(true)}>
             <Image
               source={require("../../../../assets/img/24-search_.png")}

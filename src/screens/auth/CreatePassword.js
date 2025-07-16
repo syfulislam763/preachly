@@ -69,7 +69,7 @@ export default function CreatePassword() {
         
         setLoading(false)
         handleToast("error", "Enter valid password", 3000, () => {})
-        console.log("error", res)
+        
       }
     })
   }
@@ -78,7 +78,7 @@ export default function CreatePassword() {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
       const height = e.endCoordinates.height;
-      console.log(height)
+ 
       const safeOffset = Math.min(height, 100); 
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setKeyboardOffset(safeOffset);

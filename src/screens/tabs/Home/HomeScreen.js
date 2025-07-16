@@ -26,10 +26,6 @@ export default function HomeScreen() {
     bible_familiarity_data
   } = store;
 
-  console.log("verify store ->", JSON.stringify(store,null, 2))
-
-
-  console.log("v-version->", JSON.stringify(bible_versions, null, 2))
   useEffect(() => {
        
     setLoading(true)

@@ -143,8 +143,7 @@ const PersonalInfo = () => {
     //   name: name,
     // }
 
-    console.log("profile info->", profileInfo_payload)
-    console.log("onboarding -> ", payload)
+
 
     // return 0;
  
@@ -169,14 +168,13 @@ const PersonalInfo = () => {
               
               navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData})
             }else{
-              console.log("----", profileSettingData.userInfo.profile_picture)
+          
               updateStore({profileSettingData})
               navigation.goBack()
             }
 
           }else{
-            console.log(profileInfo_payload)
-            console.log("update profile -> ",response.message)
+        
             setLoading(false)
           }
         })
