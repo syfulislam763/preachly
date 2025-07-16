@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, Image, ActivityIndicator } from 'react-native';
 import CommonButton from '../../components/CommonButton';
 import { deepGreen , primaryText} from '../../components/Constant';
 import { useAuth } from '../../context/AuthContext';
@@ -9,27 +9,59 @@ import { setAuthToken } from '../../context/api';
 import { onboarding_complete } from '../personalization/PersonalizationAPIs';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Indicator from '../../components/Indicator';
+import { get_onboarding_all_data } from '../personalization/PersonalizationAPIs';
 
 const { width, height } = Dimensions.get('window');
 
 const FinishAuthentication = () => {
   const navigation = useNavigation();
-  const {login, store} = useAuth()
-  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+  const {login, store, updateStore} = useAuth()
+  const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention();
+  const [loading, setLoading] = useState(false);
 
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
   const handleForward = () => {
 
-    setAuthToken(store?.access, store?.refresh, async () => {
-      await AsyncStorage.setItem('store', JSON.stringify(store));
+    setLoading(true);
+
+    get_onboarding_all_data(store?.access, (res, success) => {
+      setLoading(false)
+      if(success){
+          const denominations = [...res?.data?.denominations];
+          denominations.push({
+              "id": 0,
+              "name": "None",
+              "is_active": false,
+              is_selected: false,
+          })
+          let faith_journey_reasons = [...res?.data?.journey_reasons];
+          faith_journey_reasons = faith_journey_reasons.map(item => ({...item, name: item?.option}));
+
+          let bible_versions = [...res?.data?.bible_versions];
+          bible_versions = bible_versions.map(item => ({...item, name: item?.title}));
+          
+          const bible_familiarity_data = [...res?.data?.bible_familiarity];
+          
+          
+          const tone_preference_data = [...res?.data?.tone_preferences];
+
+          const faith_goal_questions = [...res?.data?.faith_goal_questions];
+          const temp = {...store,denominations, faith_goal_questions, faith_journey_reasons, bible_versions, bible_familiarity_data, tone_preference_data }
+          updateStore(temp)
+
+          setAuthToken(store?.access, store?.refresh, async () => {
+            await AsyncStorage.setItem('store', JSON.stringify(temp));
+            login();
+          })
+      }else{
+        console.log(res);
+      }
     })
-    login()
+    
   }
 
-  useEffect(() => {
-   
-  },[ store]);
 
   return (
     <View style={styles.container}>
@@ -58,7 +90,10 @@ const FinishAuthentication = () => {
                 opacity={1}
             />
         </View>
-      
+
+        {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </View>
   );
 };

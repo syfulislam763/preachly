@@ -29,6 +29,7 @@ import { useRoute } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
+import { get_onboarding_all_data } from '../personalization/PersonalizationAPIs';
 
 export default function CreatePassword() {
   const { updateStore } = useAuth();
@@ -52,6 +53,7 @@ export default function CreatePassword() {
       if(isSuccess){
       
         onboarding_status(res?.data?.access, (statusRes, isOk) => {
+
           setLoading(false)
           if(isOk){
             updateStore({...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed})

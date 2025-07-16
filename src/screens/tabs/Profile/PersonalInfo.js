@@ -35,15 +35,16 @@ import Indicator from '../../../components/Indicator';
 
 
 const PersonalInfo = () => {
-  useLogout()
+  useLogout();
+  const {store, updateStore} = useAuth()
   const {
     denominations,
     bible_versions,
     tone_preference_data,
     faith_journey_reasons,
     bible_familiarity_data
-  } = useStaticData()
-  const {store, updateStore} = useAuth()
+  } = store;
+  
   const route = useRoute()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
@@ -292,14 +293,14 @@ const PersonalInfo = () => {
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         handleChage={handleSelect}
-        options={denominations.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
+        options={denominations?.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
         selectedItem={selectedDenomination}
       />
       <DropdownModal
         isVisible={bibleModalVisible}
         onClose={() => setBibleModalVisible(false)}
         handleChage={handleSelect1}
-        options={bible_versions.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
+        options={bible_versions?.filter(it => it.id > 0).sort((a,b) => a.id-b.id)}
         selectedItem={selectedBibleVersion}
       />
 

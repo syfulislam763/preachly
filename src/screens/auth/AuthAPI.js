@@ -135,6 +135,7 @@ export const googleLogin = async (payload, cb) => {
 
 
 export const get_profile_info = async(cb) => {
+    // console.log("header ->", api.defaults.headers.common )
     try{
         const res = await api.get(PROFILE_UPDATE)
         cb(res.data, true)

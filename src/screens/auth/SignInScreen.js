@@ -31,6 +31,7 @@ import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAuthToken } from '../../context/api';
+import { get_onboarding_all_data } from '../personalization/PersonalizationAPIs';
 
 export default function SignInScreen () {
   const context = useAuth();
@@ -51,24 +52,58 @@ export default function SignInScreen () {
       if(success){
       
         onboarding_status(res?.data?.access, (statusRes, isOk) => {
-          setLoading(false)
+       
           if(isOk){
-            const store = {...res?.data, onboarding_completed:statusRes?.data?.onboarding_completed}
-            
-            if(store?.onboarding_completed){
-              context.updateStore(store)
-              setAuthToken(store?.access, store?.refresh, async () => {
-                await AsyncStorage.setItem('store', JSON.stringify(store));
-              })
-              context.login()
-            }else{
-              
-              context.updateStore(store)
-              setAuthToken(store?.access, store?.refresh, async () => {
-                await AsyncStorage.setItem('store', JSON.stringify(store));
-              })
-              navigation.navigate("FinishAuthentication")
-            }
+
+            get_onboarding_all_data(res?.data?.access, (all_data, isFine) => {
+              if(isFine){
+
+                const denominations = [...all_data?.data?.denominations];
+                denominations.push({
+                    "id": 0,
+                    "name": "None",
+                    "is_active": false,
+                    is_selected: false,
+                })
+                let faith_journey_reasons = [...all_data?.data?.journey_reasons];
+                faith_journey_reasons = faith_journey_reasons.map(item => ({...item, name: item?.option}));
+
+                let bible_versions = [...all_data?.data?.bible_versions];
+                bible_versions = bible_versions.map(item => ({...item, name: item?.title}));
+                
+                const bible_familiarity_data = [...all_data?.data?.bible_familiarity];
+                
+                
+                const tone_preference_data = [...all_data?.data?.tone_preferences];
+
+                const faith_goal_questions = [...all_data?.data?.faith_goal_questions];
+                const store = {...res?.data ,denominations, faith_goal_questions, faith_journey_reasons, bible_versions, bible_familiarity_data, tone_preference_data, onboarding_completed:statusRes?.data?.onboarding_completed }
+
+          
+                if(store?.onboarding_completed){
+
+                  context.updateStore(store)
+                  setAuthToken(store?.access, store?.refresh, async () => {
+                    await AsyncStorage.setItem('store', JSON.stringify(store));
+                    context.login()
+                  })
+                  
+                }else{
+                  
+                  context.updateStore(store)
+                  setAuthToken(store?.access, store?.refresh, async () => {
+                    await AsyncStorage.setItem('store', JSON.stringify(store));
+                    navigation.navigate("FinishAuthentication")
+                  })
+                  
+                }
+
+
+
+              }else{
+
+              }
+            })
            
             
           }else{

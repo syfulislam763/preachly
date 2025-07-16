@@ -15,15 +15,17 @@ import useStaticData from '../../hooks/useStaticData';
 
 
 export default function PersonalizationScreen() {
-  const {bible_familiarity_data} = useStaticData()
+  const {store} = useAuth();
+
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const [isLoading, setIsLoading] = useState(false)
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
+  const [id, setId] = useState(null)
   const navigation = useNavigation();
   const handleSubmit = () => {
     const payload = {
-      "bible_familiarity_option": index+1
+      "bible_familiarity_option": id
     };
     setIsLoading(true);
     bible_familiarity(payload, (response, success) => {
@@ -52,20 +54,29 @@ export default function PersonalizationScreen() {
 
             <PhotoCard 
               isActive={index==0}
-              setIsActive={() => setIndex(0)}
-              text={"None"}
+              setIsActive={() => {
+                setIndex(0);
+                setId(store?.bible_familiarity_data[0].id)
+              }}
+              text={store?.bible_familiarity_data[0].label}
               img={require("../../../assets/img/card_bg1.png")}
             />
             <PhotoCard 
               isActive={index==1}
-              setIsActive={() => setIndex(1)}
-              text={"A Little"}
+              setIsActive={() => {
+                setIndex(1);
+                setId(store?.bible_familiarity_data[1].id)
+              }}
+              text={store?.bible_familiarity_data[1].label}
               img={require("../../../assets/img/card_bg2.png")}
             />
             <PhotoCard 
               isActive={index==2}
-              setIsActive={() => setIndex(2)}
-              text={"A Lot"}
+              setIsActive={() => {
+                setIndex(2);
+                setId(store?.bible_familiarity_data[2].id)
+              }}
+              text={store?.bible_familiarity_data[2].label}
               img={require("../../../assets/img/card_bg3.png")}
             />
           
@@ -74,7 +85,7 @@ export default function PersonalizationScreen() {
         
         <Content
           styles={styles}
-          data={bible_familiarity_data[index]}
+          data={store?.bible_familiarity_data[index]}
         />
         
 

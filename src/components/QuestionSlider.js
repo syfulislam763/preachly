@@ -5,11 +5,13 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import useLayoutDimention from '../hooks/useLayoutDimention';
 import { getStyles } from './QuestionSliderStyle';
 import useStaticData from '../hooks/useStaticData';
+import { useAuth } from '../context/AuthContext';
 
 
 
 export default function QuestionSlider({savedOptions, setSavedOptions}) {
-  const {faith_goal_questions} = useStaticData()
+  const {store} = useAuth();
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
@@ -21,7 +23,7 @@ export default function QuestionSlider({savedOptions, setSavedOptions}) {
   };
 
   const goNext = () => {
-    if (currentIndex < faith_goal_questions.length - 1) {
+    if (currentIndex < store?.faith_goal_questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -51,10 +53,10 @@ export default function QuestionSlider({savedOptions, setSavedOptions}) {
   return (
     <View style={styles.container}>
       <View style={styles.questionBox}>
-        <Text style={styles.questionText}>{faith_goal_questions[currentIndex].question}</Text>
+        <Text style={styles.questionText}>{store?.faith_goal_questions[currentIndex].question}</Text>
       </View>
 
-      {faith_goal_questions.sort((a, b) => a.id - b.id)[currentIndex].options.map(renderRadio)}
+      {store?.faith_goal_questions.sort((a, b) => a.id - b.id)[currentIndex].options.map(renderRadio)}
 
       <View style={{
         alignItems:'center',
@@ -66,7 +68,7 @@ export default function QuestionSlider({savedOptions, setSavedOptions}) {
           </TouchableOpacity>
 
           <View style={styles.dots}>
-            {faith_goal_questions.map((_, index) => (
+            {store?.faith_goal_questions.map((_, index) => (
               <View
                 key={index}
                 style={[
@@ -77,8 +79,8 @@ export default function QuestionSlider({savedOptions, setSavedOptions}) {
             ))}
           </View>
 
-          <TouchableOpacity onPress={goNext} disabled={currentIndex === faith_goal_questions.length - 1}>
-            <AntDesign name="right" size={24} color={currentIndex === faith_goal_questions.length - 1 ? '#d3e0dd' : '#a1b7b2'} />
+          <TouchableOpacity onPress={goNext} disabled={currentIndex === store?.faith_goal_questions.length - 1}>
+            <AntDesign name="right" size={24} color={currentIndex === store?.faith_goal_questions.length - 1 ? '#d3e0dd' : '#a1b7b2'} />
           </TouchableOpacity>
         </View>
       </View>

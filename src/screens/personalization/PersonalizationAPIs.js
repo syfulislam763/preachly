@@ -1,5 +1,5 @@
-import { addWithOptions } from "date-fns/fp";
-import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS,ONBOARDING_USER_DATA } from "../../context/Paths";
+
+import { ONBOARDING_COMPLETE, BIBLE_FAMILIARITY, BIBLE_VERSION, DENOMINATION, FAITH_GOAL, JOURNEY_REASON, TONE_PREFERENCE, ONBOARDING_STATUS, ONBOARDING_OPTIONS,ONBOARDING_USER_DATA, ONBOARDING_ALL_DATA } from "../../context/Paths";
 
 import api from "../../context/api";
 
@@ -163,5 +163,18 @@ export const post_onboarding_user_data = async(payload, cb) => {
     cb(response.data, true)
   }catch(error){
     cb(error, false)
+  }
+}
+
+export const get_onboarding_all_data = async(token, cb) => {
+  try{
+    const res = await api.get(ONBOARDING_ALL_DATA, {
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    });
+    cb(res.data, true)
+  }catch(e){
+    cb(e, false);
   }
 }

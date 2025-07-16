@@ -6,14 +6,71 @@ import HomepageHeader from '../../../components/HomepageHeader';
 import { loadAuthToken } from '../../../context/api';
 import Indicator from '../../../components/Indicator';
 import { useAuth } from '../../../context/AuthContext';
+import useStaticData from '../../../hooks/useStaticData';
+import useLogout from '../../../hooks/useLogout';
+import { useRoute } from '@react-navigation/native';  
+import { get_onboarding_user_data } from '../../personalization/PersonalizationAPIs';
+import { get_profile_info } from '../../auth/AuthAPI';
 
 export default function HomeScreen() {
-  const [loading,setLoading] = useState(false)
-  const {store, updateStore} = useAuth()
 
+  const [loading,setLoading] = useState(false);
+
+  const {store, updateStore} = useAuth()
+  useLogout()
+  const {
+    denominations,
+    bible_versions,
+    tone_preference_data,
+    faith_journey_reasons,
+    bible_familiarity_data
+  } = store;
+
+  console.log("verify store ->", JSON.stringify(store,null, 2))
+
+
+  console.log("v-version->", JSON.stringify(bible_versions, null, 2))
   useEffect(() => {
-    
-  }, []);
+       
+    setLoading(true)
+    get_onboarding_user_data((res, success) => {
+      if(success){
+        get_profile_info((res1, success1) => {
+          if(success1){
+
+            const userInfo = res1?.data
+            const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
+            const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
+            const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
+            const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
+            const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
+            console.log("inspect->", JSON.stringify(res, null, 2))
+
+            const profileSettingData = {
+              userInfo:userInfo || {},
+              denomination: denomination[0] || {},
+              bible_version: bible_version[0] || {},
+              tone_preference: tone_preference[0] || {},
+              faith_reason: faith_reason[0] || {},
+              bible_familiarity: bible_familiarity[0] || {},
+            }
+            setLoading(false)
+            updateStore({profileSettingData})
+          }else{
+            setLoading(false)
+          }
+        })
+      }else{
+        setLoading(false)
+      }
+  })
+  
+  
+  
+  
+  
+        
+      }, [])
 
 
 

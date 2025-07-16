@@ -16,7 +16,8 @@ import useStaticData from '../../hooks/useStaticData';
 
 
 export default function PersonalizationScreen1() {
-    const {denominations} = useStaticData()
+    const {store} = useAuth();
+
     const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
@@ -46,7 +47,7 @@ export default function PersonalizationScreen1() {
         <Text style={styles.title}>Select your denomination</Text>
 
         <CustomSelect
-          items={denominations}
+          items={store?.denominations}
           placeholder='Select Denomination'
           onSelect={(item) => {
             setSelectedItem(item)

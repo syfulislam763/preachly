@@ -15,7 +15,8 @@ import useStaticData from '../../hooks/useStaticData';
 
 
 export default function PersonalizationScreen5() {
-  const {bible_versions} = useStaticData()
+  const {store} = useAuth();
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -45,7 +46,7 @@ export default function PersonalizationScreen5() {
         <Text style={styles.title}>Select your preferred Bible versioin</Text>
 
         <CustomSelect
-          items={bible_versions}
+          items={store?.bible_versions}
           placeholder='Bible Version'
           onSelect={(item) => {
             setSelectedItem(item)

@@ -30,7 +30,12 @@ export const ONBOARDING_COMPLETE = ONBOARDING+"/complete/"
 export const ONBOARDING_STATUS = ONBOARDING+"/status/"
 export const ONBOARDING_OPTIONS = ONBOARDING+"/options/"
 export const ONBOARDING_USER_DATA = ONBOARDING+"/user-data/"
+export const ONBOARDING_ALL_DATA =  ONBOARDING+"/options/"
 
 //Profile API
 export const PROFILE_UPDATE = "/auth/profile/update/"
 export const VERIFY_CHANGE_EMAIL = "/auth/profile/verify-email-change/"
+
+
+//Bible
+export const BIBLE_BIBLE_VERSIONS = "/bible/bible-versions/"

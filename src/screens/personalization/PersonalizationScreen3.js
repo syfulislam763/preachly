@@ -18,7 +18,8 @@ import useStaticData from '../../hooks/useStaticData';
 
 
 export default function PersonalizationScreen3() {
-  const {tone_preference_data} = useStaticData()
+  const {store} = useAuth()
+
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [id, setId] = useState(null);
   const navigation = useNavigation();
@@ -63,7 +64,7 @@ export default function PersonalizationScreen3() {
           contentContainerStyle={{ padding: 0 }}
           showsVerticalScrollIndicator={false}
         >
-          {tone_preference_data.map((item, idx) => (
+          {store?.tone_preference_data.map((item, idx) => (
             <SelectableCard
               key={idx}
               title={item.title}

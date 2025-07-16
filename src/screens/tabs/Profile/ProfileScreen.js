@@ -7,12 +7,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { getStyles } from './ProfileScreenStyle';
 import { useAuth } from '../../../context/AuthContext';
-import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
-import { 
-  
-  get_onboarding_user_data
-  
-} from '../../personalization/PersonalizationAPIs';
+
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
@@ -21,14 +16,7 @@ import Indicator from '../../../components/Indicator'
 
 const ProfileScreen = () => {
   useLogout()
-  const {
-    denominations,
-    bible_versions,
-    tone_preference_data,
-    faith_journey_reasons,
-    bible_familiarity_data
-  } = useStaticData()
-
+  
   const {updateStore, store} = useAuth()
 
   const navigation = useNavigation()
@@ -37,62 +25,6 @@ const ProfileScreen = () => {
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const [loading, setLoading] = useState(false)
   const [uri, setUri] = useState(null)
-
-  useEffect(() => {
-      /*
-        data?.denomination_option
-        data?.bible_version_option
-        data.tone_preference_option
-        data.journey_reason
-        data.bible_familiarity_option
-
-        const userInfo = res5?.data;
-      */
-      setLoading(true)
-      get_onboarding_user_data((res, success) => {
-        if(success){
-          get_profile_info((res1, success1) => {
-            if(success1){
-
-              const userInfo = res1?.data
-              const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
-              const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
-              const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
-              const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
-              const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
-
-
-              const profileSettingData = {
-                userInfo:userInfo || {},
-                denomination: denomination[0] || {},
-                bible_version: bible_version[0] || {},
-                tone_preference: tone_preference[0] || {},
-                faith_reason: faith_reason[0] || {},
-                bible_familiarity: bible_familiarity[0] || {},
-              }
-              setLoading(false)
-              updateStore({profileSettingData})
-            }else{
-              setLoading(false)
-            }
-          })
-        }else{
-          setLoading(false)
-        }
-      })
-
-
-
-
-
-      
-    }, [])
-  
-
-
-    console.log("picture -> ", store?.profileSettingData?.userInfo?.profile_picture)
-
-
 
   return (
     <View style={{flex:1,backgroundColor:'#fff'}}>

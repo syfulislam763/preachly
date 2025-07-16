@@ -1,7 +1,11 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { get_bible_versions } from "../screens/tabs/TabsAPI";
+import { useAuth } from "../context/AuthContext";
+import { get_onboarding_all_data } from "../screens/personalization/PersonalizationAPIs";
 
 export const useStaticData = () => {
+    const {store, updateStore} = useAuth();
+
     const denominations = [
         {
             "id": 0,
@@ -295,6 +299,37 @@ export const useStaticData = () => {
             "is_active": false
         },
     ]
+
+
+    useEffect(() => {
+        get_onboarding_all_data((res, success) => {
+            if(success){
+                const denominations = res?.data?.denominations || [];
+                denominations.push({
+                    "id": 0,
+                    "name": "None",
+                    "is_active": false,
+                    is_selected: false,
+                })
+                const faith_journey_reasons = res?.data?.journey_reasons || [];
+                faith_journey_reasons = faith_journey_reasons.map(item => ({...item, name: item?.option}));
+
+                const bible_versions = res?.data?.bible_versions || [];
+                bible_versions = bible_versions.map(item => ({...item, name: item?.title}));
+                
+                const bible_familiarity_data = res?.data?.bible_familiarity || [];
+                
+                
+                const tone_preference_data = res?.data?.tone_preferences || [];
+
+                const faith_goal_questions = res?.data?.faith_goal_questions || [];
+
+                updateStore({denominations, faith_goal_questions, faith_journey_reasons, bible_versions, bible_familiarity_data, tone_preference_data})
+
+            }
+        })
+    }, [])
+
 
     return {
         denominations,

@@ -31,7 +31,6 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
     }
 
 
-    console.log("profile image -> ", uri)
   return (
     <>
         <View style={{
