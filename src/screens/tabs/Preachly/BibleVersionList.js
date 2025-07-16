@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import ModalHeader from './ModalHeader';
+import { useAuth } from '../../../context/AuthContext';
 
 const initialVersions = [
   {
@@ -21,11 +22,13 @@ const initialVersions = [
   },
 ];
 
-export default function BibleVersionList({onClose}) {
+export default function BibleVersionList({selectedItem, setSelectedItem, onClose}) {
   const [selectedId, setSelectedId] = useState('1');
+  const {store} = useAuth()
+
 
   const renderItem = ({ item }) => {
-    const isSelected = item.id === selectedId;
+    const isSelected = item.api_bible_id === selectedItem?.api_bible_id;
 
     return (
       <TouchableOpacity
@@ -33,7 +36,7 @@ export default function BibleVersionList({onClose}) {
           borderBottomWidth:1,
           borderBottomColor: "#EDF3F3"
         }}
-        onPress={() => setSelectedId(item.id)}
+        onPress={() => setSelectedItem(item)}
       >
         <View style={styles.itemContainer}>
           <View style={styles.radioCircleWrapper}>
@@ -63,7 +66,7 @@ export default function BibleVersionList({onClose}) {
             />
         </View>
         <FlatList
-            data={initialVersions}
+            data={store?.bible_versions}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             ItemSeparatorComponent={() => <View style={styles.separator} />}

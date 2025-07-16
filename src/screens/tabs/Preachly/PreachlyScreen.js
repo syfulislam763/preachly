@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, StyleSheet, Image} from 'react-native';
+import React, { useEffect, useState, version } from 'react';
+import { View, Text, Pressable, Modal, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MediaControls from './MediaControls';
 import ChapterSheet from './ChapterSheet';
 import ScriptureSearch from './ScriptureSearch';
 import BibleVersionList from './BibleVersionList';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useAuth } from '../../../context/AuthContext';
+import { get_bible_books, get_bible_books_chapter, get_bible_chapter_content } from '../TabsAPI';
+import Indicator from '../../../components/Indicator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const bible = [
   {
@@ -36,8 +40,88 @@ export default function PreachlyScreen() {
   const [openBibleVersion, setOpenBibleVersion] = useState(false)
   const [openChapterList, setOpenChapterList] = useState(false)
   const [openSearch, setOpenSearch] = useState(false)
-  const [progress, setProgress] = useState(40)
+  const [progress, setProgress] = useState(40);
+  const {store, updateStore} = useAuth();
+  const [selectedBibleVersion, setSelectedBibleVersion] = useState({})
+  const [bibleBooks, setBibleBooks] = useState([]);
+  const [bibleBook, setBibleBook] = useState({});
+  const [loading, setLoading ] = useState(false);
+  const [itemLoading, setItemLoading] = useState(false);
+  
+  const [chapters, setChapters] = useState([]);
+  const [expanded, setExpanded] = useState(''); // Currently opened
+  const [selected, setSelected] = useState("5");
+  const [content, setContent] = useState([]);
 
+  const get_chapters = (item, bible_id) => {
+    const payload = {
+      version_id: bible_id,
+      book_id: item.id,
+    }
+    console.log(payload)
+    setExpanded(item.name);
+    setItemLoading(true)
+    get_bible_books_chapter(payload, (res, success) =>{
+      // console.log("he-=", JSON.stringify(res.data, null,2))
+      if(success){
+        setChapters(res?.data?.chapters);
+      }
+      setItemLoading(false);
+    })
+  }
+
+
+  const get_contents = (item, bible_id, chapter_id) =>{
+    setLoading(true);
+    const payload = {
+      version_id: bible_id,
+      chapter_id: chapter_id
+    }
+
+    console.log(payload)
+    get_bible_chapter_content(payload, (res, success) => {
+      if(success){
+        setContent([res?.data?.chapter]);
+        setExpanded(item?.name);
+        setSelected(chapter_id.split(".")[1]);
+        //console.log("content -> ", JSON.stringify(res?.data, null, 2));
+        setOpenChapterList(false);
+      }
+      setLoading(false)
+    })
+  }
+
+
+
+  const get_bible_abbreviation = (item) => {
+    let abbr = item?.title?.split(" ") || "";
+    return abbr[abbr?.length-1] || " ";
+  }
+
+  useEffect(()=>{
+    setSelectedBibleVersion(store?.profileSettingData?.bible_version);
+  }, [])
+
+  useEffect(() => {
+    const payload = {
+      version_id: selectedBibleVersion?.api_bible_id,
+    }
+    setLoading(true)
+    get_bible_books(payload, (res, success) => {
+
+      if(success){
+        setBibleBooks(res?.data);
+        setOpenBibleVersion(false);
+      }
+      setLoading(false)
+    });
+  }, [selectedBibleVersion]);
+
+
+  
+
+  // console.log("bible -> ", JSON.stringify(store.bible_versions, null, 2));
+  // console.log("bible -> ", JSON.stringify(store.profileSettingData.bible_version, null, 2));
   return (
     <View style={{flex:1, backgroundColor:'#edf3f3'}}>
 
@@ -52,12 +136,12 @@ export default function PreachlyScreen() {
           }}
         >
           <Pressable onPress={() =>  setOpenChapterList(true)}>
-            <Text style={styles.headerText1}>Joshua 19</Text>
+            <Text style={styles.headerText1}>{expanded+" "+selected || "Joshua 19"}</Text>
           </Pressable>
           
 
           <Pressable onPress={()=>setOpenBibleVersion(true)}>
-            <Text style={styles.headerText2}>RSVCE</Text>
+            <Text style={styles.headerText2}>{get_bible_abbreviation(selectedBibleVersion)}</Text>
           </Pressable>
         </View>
         <View style={{
@@ -84,7 +168,7 @@ export default function PreachlyScreen() {
         flexGrow:1,
         padding:20,
       }}>
-        {bible.map((verse,i) => <View 
+        {content.map((chapter,i) => <View 
           key={i.toString()}
         >
 
@@ -92,9 +176,9 @@ export default function PreachlyScreen() {
               fontFamily:'NunitoBold',
               fontSize: 24,
               color:'#0B172A'
-            }}>{verse.title}</Text>
+            }}>{chapter?.title}</Text>
 
-            {verse.content.map((item,idx) => <Text
+            {chapter.verses.map((item,idx) => <Text
               key={idx.toString()}
               style={{
                 fontFamily: 'NunitoSemiBold',
@@ -106,8 +190,8 @@ export default function PreachlyScreen() {
               <Text style={{
                 color:'#966F44',
                 fontFamily:'NunitoBold'
-              }}>{idx+1+" "}</Text>
-              {item}
+              }}>{item?.number+ " "}</Text>
+              {item?.text}
             </Text>)}
 
         </View>)}
@@ -189,6 +273,12 @@ export default function PreachlyScreen() {
       >
         <ChapterSheet
           onClose={() => setOpenChapterList(false)}
+          bible={bibleBooks}
+          chapters={chapters}
+          handleExpand={get_chapters}
+          handleContent={get_contents}
+          expanded={expanded}
+          selected={selected}
         />
       </CustomModal>
       
@@ -198,6 +288,8 @@ export default function PreachlyScreen() {
       >
         <BibleVersionList
           onClose={() => setOpenBibleVersion(false)}
+          selectedItem={selectedBibleVersion}
+          setSelectedItem={setSelectedBibleVersion}
         />
       </CustomModal>
 
@@ -209,7 +301,11 @@ export default function PreachlyScreen() {
           onClose={() => setOpenSearch(false)}
         />
       </CustomModal>
+      
 
+      {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
+        <ActivityIndicator size={"large"}/>
+      </Indicator>}
     </View>
   );
 }

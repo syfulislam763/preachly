@@ -40,7 +40,7 @@ export default function HomeScreen() {
             const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
             const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
             const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
-            console.log("inspect->", JSON.stringify(res, null, 2))
+         
 
             const profileSettingData = {
               userInfo:userInfo || {},

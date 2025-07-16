@@ -14,11 +14,19 @@ const chapters = [
   // add more chapters if needed
 ]
 
-const ChapterSheet = ({onClose}) => {
-  const [expanded, setExpanded] = useState('Joshua'); // Currently opened
-  const [selected, setSelected] = useState(19);
+const ChapterSheet = ({
+  onClose=()=>{},
+  handleContent=()=>{},
+  handleExpand=()=>{},
+  bible={},
+  chapters=[],
+  expanded,
+  selected
+}) => {
+  
 
 
+  
   return (
     <View style={styles.container}>
       {/* Handle Indicator */}
@@ -30,15 +38,15 @@ const ChapterSheet = ({onClose}) => {
 
       {/* List */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {chapters.map((item, idx) => (
+        {bible?.books?.map((item, idx) => (
           <View key={idx}>
             <TouchableOpacity 
-              style={(expanded === item.title && item.chapters )?{...styles.row, borderBottomWidth:0}: styles.row}
-              onPress={() => setExpanded(expanded === item.title ? '' : item.title)}
+              style={(expanded === item.name && item.chapters )?{...styles.row, borderBottomWidth:0}: styles.row}
+              onPress={() => handleExpand(item, bible.bible_id)}
             >
-              <Text style={styles.rowText}>{item.title}</Text>
+              <Text style={styles.rowText}>{item.name}</Text>
               <Image 
-                source={(expanded === item.title && item.chapters )? require('../../../../assets/img/24-caret-down.png'):require("../../../../assets/img/24-caret-right.png")}
+                source={(expanded === item.name && item.chapters )? require('../../../../assets/img/24-caret-down.png'):require("../../../../assets/img/24-caret-right.png")}
                 style={
                     styles.rowArrow
                 }
@@ -46,24 +54,24 @@ const ChapterSheet = ({onClose}) => {
             </TouchableOpacity>
 
             {/* Numbers grid if expanded */}
-            {(expanded === item.title && item.chapters ) && (
+            {(expanded === item.name && item.chapters ) && (
               <View style={styles.grid}>
-                {item.chapters.map((number) => (
+                {chapters.map((chapt) => (
                     <TouchableOpacity
-                      key={number}
+                      key={chapt.id}
                       style={[
                         styles.numberBox,
-                        selected === number && styles.numberBoxSelected,
+                        selected === chapt.number && styles.numberBoxSelected,
                       ]}
-                      onPress={() => setSelected(number)}
+                      onPress={() => handleContent(item, bible.bible_id, chapt.id)}
                     >
                       <Text
                         style={[
                           styles.numberText,
-                          selected === number && styles.numberTextSelected,
+                          selected === chapt.number && styles.numberTextSelected,
                         ]}
                       >
-                        {number}
+                        {chapt.number}
                       </Text>
                     </TouchableOpacity>
                 ))}
