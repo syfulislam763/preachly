@@ -57,8 +57,13 @@ export default function PreachlyScreen() {
   const [chapter, setChapter] = useState({});
 
   const speak = () => {
-    const thingToSay = '1';
-    Speech.speak(thingToSay);
+    console.log("hello")
+    // const thingToSay = 'hello world';
+    // Speech.speak(thingToSay);
+    Speech.speak("Testing speech");
+    Speech.isSpeakingAsync().then(isSpeaking => {
+      console.log('Is speaking?', isSpeaking);
+    });
   };
 
   const get_chapters = (item, bible_id, isDefault=false) => {
