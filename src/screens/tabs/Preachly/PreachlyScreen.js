@@ -10,6 +10,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { get_bible_books, get_bible_books_chapter, get_bible_chapter_content } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Speech from 'expo-speech';
 
 const bible = [
   {
@@ -50,39 +51,63 @@ export default function PreachlyScreen() {
   
   const [chapters, setChapters] = useState([]);
   const [expanded, setExpanded] = useState(''); // Currently opened
-  const [selected, setSelected] = useState("5");
+  const [selected, setSelected] = useState("");
   const [content, setContent] = useState([]);
 
-  const get_chapters = (item, bible_id) => {
+  const [chapter, setChapter] = useState({});
+
+  const speak = () => {
+    const thingToSay = '1';
+    Speech.speak(thingToSay);
+  };
+
+  const get_chapters = (item, bible_id, isDefault=false) => {
     const payload = {
       version_id: bible_id,
       book_id: item.id,
     }
-    console.log(payload)
+    
+    
+    console.log("---", item)
     setExpanded(item.name);
-    setItemLoading(true)
+    setBibleBook(item)
+    //setItemLoading(true)
+    setChapters([]);
     get_bible_books_chapter(payload, (res, success) =>{
       // console.log("he-=", JSON.stringify(res.data, null,2))
       if(success){
         setChapters(res?.data?.chapters);
+        if(isDefault){
+          console.log("+++" , bibleBook)
+          get_contents(res?.data?.chapters[0], bible_id, res?.data?.chapters[0]?.id)
+        }
       }
-      setItemLoading(false);
+      //setItemLoading(false);
     })
+    
   }
 
 
-  const get_contents = (item, bible_id, chapter_id) =>{
-    setLoading(true);
+  const get_contents = (chapt, bible_id, chapter_id, isDefault=false) =>{
+    if(!isDefault)
+      setLoading(true);
+
     const payload = {
       version_id: bible_id,
       chapter_id: chapter_id
     }
 
-    console.log(payload)
+    if(isDefault){
+      setBibleBook(chapt);
+    }else{
+      setChapter(chapt)
+    }
+    console.log("hee-<>", bibleBook)
     get_bible_chapter_content(payload, (res, success) => {
       if(success){
         setContent([res?.data?.chapter]);
-        setExpanded(item?.name);
+        console.log(bibleBook, "---")
+        //setExpanded(bibleBook?.name);
         setSelected(chapter_id.split(".")[1]);
         //console.log("content -> ", JSON.stringify(res?.data, null, 2));
         setOpenChapterList(false);
@@ -111,13 +136,53 @@ export default function PreachlyScreen() {
 
       if(success){
         setBibleBooks(res?.data);
-        setOpenBibleVersion(false);
+        setOpenBibleVersion(false)
+        //console.log("-----", JSON.stringify(res?.data, null, 2))
+
+        const book = res?.data?.books[0];
+        const bible_id = res?.data?.bible_id;
+        get_chapters(book, bible_id, true)
+        // remove_local_storage_data(() => {
+        //   console.log("fine");
+        // })
+        // get_local_storage_data((current_bible)=>{
+        //   if(current_bible){
+            
+        //     const bible = JSON.parse(current_bible);
+        //     console.log(bible, "-00")
+        //     if(bible.bible_id != payload.version_id){
+        //       get_chapters(book, bible_id, true);
+        //     }else{
+
+        //       get_contents(book, bible.bible_id, bible.chapter_id, true);
+        //     }
+        //   }else{
+        //     console.log("whats app")
+        //     get_chapters(book, bible_id, true)
+        //   }
+        // })
+
+        
+        // setOpenBibleVersion(false);
+      }else{
+        setLoading(false)
       }
-      setLoading(false)
+      
     });
   }, [selectedBibleVersion]);
 
-
+  const get_local_storage_data = async (cb) => {
+    const current_bible = await AsyncStorage.getItem("current_bible");
+    cb(current_bible);
+  }
+  const set_local_storage_data = async(payload, cb) => {
+    await AsyncStorage.setItem("current_bible", JSON.stringify(payload));
+    cb()
+  }
+  const remove_local_storage_data = async (cb) =>{
+    await AsyncStorage.removeItem("current_bible");
+    cb()
+  }
   
 
   // console.log("bible -> ", JSON.stringify(store.bible_versions, null, 2));
@@ -167,7 +232,9 @@ export default function PreachlyScreen() {
       <ScrollView style={{
         flexGrow:1,
         padding:20,
+        
       }}>
+      
         {content.map((chapter,i) => <View 
           key={i.toString()}
         >
@@ -214,7 +281,9 @@ export default function PreachlyScreen() {
               style={styles.icon}
             />
           </View>
-          <View style={{
+          <Pressable 
+          onPress={speak}
+          style={{
             backgroundColor:'#005A55',
             flexDirection:'row',
             alignItems:'center',
@@ -222,7 +291,9 @@ export default function PreachlyScreen() {
             paddingVertical: 10,
             paddingHorizontal:20,
             borderRadius: 50
-          }}>
+          }}
+          
+          >
             <Text style={{
               color:'#fff',
               fontFamily:'NunitoSemiBold',
@@ -233,7 +304,7 @@ export default function PreachlyScreen() {
               source={require("../../../../assets/img/ArrowRight.png")}
               style={styles.icon}
             />
-          </View>
+          </Pressable>
         </View>
 
 

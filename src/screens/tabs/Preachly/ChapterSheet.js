@@ -61,14 +61,14 @@ const ChapterSheet = ({
                       key={chapt.id}
                       style={[
                         styles.numberBox,
-                        selected === chapt.number && styles.numberBoxSelected,
+                        (selected === chapt.number && expanded=== item.name) && styles.numberBoxSelected,
                       ]}
-                      onPress={() => handleContent(item, bible.bible_id, chapt.id)}
+                      onPress={() => handleContent(chapt, bible.bible_id, chapt.id)}
                     >
                       <Text
                         style={[
                           styles.numberText,
-                          selected === chapt.number && styles.numberTextSelected,
+                           (selected === chapt.number && expanded=== item.name) && styles.numberTextSelected,
                         ]}
                       >
                         {chapt.number}
