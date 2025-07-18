@@ -1,4 +1,4 @@
-import React, { useEffect, useState, version } from 'react';
+import React, { useEffect, useRef, useState, version } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MediaControls from './MediaControls';
@@ -7,41 +7,19 @@ import ScriptureSearch from './ScriptureSearch';
 import BibleVersionList from './BibleVersionList';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useAuth } from '../../../context/AuthContext';
-import { get_bible_books, get_bible_books_chapter, get_bible_chapter_content } from '../TabsAPI';
+import { get_bible_books, get_bible_books_chapter, get_bible_chapter_content, next_previous } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Speech from 'expo-speech';
-
-const bible = [
-  {
-    title: "The Territory of Simeon",
-    content: [
-       "The second lot came out for Simeon, for the tribe of Simeon, according to its families; and its inheritance was in the midst of the inheritance of the tribe of Judah.",
-
-      "And it had for its inheritance Beer-sheba, Sheba, Mola′dah,",
-
-      "Hazar-shu′al, Balah, Ezem,",
-
-      "Elto′lad, Bethul, Hormah,",
-
-      "Ziklag, Beth-mar′caboth, Ha′zar-su′sah",
-
-      "Beth-leba′oth, and Sharu′hen—thirteen cities with their villages;",
-
-      "En-rimmon, Ether, and Ashan—four cities with their villages;",
-
-      "Together with all the villages round about these cities as far as Ba′alath-beer, Ramah of the Negeb. This was the inheritance of the tribe of Simeon according to its families.",
-    ]
-  }
-]
-
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { set } from 'date-fns';
 
 
 export default function PreachlyScreen() {
   const [openBibleVersion, setOpenBibleVersion] = useState(false)
   const [openChapterList, setOpenChapterList] = useState(false)
   const [openSearch, setOpenSearch] = useState(false)
-  const [progress, setProgress] = useState(40);
+  const [progress, setProgress] = useState(0);
   const {store, updateStore} = useAuth();
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({})
   const [bibleBooks, setBibleBooks] = useState([]);
@@ -53,18 +31,78 @@ export default function PreachlyScreen() {
   const [expanded, setExpanded] = useState(''); // Currently opened
   const [selected, setSelected] = useState("");
   const [content, setContent] = useState([]);
+  const [isPaused, setIsPaused] =  useState(true);
 
   const [chapter, setChapter] = useState({});
 
-  const speak = () => {
-    console.log("hello")
-    // const thingToSay = 'hello world';
-    // Speech.speak(thingToSay);
-    Speech.speak("Testing speech");
-    Speech.isSpeakingAsync().then(isSpeaking => {
-      console.log('Is speaking?', isSpeaking);
-    });
+  const speak = async () => {
+    
   };
+
+  const scrollRef = useRef();
+  const intervalRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
+  const stopRef = useRef(false);
+  const count = useRef(0)
+  const stop_audio = () =>{
+    Speech.stop();
+    setIsPaused(true);
+  }
+
+  const play_audio_script = (val) => {
+    setIsPaused(false);
+    
+    stopRef.current = false;
+    Speech.stop();
+    const arr = content[0].verses;
+    let len = (arr.length)*1.2;
+    const scrollBy = contentHeight / len;
+    let i = 0;
+    count.current = val<0?0:val>=len?len-1:val;
+
+    setProgress((100 / len) * count.current);
+    scrollRef.current?.scrollTo({ y: count.current*scrollBy, animated: false });
+
+    const speakNext = () => {
+
+      if (stopRef.current || count.current >= len) {
+        setIsPaused(true);
+        console.log(count.current, "--" )
+        return;
+      }
+      
+      if(count.current< arr.length){
+        const currentText = arr[count.current].text;
+        Speech.speak(currentText, {
+          voice: "en-us-x-iol-local",
+          onStart: () => {
+            
+          },
+          onDone: () => {
+            scrollRef.current?.scrollTo({
+              y: count.current * scrollBy,
+              animated: true,
+            });
+            count.current++;
+            setProgress((100 / len) * count.current);
+            speakNext();
+          },
+        });
+      }else{
+        scrollRef.current?.scrollTo({
+          y: count.current * scrollBy,
+          animated: true,
+        });
+        count.current++;
+        setProgress((100 / len) * count.current);
+        speakNext();
+      }
+      
+    };
+
+    speakNext();
+  };
+
 
   const get_chapters = (item, bible_id, isDefault=false) => {
     const payload = {
@@ -73,7 +111,7 @@ export default function PreachlyScreen() {
     }
     
     
-    console.log("---", item)
+ 
     setExpanded(item.name);
     setBibleBook(item)
     //setItemLoading(true)
@@ -107,7 +145,7 @@ export default function PreachlyScreen() {
     }else{
       setChapter(chapt)
     }
-    console.log("hee-<>", bibleBook)
+   
     get_bible_chapter_content(payload, (res, success) => {
       if(success){
         setContent([res?.data?.chapter]);
@@ -121,6 +159,15 @@ export default function PreachlyScreen() {
     })
   }
 
+  const handleNextPrevious = (route) =>{
+    const payload = {
+      version_id: selectedBibleVersion?.api_bible_id,
+      chapter_id:chapter?.id,
+      route: route
+    }
+
+    console.log(payload)
+  }
 
 
   const get_bible_abbreviation = (item) => {
@@ -142,33 +189,11 @@ export default function PreachlyScreen() {
       if(success){
         setBibleBooks(res?.data);
         setOpenBibleVersion(false)
-        //console.log("-----", JSON.stringify(res?.data, null, 2))
 
         const book = res?.data?.books[0];
         const bible_id = res?.data?.bible_id;
         get_chapters(book, bible_id, true)
-        // remove_local_storage_data(() => {
-        //   console.log("fine");
-        // })
-        // get_local_storage_data((current_bible)=>{
-        //   if(current_bible){
-            
-        //     const bible = JSON.parse(current_bible);
-        //     console.log(bible, "-00")
-        //     if(bible.bible_id != payload.version_id){
-        //       get_chapters(book, bible_id, true);
-        //     }else{
-
-        //       get_contents(book, bible.bible_id, bible.chapter_id, true);
-        //     }
-        //   }else{
-        //     console.log("whats app")
-        //     get_chapters(book, bible_id, true)
-        //   }
-        // })
-
         
-        // setOpenBibleVersion(false);
       }else{
         setLoading(false)
       }
@@ -193,7 +218,7 @@ export default function PreachlyScreen() {
   // console.log("bible -> ", JSON.stringify(store.bible_versions, null, 2));
   // console.log("bible -> ", JSON.stringify(store.profileSettingData.bible_version, null, 2));
   return (
-    <View style={{flex:1, backgroundColor:'#edf3f3'}}>
+    <View  style={{flex:1, backgroundColor:'#edf3f3'}}>
 
       <View style={{
         ...styles.commonHeaderStyle,
@@ -205,12 +230,18 @@ export default function PreachlyScreen() {
             marginBottom:20
           }}
         >
-          <Pressable onPress={() =>  setOpenChapterList(true)}>
+          <Pressable onPress={() =>  {
+            stop_audio();
+            setOpenChapterList(true)
+          }}>
             <Text style={styles.headerText1}>{expanded+" "+selected || "Joshua 19"}</Text>
           </Pressable>
           
 
-          <Pressable onPress={()=>setOpenBibleVersion(true)}>
+          <Pressable onPress={()=>{
+            stop_audio();
+            setOpenBibleVersion(true)
+          }}>
             <Text style={styles.headerText2}>{get_bible_abbreviation(selectedBibleVersion)}</Text>
           </Pressable>
         </View>
@@ -224,7 +255,10 @@ export default function PreachlyScreen() {
             style={{...styles.icon, marginRight:20}}
           />
      
-          <Pressable onPress={() => setOpenSearch(true)}>
+          <Pressable onPress={() => {
+            stop_audio();
+            setOpenSearch(true)
+          }}>
             <Image
               source={require("../../../../assets/img/24-search_.png")}
               style={styles.icon}
@@ -234,7 +268,7 @@ export default function PreachlyScreen() {
       </View>
 
 
-      <ScrollView style={{
+      <ScrollView onContentSizeChange={(width, height) => setContentHeight(height)}  ref={scrollRef} style={{
         flexGrow:1,
         padding:20,
         
@@ -276,18 +310,22 @@ export default function PreachlyScreen() {
           paddingVertical: 30,
           marginBottom:20
         }}>
-          <View style={{
-            backgroundColor:'#005A55',
-            padding:10,
-            borderRadius: 50
-          }}>
-            <Image 
-              source={require("../../../../assets/img/ArrowLeft.png")}
-              style={styles.icon}
-            />
-          </View>
           <Pressable 
-          onPress={speak}
+            onPress={() => handleNextPrevious("previous")}
+          >
+            <View style={{
+              backgroundColor:'#005A55',
+              padding:10,
+              borderRadius: 50
+            }}>
+              <Image 
+                source={require("../../../../assets/img/ArrowLeft.png")}
+                style={styles.icon}
+              />
+            </View>
+          </Pressable>
+          <Pressable 
+          onPress={() => handleNextPrevious("next")}
           style={{
             backgroundColor:'#005A55',
             flexDirection:'row',
@@ -321,18 +359,40 @@ export default function PreachlyScreen() {
         <View
           style={styles.playButtons}
         >
-            <Image
-              source={require("../../../../assets/img/CaretDoubleLeft.png")}
-              style={styles.icon}
-            />
-            <Image
-              source={require("../../../../assets/img/Play.png")}
-              style={styles.icon}
-            />
-            <Image
-              source={require("../../../../assets/img/CaretDoubleRight.png")}
-              style={styles.icon}
-            />
+            <Pressable
+               onPress={() => play_audio_script(count.current-1)}
+            >
+              <Image
+                source={require("../../../../assets/img/CaretDoubleLeft.png")}
+                style={styles.icon}
+              />
+            </Pressable>
+
+            {isPaused?
+              <Pressable onPress={() => play_audio_script(0)}>
+                <Image
+                  source={require("../../../../assets/img/Play.png")}
+                  style={styles.icon}
+                />
+              </Pressable>:
+              <Pressable  onPress={() => {
+                clearInterval(intervalRef.current);
+                stopRef.current = true;
+                stop_audio();
+              }}>
+                <FontAwesome name="pause" size={24} color="black" />
+              </Pressable>
+            }
+            
+            
+            <Pressable 
+              onPress={() => play_audio_script(count.current+1)}
+            >
+              <Image
+                source={require("../../../../assets/img/CaretDoubleRight.png")}
+                style={styles.icon}
+              />
+            </Pressable>
         </View>
 
         <View style={styles.progressContainer}>
