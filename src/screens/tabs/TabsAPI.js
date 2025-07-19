@@ -56,3 +56,14 @@ export const next_previous = async (payload, cb) => {
     }
 }
 
+export const search_bible = async (payload, cb) => {
+    const url = `/bible/${payload.bibleId}/search/?query=${payload.query}&limit=${payload.limit}`;
+
+    try{
+        const res = await api.get(url);
+        cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}
+

@@ -12,10 +12,11 @@ import Indicator from '../../../components/Indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Speech from 'expo-speech';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { set } from 'date-fns';
+import useLogout from '../../../hooks/useLogout';
 
 
 export default function PreachlyScreen() {
+  useLogout();
   const [openBibleVersion, setOpenBibleVersion] = useState(false)
   const [openChapterList, setOpenChapterList] = useState(false)
   const [openSearch, setOpenSearch] = useState(false)
@@ -35,9 +36,6 @@ export default function PreachlyScreen() {
 
   const [chapter, setChapter] = useState({});
 
-  const speak = async () => {
-    
-  };
 
   const scrollRef = useRef();
   const intervalRef = useRef(null);
@@ -165,8 +163,22 @@ export default function PreachlyScreen() {
       chapter_id:chapter?.id,
       route: route
     }
-
-    console.log(payload)
+    console.log("payload--", payload);
+    setLoading(true);
+    next_previous(payload, (res, success) =>{
+      if(success){
+        //console.log("hdhd-", JSON.stringify(res.data.chapter, null, 2));
+        console.log(res?.data?.chapter?.verses?.length, "-")
+        if(res?.data?.chapter?.verses?.length>0){
+          setContent([res?.data?.chapter]);
+          setSelected(res?.data?.chapter?.id?.split(".")[1]);
+          setChapter({id:res?.data?.chapter?.id, reference: res?.data?.chapter?.reference})
+        }
+      }else{
+        console.log("--", res);
+      }
+      setLoading(false);
+    })
   }
 
 
@@ -175,9 +187,13 @@ export default function PreachlyScreen() {
     return abbr[abbr?.length-1] || " ";
   }
 
+
+
   useEffect(()=>{
     setSelectedBibleVersion(store?.profileSettingData?.bible_version);
-  }, [])
+  }, []);
+
+
 
   useEffect(() => {
     const payload = {
@@ -284,7 +300,7 @@ export default function PreachlyScreen() {
               color:'#0B172A'
             }}>{chapter?.title}</Text>
 
-            {chapter.verses.map((item,idx) => <Text
+            {(chapter && chapter?.verses?.length)? chapter.verses.map((item,idx) => <Text
               key={idx.toString()}
               style={{
                 fontFamily: 'NunitoSemiBold',
@@ -298,7 +314,23 @@ export default function PreachlyScreen() {
                 fontFamily:'NunitoBold'
               }}>{item?.number+ " "}</Text>
               {item?.text}
-            </Text>)}
+            </Text>):
+              <View style={{height:400, alignItems:'center', justifyContent:'center'}}>
+
+                <Text 
+                  style={{
+                    color:'#966F44',
+                    fontFamily:'NunitoBold'
+                  }}
+                >
+                No Content Found!
+                </Text>
+
+
+              </View>
+
+
+          }
 
         </View>)}
 
@@ -435,6 +467,8 @@ export default function PreachlyScreen() {
       >
         <ScriptureSearch
           onClose={() => setOpenSearch(false)}
+          bibleId={selectedBibleVersion?.api_bible_id}
+          title={get_bible_abbreviation(selectedBibleVersion)}
         />
       </CustomModal>
       
