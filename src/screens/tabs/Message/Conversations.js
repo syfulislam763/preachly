@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity ,Image} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity ,Image, Pressable} from 'react-native';
 import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
 
-const Conversations = ({ type = 'user', message, verseLink, onYes, onNo }) => {
+
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods}) => {
   return (
     <View style={styles.container}>
       {/* User Message */}
@@ -18,15 +19,16 @@ const Conversations = ({ type = 'user', message, verseLink, onYes, onNo }) => {
         <View style={styles.botContainer}>
           <View style={styles.botBubble}>
             <Text style={styles.botText}>
-              I understand your perspective, and it's important to approach such matters with empathy and respect. In the Bible, belief in God is a central theme, yet it also embraces the diverse journeys of individuals. In{' '}
-              <Text style={styles.linkText}>{verseLink}</Text>, the Bible says, "The fool hath said in his heart, There is no God."
+              {message}
+              {/* <Text style={styles.linkText}>{verseLink}</Text> */}
             </Text>
           </View>
 
           {/* Icon Actions */}
-          <View style={styles.actions}>
+          {message != "typing..." && <View style={styles.actions}>
             <IconContainer
                 containerStyle={{width:50}}
+                onPress={() => methods.handleBookmark(message_id)}
             >
                 <Image 
                     source={require("../../../../assets/img/24-bookmark.png")}
@@ -34,23 +36,26 @@ const Conversations = ({ type = 'user', message, verseLink, onYes, onNo }) => {
                 />
             </IconContainer>
            
-            <IconContainer>
-                <Image 
-                    source={require("../../../../assets/img/24-copy.png")}
-                    style={{...styles.minIcon}}
-                />
-                <Text style={{...styles.text}}>Copy</Text>
+            <IconContainer onPress={() => methods?.handleCopy(message)}>
+                
+              <Image 
+                source={require("../../../../assets/img/24-copy.png")}
+                style={{...styles.minIcon}}
+              />
+              <Text style={{...styles.text}}>Copy</Text>
+               
             </IconContainer>
-            <IconContainer>
+            <IconContainer onPress={()=> methods.handleShare(message)}>
                 <Image 
                     source={require("../../../../assets/img/24-share_.png")}
                     style={{...styles.minIcon}}
                 />
-                <Text style={{...styles.text}}>Copy</Text>
+                <Text style={{...styles.text}}>Share</Text>
             </IconContainer>
 
             <IconContainer
                 containerStyle={{width:50}}
+                onPress={() => methods.handleRegenerate()}
             >
                 <Image 
                     source={require("../../../../assets/img/24-retry.png")}
@@ -59,10 +64,10 @@ const Conversations = ({ type = 'user', message, verseLink, onYes, onNo }) => {
             </IconContainer>
 
 
-          </View>
+          </View>}
 
           {/* Follow-up Prompt */}
-          <View style={styles.promptContainer}>
+          {/* <View style={styles.promptContainer}>
             <Text style={styles.promptText}>Need more clarity?</Text>
             <View style={styles.promptButtons}>
               <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={onYes}>
@@ -72,7 +77,7 @@ const Conversations = ({ type = 'user', message, verseLink, onYes, onNo }) => {
                 <Text style={styles.promptButtonText}>No</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </View>
       )}
     </View>

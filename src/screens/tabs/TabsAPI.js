@@ -1,5 +1,6 @@
+import axios from "axios";
 import api from "../../context/api";
-import { BIBLE_BIBLE_VERSIONS } from "../../context/Paths";
+import { BIBLE_BIBLE_VERSIONS, SESSION_ID } from "../../context/Paths";
 
 
 export const get_bible_versions = async (cb) => {
@@ -61,6 +62,25 @@ export const search_bible = async (payload, cb) => {
 
     try{
         const res = await api.get(url);
+        cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const get_session_id = async (cb) => {
+    try{
+        const res = await api.post(SESSION_ID)
+        cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const bookmark_message = async (message_id, cb) => {
+    const url = `/chat/messages/${message_id}/bookmark/`;
+    try{
+        const res = await api.post(url);
         cb(res.data, true)
     }catch(e){
         cb(e, false);

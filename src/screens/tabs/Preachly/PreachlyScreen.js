@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, version } from 'react';
+import React, { useCallback, useEffect, useRef, useState, version } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MediaControls from './MediaControls';
@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Speech from 'expo-speech';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import useLogout from '../../../hooks/useLogout';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function PreachlyScreen() {
   useLogout();
@@ -191,6 +191,7 @@ export default function PreachlyScreen() {
 
   useEffect(()=>{
     setSelectedBibleVersion(store?.profileSettingData?.bible_version);
+    
   }, []);
 
 
@@ -215,7 +216,17 @@ export default function PreachlyScreen() {
       }
       
     });
+    
   }, [selectedBibleVersion]);
+
+  useFocusEffect(
+    useCallback(()=>{
+
+      return () =>{
+        stop_audio()
+      }
+    }, [])
+  )
 
   const get_local_storage_data = async (cb) => {
     const current_bible = await AsyncStorage.getItem("current_bible");

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   StyleSheet,
-  TextInput
+  TextInput,
+  ActivityIndicator,
+  Pressable
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
@@ -21,31 +23,178 @@ import LostConnection from './LostConnection';
 import CustomModal from '../../../components/CustomModal';
 import RatingMessage from './RatingMessage';
 import Feedback from './Feedback';
+import { get_session_id, bookmark_message } from '../TabsAPI';
+import Indicator from '../../../components/Indicator'
+import { WEBSOCKET_URL } from '../../../context/Paths';
+import {useAuth} from '../../../context/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
+import * as Clipboard from 'expo-clipboard';
+import Share from 'react-native-share'
 // import { TextInput } from 'react-native-gesture-handler';
 
 export default function MessageScreen({ navigation }) {
   const flatListRef = useRef(null);
+  ///
+  const {store} = useAuth();
 
-  const [messages, setMessages] = useState([
-    { id: '1', type: 'user', message: 'I don’t believe in God' },
-    {
-      id: '2',
-      type: 'bot',
-      verseLink: 'Psalm 14:7',
-      onYes: () => console.log('Yes clicked'),
-      onNo: () => console.log('No clicked'),
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("")
+  const [prevMsg, setPrevMsg] = useState("")
+  const [session, setSession] = useState({});
+  const [loading, setLoading] = useState(false);
 
+
+  const create_session = () =>{
+    setLoading(true);
+    get_session_id((res,success)=>{
+      if(success){
+        setSession(res?.data);
+        setMessage("");
+        setMessages([])
+        setPrevMsg("");
+      }else{
+        console.log("ss->", JSON.stringify(res.response.config, null, 2));
+        console.log("code ->", res.status)
+      }
+      
+      setLoading(false);
+    })
+  }
+
+  useEffect(() =>{
+    create_session();
+  },[]);
+
+  const handleCopy = async (message) =>{
+    await Clipboard.setStringAsync(message);
+    console.log("copy...");
+  };
+  const handleBookmark = (message_id) =>{
+    bookmark_message(message_id, (res, success) => {
+      if(success){
+        console.log("message bookmarked")
+      }
+    })
+    console.log("book mark...");
+  }
+  const handleShare = async (message) =>{
+    const options = {
+      message: message
+    }
+    try{
+      await Share.open(options)
+    }catch(e){
+      console.log("share error ", e);
+    }
+    console.log("share...");
+  }
+  const handleRegenerate = () =>{
+    const payload = {
+      message: "Answer this question more deeply and precisely please " + prevMsg,
+      session_id: session.id,
+      type: "message"
+    }
+    if(ws.current && prevMsg.trim()){
+      ws.current.send(JSON.stringify(payload))
+    }
+    console.log("regenerate...");
+  }
+
+
+  const ws = useRef(null);
+  useEffect(() =>{
+    if(!session.id)return;
+
+    const wsURL = WEBSOCKET_URL+`/ws/chat/${session.id}/?token=${store?.access}`;
+    ws.current = new WebSocket(wsURL);
+
+    ws.current.onopen = () => {
+      console.log("socket connected...");
+    }
+
+    ws.current.onmessage = (e) =>{
+      try{
+        const data = JSON.parse(e.data);
+        const res = {
+          id: Date.now(),
+          message_id: data.message_id,
+          type: 'bot',
+          verseLink: "",
+          message: data.content
+        }
+        if(data.type === "typing"){
+          res.message = "typing..."
+          setMessages(prev => [...prev, res])
+        }
+        if(data.type === "message"){
+          
+          setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
+
+        }
+        console.log("bot ->", data)
+      }catch(err){
+        console.log("message err", err)
+      }
+    }
+
+    ws.current.onerror = (e) =>{
+      console.log("socket error ->", e.message);
+    }
+
+
+    ws.current.onclose = () =>{
+      console.log("socket disconnected...");
+    }
+
+  }, [messages, session]);
+
+  const sendMessage = () =>{
+    const payload = {
+      message: message,
+      session_id: session.id,
+      type: "message"
+    }
+    console.log(payload)
+    if(ws.current && message.trim()){
+      ws.current.send(JSON.stringify(payload));
+      const res = {
+        id: new Date().getTime(),
+        message_id: "",
+        type: 'user',
+        verseLink: "",
+        message: message
+      }
+      setMessages(prev => [...prev, res]);
+      setPrevMsg(message);
+      setMessage("")
+    }else{
+      console.log("problem..");
+    }
+    
+  }
+
+  useFocusEffect(
+    useCallback(() =>{
+      return () =>{
+        console.log("disconnecting")
+        ws.current?.close();
+      }
+    }, [])
+  )
+  // console.log("msg = ", JSON.stringify(messages, null, 2))
+  // console.log("session->", JSON.stringify(session, null, 2))
   // Auto-scroll when new message is added
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
+
   }, [messages]);
 
   const handleSendMessage = (newMessage) => {
-    setMessages((prev) => [...prev, newMessage]);
+    console.log("message", newMessage);
+    sendMessage()
+    // setMessages((prev) => [...prev, newMessage]);
   };
 
   return (
@@ -78,10 +227,14 @@ export default function MessageScreen({ navigation }) {
               borderRadius: 50,
             }}
           >
-            <Image
-              source={require('../../../../assets/img/newChat.png')}
-              style={{ height: 25, width: 25, resizeMode: 'contain' }}
-            />
+            <Pressable
+              onPress={() => create_session()}
+            >
+              <Image
+                source={require('../../../../assets/img/newChat.png')}
+                style={{ height: 25, width: 25, resizeMode: 'contain' }}
+              />
+            </Pressable>
           </View>
         )}
         backgroundStyle={{ backgroundColor: '#fff' }}
@@ -96,14 +249,29 @@ export default function MessageScreen({ navigation }) {
       /> */}
       {/* <LostConnection/> */}
 
-      <MessageWrapper messages={messages} flatListRef={flatListRef} handleSendMessage={handleSendMessage}/>
+      <MessageWrapper 
+        messages={messages}
+        flatListRef={flatListRef}
+        handleSendMessage={handleSendMessage}
+        onChange={(text) => setMessage(text)}
+        message={message}
+        methods = {{
+          handleBookmark,
+          handleCopy,
+          handleRegenerate,
+          handleShare
+        }}
+      />
       
+      {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
+        <ActivityIndicator size={"large"}/>
+      </Indicator>}
     </SafeAreaView>
   );
 }
 
 
-const MessageWrapper = ({flatListRef, messages, handleSendMessage}) => {
+const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, message, methods}) => {
   return <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -120,9 +288,10 @@ const MessageWrapper = ({flatListRef, messages, handleSendMessage}) => {
                 type={item.type}
                 message={item.message}
                 verseLink={item.verseLink}
-                onYes={item.onYes}
-                onNo={item.onNo}
+                methods={methods}
+                message_id={item.message_id}
               />
+          
             )}
             contentContainerStyle={{
               paddingTop: 15,
@@ -134,10 +303,28 @@ const MessageWrapper = ({flatListRef, messages, handleSendMessage}) => {
             onContentSizeChange={() =>
               flatListRef.current?.scrollToEnd({ animated: true })
             }
+            
           />
 
           {/* Pass handler to ChatInput for sending */}
           {/* <ChatInput onSendMessage={handleSendMessage} /> */}
+          {messages.length<=0 && <View style={{
+            // height: 200,
+            width:"100%",
+            backgroundColor:'green',
+            
+          }}>
+            <Text style={{color:"red"}}>What do you want to ask?</Text>
+            <View style={{
+              width:'100%'
+            }}>
+              <Text style={{color:"red"}}>Why does God allow suffering and evil in the world?</Text>
+              <Text style={{color:"red"}}>How can we trust the Bible when it’s written by humans?</Text>
+              <Text style={{color:"red"}}>How can Jesus be both fully God and fully man?</Text>
+              <Text style={{color:"red"}}>Can’t people be good without believing in God?</Text>
+              <Text style={{color:"red"}}>How can I trust the church when it’s full of scandals and corruption?</Text>
+            </View>
+          </View>}
           <View style={styles.inputContainer}>
               <Image
                 source={require("../../../../assets/img/24-addfile.png")}
@@ -147,13 +334,20 @@ const MessageWrapper = ({flatListRef, messages, handleSendMessage}) => {
                 style={styles.inputField}
                 multiline={true}
                 numberOfLines={2}
+                value={message}
+                onChangeText={e=>onChange(e)}
                 placeholder={"what's on your heart? Ask anything - lets find and inspired answer.."}
                 placeholderTextColor={'#607373'}
               />
-              <Image
-                source={require("../../../../assets/img/24-microphone.png")}
-                style={styles.inputIcon}
-              />
+              <Pressable 
+                onPress={()=>handleSendMessage(message)}
+              >
+                <Image
+                  //source={require("../../../../assets/img/24-microphone.png")}
+                  source={require("../../../../assets/img/send_message.png")}
+                  style={styles.inputIcon}
+                />
+              </Pressable>
           </View>
         </View>
       </TouchableWithoutFeedback>
