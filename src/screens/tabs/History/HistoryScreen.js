@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Image
+  Image,
+  ActivityIndicator
 } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HistoryNotFound from './HistoryNotFound';
 import useLayoutDimention from '../../../hooks/useLayoutDimention'
-import {getStyles} from './HistoryScreenStyle'
+import {getStyles} from './HistoryScreenStyle';
+import { get_all_sessions } from '../TabsAPI';
+import Indicator from '../../../components/Indicator';
 
 const star = require("../../../../assets/img/VectorStar.png")
 const bookmark = require("../../../../assets/img/24-bookmark.png")
@@ -111,6 +114,7 @@ const HistoryScreen = ({navigation}) => {
   const [selectedFilter, setSelectedFilter] = useState('All chats');
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
   
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
@@ -126,6 +130,36 @@ const HistoryScreen = ({navigation}) => {
       )
     );
   };
+  function timeAgo(isoString) {
+    const now = new Date();
+    const createdAt = new Date(isoString);
+    const diffMs = now - createdAt;
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365));
+
+    if (seconds < 60) return `${seconds}s`;
+    else if (minutes < 60) return `${minutes}m`;
+    else if (hours < 24) return `${hours}h`;
+    else if (days < 365) return `${days}d`;
+    else return `${years}y`;
+  }
+
+
+  useEffect(() => {
+    setLoading(true);
+    get_all_sessions((res, success) => {
+      if(success){
+        console.log("all", JSON.stringify(res?.data?.sessions, null, 2))
+      }else{
+
+      }
+      setLoading(false);
+    })
+  }, [])
 
   const filteredData = data
     .filter((item) => {
@@ -261,6 +295,9 @@ const HistoryScreen = ({navigation}) => {
            
         }}
       />
+      {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
+        <ActivityIndicator size={"large"}/>
+      </Indicator>}
     </SafeAreaView>
   );
 };

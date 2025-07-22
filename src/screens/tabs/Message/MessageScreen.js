@@ -23,7 +23,7 @@ import LostConnection from './LostConnection';
 import CustomModal from '../../../components/CustomModal';
 import RatingMessage from './RatingMessage';
 import Feedback from './Feedback';
-import { get_session_id, bookmark_message } from '../TabsAPI';
+import { get_session_id, bookmark_message, get_message_by_session_id } from '../TabsAPI';
 import Indicator from '../../../components/Indicator'
 import { WEBSOCKET_URL } from '../../../context/Paths';
 import {useAuth} from '../../../context/AuthContext';
@@ -35,7 +35,7 @@ import Share from 'react-native-share'
 export default function MessageScreen({ navigation }) {
   const flatListRef = useRef(null);
   ///
-  const {store} = useAuth();
+  const {store, updateStore} = useAuth();
 
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("")
@@ -52,6 +52,7 @@ export default function MessageScreen({ navigation }) {
         setMessage("");
         setMessages([])
         setPrevMsg("");
+        updateStore({ session: res?.data})
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
@@ -62,9 +63,43 @@ export default function MessageScreen({ navigation }) {
   }
 
   useEffect(() =>{
-    create_session();
-  },[]);
+    if(store?.session?.id){
+      setLoading(true);
+      get_message_by_session_id(store?.session?.id, (res, success) => {
+        if(success){
+          const msgs = res?.data?.messages?.map(item => {
+            return item.is_user?{
+                id: item?.id,
+                message_id: item?.id,
+                type: 'user',
+                verseLink: "",
+                message: item?.content
+              }:{
+              id: item?.id,
+              message_id: item?.id,
+              type: 'bot',
+              verseLink: "",
+              message: item?.content
+            }
+          });
 
+          setMessages(msgs);
+          setSession(store?.session);
+          setLoading(false);
+          //console.log("m ->", JSON.stringify(msgs, null, 2))
+        }else{
+          console.log("s error->", res);
+        }
+      })
+   
+    }else{
+      create_session();
+    }
+    console.log("he")
+  },[]);
+  const predefinedMessage = (message)=>{
+    setMessage(message);
+  }
   const handleCopy = async (message) =>{
     await Clipboard.setStringAsync(message);
     console.log("copy...");
@@ -131,7 +166,7 @@ export default function MessageScreen({ navigation }) {
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
         }
-        console.log("bot ->", data)
+      
       }catch(err){
         console.log("message err", err)
       }
@@ -172,6 +207,8 @@ export default function MessageScreen({ navigation }) {
     }
     
   }
+
+ 
 
   useFocusEffect(
     useCallback(() =>{
@@ -311,25 +348,47 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
           {messages.length<=0 && <View style={{
             // height: 200,
             width:"100%",
-            backgroundColor:'green',
-            
+            backgroundColor:'#fff',
+            padding:20,
+            alignItems: 'center',
+            // shadowColor: '#000',
+            // shadowOffset: { width: 0, height: 3 },
+            // shadowOpacity: 1,
+            // elevation: 5, 
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10
           }}>
-            <Text style={{color:"red"}}>What do you want to ask?</Text>
+            <Text style={{
+              color:"#0B172A",
+              fontFamily:'NunitoBold',
+              fontSize: 18,
+              paddingVertical: 20,
+            }}>What do you want to ask?</Text>
             <View style={{
-              width:'100%'
+              
             }}>
-              <Text style={{color:"red"}}>Why does God allow suffering and evil in the world?</Text>
-              <Text style={{color:"red"}}>How can we trust the Bible when it’s written by humans?</Text>
-              <Text style={{color:"red"}}>How can Jesus be both fully God and fully man?</Text>
-              <Text style={{color:"red"}}>Can’t people be good without believing in God?</Text>
-              <Text style={{color:"red"}}>How can I trust the church when it’s full of scandals and corruption?</Text>
+              <Pressable onPress={()=>onChange("Why does God allow suffering and evil in the world?")}>
+                <Text style={styles.commonQuestion}>Why does God allow suffering and evil in the world?</Text>
+              </Pressable>
+              <Pressable onPress={() => onChange("How can we trust the Bible when it’s written by humans?")}>
+                <Text style={styles.commonQuestion}>How can we trust the Bible when it’s written by humans?</Text>
+              </Pressable>
+              <Pressable onPress={() => onChange("How can Jesus be both fully God and fully man?")}>
+                <Text style={styles.commonQuestion}>How can Jesus be both fully God and fully man?</Text>
+              </Pressable>
+              <Pressable onPress={() => onChange(`Can’t people be good without believing in God?`)}>
+                <Text style={styles.commonQuestion}>Can’t people be good without believing in God?</Text>
+              </Pressable>
+              <Pressable onPress={() => onChange(`How can I trust the church when it’s full of scandalsand corruption?`)}>
+                <Text style={styles.commonQuestion}>How can I trust the church when it’s full of scandalsand corruption?</Text>
+              </Pressable>
             </View>
           </View>}
           <View style={styles.inputContainer}>
-              <Image
+              {/* <Image
                 source={require("../../../../assets/img/24-addfile.png")}
                 style={styles.inputIcon}
-              />
+              /> */}
               <TextInput
                 style={styles.inputField}
                 multiline={true}
@@ -348,6 +407,14 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
                   style={styles.inputIcon}
                 />
               </Pressable>
+              <Pressable 
+                onPress={()=>console.log("recording")}
+              >
+                <Image
+                  source={require("../../../../assets/img/24-microphone.png")}
+                  style={styles.inputIcon}
+                />
+              </Pressable>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -356,6 +423,16 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
 
 
 const styles = StyleSheet.create({
+  commonQuestion:{
+    color:'#0B172A',
+    fontFamily:'NunitoSemiBold',
+    fontSize: 15,
+    backgroundColor:'#FDF2D8',
+    paddingVertical:5,
+    paddingHorizontal:10,
+    marginBottom:10,
+    borderRadius: 20,
+  },
   inputContainer:{
     display:'flex',
     flexDirection:'row',

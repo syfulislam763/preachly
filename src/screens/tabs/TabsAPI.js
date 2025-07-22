@@ -87,3 +87,23 @@ export const bookmark_message = async (message_id, cb) => {
     }
 }
 
+export const get_message_by_session_id = async(session_id, cb) => {
+    const url =  `/chat/sessions/${session_id}/`;
+    try{
+        const res = await api.get(url);
+        cb(res?.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const get_all_sessions = async (cb) => {
+    const url = `/chat/export/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}
+
