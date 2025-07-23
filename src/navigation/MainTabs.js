@@ -107,6 +107,8 @@ export default function MainTabs() {
         component={NullComponent} 
         
       />
+     
+
       <Tab.Screen name="Preachly" component={PreachlyStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>

@@ -77,10 +77,10 @@ export const get_session_id = async (cb) => {
     }
 }
 
-export const bookmark_message = async (message_id, cb) => {
-    const url = `/chat/messages/${message_id}/bookmark/`;
+export const bookmark_message = async (payload, cb) => {
+    const url = `/chat/messages/${payload.message_id}/bookmark/`;
     try{
-        const res = await api.post(url);
+        const res = await api.post(url, {bookmark:payload.bookmark});
         cb(res.data, true)
     }catch(e){
         cb(e, false);
@@ -102,6 +102,34 @@ export const get_all_sessions = async (cb) => {
     try{
         const res = await api.get(url);
         cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const delete_session = async (session_id, cb) =>{
+    const url =  `/chat/sessions/${session_id}/delete/`
+    try{
+        const res = await api.delete(url);
+        cb(res.data, true);
+    }catch(err){
+        cb(err, false);
+    }
+}
+export const make_favorite_session = async (payload, cb) =>{
+    const url = `/chat/sessions/${payload.session_id}/favorite/`;
+    try{
+        const res = await api.post(url, {favorite: payload.favorite});
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+export const get_bookmarked_message = async (cb) =>{
+    const url = `/chat/messages/bookmarked/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data, true);
     }catch(e){
         cb(e, false);
     }

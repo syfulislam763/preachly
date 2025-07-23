@@ -30,9 +30,11 @@ import {useAuth} from '../../../context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Share from 'react-native-share'
+import useLogout from '../../../hooks/useLogout';
 // import { TextInput } from 'react-native-gesture-handler';
 
 export default function MessageScreen({ navigation }) {
+  useLogout();
   const flatListRef = useRef(null);
   ///
   const {store, updateStore} = useAuth();
@@ -65,6 +67,7 @@ export default function MessageScreen({ navigation }) {
   useEffect(() =>{
     if(store?.session?.id){
       setLoading(true);
+      
       get_message_by_session_id(store?.session?.id, (res, success) => {
         if(success){
           const msgs = res?.data?.messages?.map(item => {
@@ -79,7 +82,8 @@ export default function MessageScreen({ navigation }) {
               message_id: item?.id,
               type: 'bot',
               verseLink: "",
-              message: item?.content
+              message: item?.content,
+              bookmark:item.bookmark
             }
           });
 
@@ -89,7 +93,10 @@ export default function MessageScreen({ navigation }) {
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
+          console.log(store.session)
+          setLoading(false);
         }
+        
       })
    
     }else{
@@ -105,9 +112,23 @@ export default function MessageScreen({ navigation }) {
     console.log("copy...");
   };
   const handleBookmark = (message_id) =>{
-    bookmark_message(message_id, (res, success) => {
+    const payload = {
+      bookmark: true,
+      message_id: message_id
+    }
+    bookmark_message(payload, (res, success) => {
       if(success){
-        console.log("message bookmarked")
+        let temp = [];
+        messages.forEach(item => {
+          if(item.id == message_id){
+            let x = {...item};
+            x.bookmark = true;
+            temp.push(x);
+          }else{
+            temp.push(item)
+          }
+        });
+        setMessages(temp);
       }
     })
     console.log("book mark...");
@@ -155,7 +176,8 @@ export default function MessageScreen({ navigation }) {
           message_id: data.message_id,
           type: 'bot',
           verseLink: "",
-          message: data.content
+          message: data.content,
+          bookmark:false,
         }
         if(data.type === "typing"){
           res.message = "typing..."
@@ -327,6 +349,7 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
                 verseLink={item.verseLink}
                 methods={methods}
                 message_id={item.message_id}
+                item={item}
               />
           
             )}
@@ -398,20 +421,21 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
                 placeholder={"what's on your heart? Ask anything - lets find and inspired answer.."}
                 placeholderTextColor={'#607373'}
               />
+              
+              <Pressable 
+                onPress={()=>console.log("recording")}
+              >
+                <Image
+                  source={require("../../../../assets/img/24-microphone.png")}
+                  style={styles.inputIcon}
+                />
+              </Pressable>
               <Pressable 
                 onPress={()=>handleSendMessage(message)}
               >
                 <Image
                   //source={require("../../../../assets/img/24-microphone.png")}
                   source={require("../../../../assets/img/send_message.png")}
-                  style={styles.inputIcon}
-                />
-              </Pressable>
-              <Pressable 
-                onPress={()=>console.log("recording")}
-              >
-                <Image
-                  source={require("../../../../assets/img/24-microphone.png")}
                   style={styles.inputIcon}
                 />
               </Pressable>

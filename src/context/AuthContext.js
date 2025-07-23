@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     else{
       setStore(data)
     }
-    
   }
 
   // const setLocalStorage = async () => {

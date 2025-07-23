@@ -4,7 +4,7 @@ import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
 
 
-const Conversations = ({ type = 'user', message,message_id, verseLink, methods}) => {
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item}) => {
   return (
     <View style={styles.container}>
       {/* User Message */}
@@ -30,10 +30,16 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods})
                 containerStyle={{width:50}}
                 onPress={() => methods.handleBookmark(message_id)}
             >
-                <Image 
+              {
+                item.bookmark?<Image
+                  source={require("../../../../assets/img/Bookmark1.png")}
+                  style={{...styles.minIcon}}
+                />:<Image 
                     source={require("../../../../assets/img/24-bookmark.png")}
                     style={{...styles.minIcon}}
                 />
+              }
+                
             </IconContainer>
            
             <IconContainer onPress={() => methods?.handleCopy(message)}>

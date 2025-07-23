@@ -2,8 +2,9 @@ import { View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../context/api";
 import { handleToast } from "../screens/auth/AuthAPI";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { get_profile_info } from "../screens/auth/AuthAPI";
+import { useFocusEffect } from "@react-navigation/native";
 
 const useLogout = () => {
     const {logout} = useAuth()
@@ -23,9 +24,15 @@ const useLogout = () => {
         
     }
 
-    useEffect(() => {
-        login_again()
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            login_again()
+        }, [])
+    )
+
+    // useEffect(() => {
+        
+    // }, [])
 
 
 }

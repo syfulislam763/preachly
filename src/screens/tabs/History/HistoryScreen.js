@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,8 +16,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import HistoryNotFound from './HistoryNotFound';
 import useLayoutDimention from '../../../hooks/useLayoutDimention'
 import {getStyles} from './HistoryScreenStyle';
-import { get_all_sessions } from '../TabsAPI';
+import { get_all_sessions, delete_session, make_favorite_session, bookmark_message } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
+import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../../context/AuthContext';
+import useLogout from '../../../hooks/useLogout'
 
 const star = require("../../../../assets/img/VectorStar.png")
 const bookmark = require("../../../../assets/img/24-bookmark.png")
@@ -26,110 +30,77 @@ const trash = require("../../../../assets/img/Trash.png")
 
 const FILTERS = [{img:'', txt:'All chats'}, {img:star,txt:'Favorites'}, {img:bookmark, txt: 'Answers'}];
 
-const initialData = [
-  {
-    id: '1',
-    title: 'Finding Faith and Connection with Christ',
-    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
-    replies: 3,
-    timeAgo: '1 hour ago',
-    isFavorite: false,
-    type: 'chat',
-  },
-  {
-    id: '2',
-    title: 'The Power of Community in Spiritual Growth',
-    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
-    replies: 5,
-    timeAgo: '2 hour ago',
-    isFavorite: true,
-    type: 'chat',
-  },
-  {
-    id: '3',
-    title: 'Overcoming Doubt Through Scripture',
-    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
-    replies: 8,
-    timeAgo: '3 hour ago',
-    isFavorite: false,
-    type: 'chat',
-  },
-   {
-    id: '4',
-    title: 'Finding Faith and Connection with Christ',
-    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
-    replies: 3,
-    timeAgo: '1 hour ago',
-    isFavorite: false,
-    type: 'chat',
-  },
-  {
-    id: '5',
-    title: 'The Power of Community in Spiritual Growth',
-    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
-    replies: 5,
-    timeAgo: '2 hour ago',
-    isFavorite: true,
-    type: 'chat',
-  },
-  {
-    id: '6',
-    title: 'Overcoming Doubt Through Scripture',
-    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
-    replies: 8,
-    timeAgo: '3 hour ago',
-    isFavorite: false,
-    type: 'chat',
-  },
-   {
-    id: '7',
-    title: 'Finding Faith and Connection with Christ',
-    snippet: 'When you feel distant from Christ, prayer can be a powerful means of seeing comfort, guidance, an...',
-    replies: 3,
-    timeAgo: '1 hour ago',
-    isFavorite: false,
-    type: 'answer',
-  },
-  {
-    id: '8',
-    title: 'The Power of Community in Spiritual Growth',
-    snippet: 'Engaging with a supportive community can enhance your faith journey, providing encouragement, sharing...',
-    replies: 5,
-    timeAgo: '2 hour ago',
-    isFavorite: false,
-    type: 'answer',
-  },
-  {
-    id: '9',
-    title: 'Overcoming Doubt Through Scripture',
-    snippet: 'Reading the Bible can help you confront your doubts and strengthen your belief, illuminating your path...',
-    replies: 8,
-    timeAgo: '3 hour ago',
-    isFavorite: false,
-    type: 'answer',
-  },
-];
 
-const HistoryScreen = ({navigation}) => {
+/*
+
+{
+    id: '9',
+    title: '',
+    snippet: '',
+    replies: 0,
+    timeAgo: '',
+    isFavorite: ,
+    type: 'answer',
+  },
+
+
+*/
+
+const HistoryScreen = () => {
+  useLogout();
   const [selectedFilter, setSelectedFilter] = useState('All chats');
   const [searchText, setSearchText] = useState('');
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const navigation = useNavigation();
   
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold);
+  const {updateStore} = useAuth()
 
   const handleDelete = (id) => {
     setData((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const toggleFavorite = (id) => {
-    setData((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
-      )
-    );
-  };
+
+  const handleDeleteSession = (session_id) =>{
+    delete_session(session_id, (res, success) =>{
+      if(success){
+        handleGetAllData();
+      }
+    })
+  }
+
+  const handleBookmark = (message_id) =>{
+      const payload = {
+        bookmark: false,
+        message_id: message_id
+      }
+      bookmark_message(payload, (res, success) => {
+        if(success){
+          handleGetAllData();
+          
+        }
+      })
+      console.log("book mark...");
+  }
+
+  const handleMakeFavorite = (item) =>{
+    const payload = {
+      session_id: item.id,
+      favorite: !item.isFavorite
+    }
+    make_favorite_session(payload, (res, success) =>{
+      if(success){
+        handleGetAllData();
+      }else{
+        console.log("mm", res);
+      }
+    })
+  }
+
+ 
   function timeAgo(isoString) {
     const now = new Date();
     const createdAt = new Date(isoString);
@@ -149,31 +120,107 @@ const HistoryScreen = ({navigation}) => {
   }
 
 
-  useEffect(() => {
+  const handleGetAllData = () => {
+    
     setLoading(true);
     get_all_sessions((res, success) => {
       if(success){
-        console.log("all", JSON.stringify(res?.data?.sessions, null, 2))
-      }else{
+        //const temp_data = res?.data
+        const temp_data = res?.data?.sessions?.map(item => {
+          let snippet = "";
+          let searchContent = "";
+          if(item?.messages?.length){
+            snippet = item?.messages[item.messages.length-1].content.substring(0, 150)+"...";
+            item?.messages.forEach(msg => {
+              searchContent += msg.content;
+            })
+          }
 
+          return {
+            id: item?.id,
+            title: item?.title,
+            snippet: snippet,
+            replies: item?.messages?.length,
+            timeAgo: timeAgo(item?.created_at),
+            isFavorite: item?.is_favorite,
+            searchContent: searchContent,
+            type: 'chat',
+          }
+        });
+
+        res?.data?.sessions.forEach(item => {
+          ///chat/messages/bookmarked/
+          item?.messages.forEach(msg => {
+            if(msg.bookmark){
+              temp_data.push(
+                {
+                  id: msg.id,
+                  title: "",
+                  snippet: msg.content,
+                  replies: 0,
+                  timeAgo: timeAgo(msg.created_at),
+                  isFavorite: false,
+                  isBookmarked: msg.bookmark,
+                  searchContent: msg.content,
+                  type: 'answer',
+                }
+              )
+            }
+          })
+        })
+
+        //console.log("test -> ", JSON.stringify(temp_data, null, 2))
+        setData(temp_data)
+        handleFilter(selectedFilter, temp_data);
+      }else{
+        console.log("hddsfs", res)
       }
       setLoading(false);
     })
-  }, [])
+  }
 
-  const filteredData = data
+  useFocusEffect(
+    useCallback(() =>{
+      handleGetAllData()
+    }, [])
+  )
+
+
+  const handleFilter = (label, temp=[]) =>{
+    const container = temp.length?temp:data;
+    const filteredData = container
     .filter((item) => {
-      if (selectedFilter === 'Favorites') return item.isFavorite;
-      if (selectedFilter === 'Answers') return item.type === 'answer';
-      return true;
+      if (label === 'Favorites') return item.isFavorite;
+      if (label === 'Answers') return item.type === 'answer';
+      return item.type == "chat"
     })
-    .filter((item) =>
-      item.title.toLowerCase().includes(searchText.toLowerCase())
-    );
+    setFilteredData(filteredData)
+    setSelectedFilter(label);
+  }
+
+
+  
+
+  
+  const handleSearch = (e) => {
+    setSearchText(e);  
+  }
+
+  let searchedData = filteredData.filter(item => {
+    let charArr = item.searchContent.split(" ");
+    charArr = charArr.map(ch => ch.toLowerCase());
+    return charArr.join(" ").includes(searchText.toLowerCase());
+  })
+  
+  searchedData = searchText.length?searchedData:filteredData
+
+    // .filter(item => {
+    //   item.searchContent.split(" ").includes(searchText.toLowerCase())
+    // })
 
   const renderRightActions = (progress, dragX, itemId) => (
     <TouchableOpacity
-      onPress={() => handleDelete(itemId)}
+      onPress={() => handleDeleteSession(itemId)}
       style={styles.deleteButton}
     >
       {/* <MaterialIcons name="delete" size={24} color="#fff" /> */}
@@ -188,20 +235,26 @@ const HistoryScreen = ({navigation}) => {
     </TouchableOpacity>
   );
 
-  const renderItem = ({ item }) => (
-    <Swipeable renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.id)}>
+  const renderContent = (item) => (
+    <TouchableOpacity onPress={() => {
+      if(item.type != "answer"){
+        updateStore({ session: {id: item.id}})
+        navigation.navigate("MessageScreen")
+      }
+    }}>
       <View style={styles.itemContainer}>
         <View style={{ flex: 1 }}>
           {(item?.type != "answer") && <Text style={styles.itemTitle}>{item.title}</Text>}
           <Text style={(item?.type != "answer")?{...styles.itemSnippet}:{...styles.itemSnippet, paddingVertical:0}}>{item.snippet}</Text>
           <View style={styles.metaRow}>
-            <MaterialCommunityIcons name="reply" size={16} color="#966F44" />
-            <Text style={styles.metaText}>{item.replies} replies</Text>
-            <MaterialIcons name="access-time" size={16} color="#966F44" style={{ marginLeft: 10 }} />
+            {(item?.type != "answer") && <MaterialCommunityIcons name="reply" size={16} color="#966F44" />}
+            {(item?.type != "answer") && <Text style={{...styles.metaText, marginRight:10}}>{item.replies} replies</Text>}
+            <MaterialIcons name="access-time" size={16} color="#966F44"  />
             <Text style={styles.metaText}>{item.timeAgo}</Text>
           </View>
         </View>
-        {(item?.type==="answer")? <Image
+        {(item?.type==="answer")? <TouchableOpacity onPress={()=>handleBookmark(item.id)}>
+          <Image
           source={bookmark1}
           style={{
             height:20,
@@ -209,7 +262,8 @@ const HistoryScreen = ({navigation}) => {
             objectFit:'contain',
             marginTop: (item?.type != "answer")?0:5
           }}
-        /> : <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+        />
+        </TouchableOpacity> : <TouchableOpacity onPress={() => handleMakeFavorite(item)}>
           <MaterialIcons
             name={item.isFavorite ? 'star' : 'star-border'}
             size={24}
@@ -217,8 +271,14 @@ const HistoryScreen = ({navigation}) => {
           />
         </TouchableOpacity>}
       </View>
+    </TouchableOpacity>
+  )
+
+  const renderItem = ({ item }) => {
+    return item.type == "answer"?renderContent(item):<Swipeable renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.id)}>
+        {renderContent(item)}
     </Swipeable>
-  );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -239,7 +299,7 @@ const HistoryScreen = ({navigation}) => {
           style={styles.searchInput}
           value={searchText}
           placeholderTextColor={"#607373"}
-          onChangeText={setSearchText}
+          onChangeText={e => handleSearch(e)}
         />
       </View>
 
@@ -251,7 +311,7 @@ const HistoryScreen = ({navigation}) => {
               styles.filterButton,
               selectedFilter === filter.txt && styles.activeFilterButton,
             ]}
-            onPress={() => setSelectedFilter(filter.txt)}
+            onPress={() => handleFilter(filter.txt)}
           >
             
             {filter?.img?<Image
@@ -271,9 +331,10 @@ const HistoryScreen = ({navigation}) => {
       </View>
 
       <FlatList
-        data={filteredData}
+        data={searchedData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
         ListEmptyComponent={() => {
           if(selectedFilter == 'All chats'){
