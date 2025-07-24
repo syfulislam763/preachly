@@ -9,7 +9,7 @@ import CommonButton from '../../components/CommonButton';
 import Divider from '../../components/Divider';
 import { getStyles } from './authStyles/AuthHomeStyle';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
-import { googleSignIn, googleSignOut, googleLogin} from './AuthAPI';
+// import { googleSignIn, googleSignOut, googleLogin} from './AuthAPI';
 import { useNavigation } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
@@ -111,7 +111,8 @@ export default function AuthHome({}) {
               <Divider text={"or"}/>
             </View>
 
-            <View style={styles.googleAppleAuth}>
+            <View style={styles.googleAppleAuth}
+            >
                 <Pressable>
                   <Image 
                     source={require("../../../assets/img/appleAuth.png")}
@@ -120,7 +121,7 @@ export default function AuthHome({}) {
                   />
                 </Pressable>
                 <Pressable 
-                  onPress={handleGoogleLogin}
+                  //onPress={handleGoogleLogin}
                 >
                   <Image 
                     source={require("../../../assets/img/googleAuth.png")}

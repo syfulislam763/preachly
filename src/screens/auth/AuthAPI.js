@@ -1,58 +1,58 @@
 import axios from "axios";
 import { ROOT_URL, SIGNUP, VERIFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN , PROFILE_UPDATE, VERIFY_CHANGE_EMAIL} from "../../context/Paths";
 import Toast from "react-native-toast-message";
-import {
-  GoogleSignin,
-  isErrorWithCode,
-  isSuccessResponse,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+// import {
+//   GoogleSignin,
+//   isErrorWithCode,
+//   isSuccessResponse,
+//   statusCodes,
+// } from '@react-native-google-signin/google-signin';
 import api from "../../context/api";
 
-GoogleSignin.configure({
+// GoogleSignin.configure({
 
-    webClientId:"311211597732-drk14eajg29l9rhld1hkr0g1m7dnr4p8.apps.googleusercontent.com",
-    scopes: ['profile', 'email'],
-    offlineAccess: true,
-});
+//     webClientId:"311211597732-drk14eajg29l9rhld1hkr0g1m7dnr4p8.apps.googleusercontent.com",
+//     scopes: ['profile', 'email'],
+//     offlineAccess: true,
+// });
 
-export const googleSignIn = async (cb) => {
-    try {
-        await GoogleSignin.hasPlayServices();
-        const response = await GoogleSignin.signIn();
-        if (isSuccessResponse(response)) {
-            cb(response.data, true)
-        } else {
-            cb(response.data, false)
-        }
-    } catch (error) {
-        cb(error, false)
-        if (isErrorWithCode(error)) {
-            switch (error.code) {
-                case statusCodes.IN_PROGRESS:
-                console.log(error.message, "a")
-                break;
-                case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                console.log(error.message, "b")
-                break;
-                default:
-                console.log(error, "c")
-                console.log(error.code, error.message, error.name, error.cause)
-            }
-        } else {
-            console.log("something else")
-        }
-    }
-};
+// export const googleSignIn = async (cb) => {
+//     try {
+//         await GoogleSignin.hasPlayServices();
+//         const response = await GoogleSignin.signIn();
+//         if (isSuccessResponse(response)) {
+//             cb(response.data, true)
+//         } else {
+//             cb(response.data, false)
+//         }
+//     } catch (error) {
+//         cb(error, false)
+//         if (isErrorWithCode(error)) {
+//             switch (error.code) {
+//                 case statusCodes.IN_PROGRESS:
+//                 console.log(error.message, "a")
+//                 break;
+//                 case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+//                 console.log(error.message, "b")
+//                 break;
+//                 default:
+//                 console.log(error, "c")
+//                 console.log(error.code, error.message, error.name, error.cause)
+//             }
+//         } else {
+//             console.log("something else")
+//         }
+//     }
+// };
 
-export const googleSignOut = async (cb) => {
-    try {
-        await GoogleSignin.signOut();
-        cb(true)
-    } catch (error) {
-        cb(false)
-    }
-};
+// export const googleSignOut = async (cb) => {
+//     try {
+//         await GoogleSignin.signOut();
+//         cb(true)
+//     } catch (error) {
+//         cb(false)
+//     }
+// };
 
 
 export const handleToast = (type, msg,duration=1000, goTo, show=()=>{}) => {
