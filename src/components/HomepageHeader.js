@@ -1,15 +1,11 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
+import { useAuth } from '../context/AuthContext';
 
 
-
-
-const HomepageHeader = () => {
-
-
-
-
+const HomepageHeader = ({userInfo}) => {
+  const {store} = useAuth();
 
   return (
     <View style={styles.container}>
@@ -17,13 +13,13 @@ const HomepageHeader = () => {
       <View style={styles.leftSection}>
         <View>
           <Image
-            source={require('../../assets/img/avatar.png')} 
+            source={{uri:userInfo?.profile_picture}} 
             style={styles.avatar}
           />
         </View>
         <View>
           <Text style={styles.welcome}>Welcome back,</Text>
-          <Text style={styles.welcome}>Alice!</Text>
+          <Text style={styles.welcome}>{userInfo?.name}</Text>
         </View>
       </View>
 

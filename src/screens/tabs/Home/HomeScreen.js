@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ImageBackground, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ScrollView, ImageBackground, StyleSheet, Image, ActivityIndicator, Pressable } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HomepageHeader from '../../../components/HomepageHeader';
@@ -8,16 +8,22 @@ import Indicator from '../../../components/Indicator';
 import { useAuth } from '../../../context/AuthContext';
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout';
-import { useRoute } from '@react-navigation/native';  
+import { useFocusEffect, useRoute } from '@react-navigation/native';  
 import { get_onboarding_user_data } from '../../personalization/PersonalizationAPIs';
 import { get_profile_info } from '../../auth/AuthAPI';
+import Share from 'react-native-share';
+import { useNavigation } from '@react-navigation/native';
+import { get_random_verses } from '../TabsAPI';
 
 export default function HomeScreen() {
-
+  useLogout()
   const [loading,setLoading] = useState(false);
 
-  const {store, updateStore} = useAuth()
-  useLogout()
+  const {store, updateStore} = useAuth();
+  const [randomVerse, setRandomVerse] = useState({});
+  const [profileInfo, setProfileInfo] = useState({})
+  const navigation = useNavigation();
+  
   const {
     denominations,
     bible_versions,
@@ -25,6 +31,36 @@ export default function HomeScreen() {
     faith_journey_reasons,
     bible_familiarity_data
   } = store;
+
+  useFocusEffect(
+    useCallback(() => {
+      get_random_verses((res, success) =>{
+        if(success){
+          setRandomVerse(res?.data.data);
+          //updateStore({random_verse:res?.data?.data})
+        }
+      })
+    }, [])
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log("hdhf")
+      setProfileInfo(store?.profileSettingData?.userInfo)
+    }, [store])
+  )
+
+  const handleShare = async (message) =>{
+    const options = {
+      message: message
+    }
+    try{
+      await Share.open(options)
+    }catch(e){
+      console.log("share error ", e);
+    }
+  }
+
 
   useEffect(() => {
        
@@ -72,7 +108,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff', paddingHorizontal:20}}>
-        <HomepageHeader/>
+        <HomepageHeader userInfo={profileInfo}/>
         <ScrollView showsVerticalScrollIndicator={false}>
 
           <ImageBackground
@@ -80,11 +116,11 @@ export default function HomeScreen() {
             style={styles.bgImageContainer}
           >
             <View style={styles.bgImageWrapper}>
-              <Text style={styles.bgImageCaption}>(1 Peter 3:15)</Text>
+              <Text style={styles.bgImageCaption}>({randomVerse?.verse_reference})</Text>
               <Text 
                 style={styles.bgImageCaptionTitle}
-              >“Always be prepared to give an answerto everyone who asks you to give the reason for the hope that you have”</Text>
-              <View style={styles.bgImageFooter}>
+              >“{randomVerse?.verse_text}”</Text>
+              <Pressable onPress={()=>handleShare(randomVerse?.verse_text)} style={styles.bgImageFooter}>
                 <Image 
                   source={require("../../../../assets/img/24-share.png")}
                   style={styles.bgImageFooterIcon}
@@ -92,7 +128,7 @@ export default function HomeScreen() {
                 <Text
                   style={styles.bgImageFooterText}
                 >Share This</Text>
-              </View>
+              </Pressable>
             </View>
           </ImageBackground>
 
@@ -114,9 +150,15 @@ export default function HomeScreen() {
               }}>
                 <Text style={styles.questionTitle1}>Have a question on your heart?</Text>
                 <Text style={styles.questionTitle2}>Ask & Get Inspired Answers Now</Text>
-                <Text 
-                  style={styles.questionTitle3}
-                >Give it a try</Text>
+                <Pressable 
+                  onPress={()=>{
+                    navigation.navigate("MessageScreen")
+                  }}
+                >
+                  <Text 
+                    style={styles.questionTitle3}
+                  >Give it a try</Text>
+                </Pressable>
               </View>
           </View>
             

@@ -1,7 +1,7 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "http://top-q-bargain-marine.trycloudflare.com";
-export const WEBSOCKET_URL = "ws://top-q-bargain-marine.trycloudflare.com";
+export const BASE_URL = "https://including-losses-pamela-solaris.trycloudflare.com";
+export const WEBSOCKET_URL = "ws://including-losses-pamela-solaris.trycloudflare.com";
 
 export const URL_CATEGORY = "/api"
 export const ROOT_URL = BASE_URL+URL_CATEGORY
@@ -43,3 +43,6 @@ export const BIBLE_BIBLE_VERSIONS = "/bible/bible-versions/"
 
 //Chat
 export const SESSION_ID = "/chat/sessions/create/"
+
+//Home page
+export const RANDOM_VERSE = "/homepage/daily-verse/";

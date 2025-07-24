@@ -63,8 +63,10 @@ export default function MessageScreen({ navigation }) {
       setLoading(false);
     })
   }
+  //console.log("***", JSON.stringify(store, null, 2))
 
   useEffect(() =>{
+    
     if(store?.session?.id){
       setLoading(true);
       
@@ -102,7 +104,7 @@ export default function MessageScreen({ navigation }) {
     }else{
       create_session();
     }
-    console.log("he")
+
   },[]);
   const predefinedMessage = (message)=>{
     setMessage(message);
@@ -245,7 +247,7 @@ export default function MessageScreen({ navigation }) {
   // Auto-scroll when new message is added
   useEffect(() => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
+     // flatListRef.current.scrollToEnd({ animated: true });
     }
 
   }, [messages]);
@@ -336,8 +338,10 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+        <View 
+        style={{ flex: 1 }}
+        >
           <FlatList
             ref={flatListRef}
             data={messages}
@@ -441,7 +445,7 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
               </Pressable>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
 }
 

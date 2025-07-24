@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "../../context/api";
-import { BIBLE_BIBLE_VERSIONS, SESSION_ID } from "../../context/Paths";
+import { BIBLE_BIBLE_VERSIONS, SESSION_ID, RANDOM_VERSE } from "../../context/Paths";
 
 
 export const get_bible_versions = async (cb) => {
@@ -135,3 +135,11 @@ export const get_bookmarked_message = async (cb) =>{
     }
 }
 
+export const get_random_verses = async (cb) => {
+    try{
+        const res = await api.get(RANDOM_VERSE);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
