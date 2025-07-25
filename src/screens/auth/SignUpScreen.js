@@ -42,8 +42,9 @@ export default function SignInScreen() {
   const route = useRoute()
 
   useEffect(() => {
-    if(route.params){
-      setEmail(route.params.email)
+    if(route.params.type == "reset"){
+      setEmail(route.params.email);
+      navigation.setOptions({title:"Reset password"})
     }
   }, [route.params])
   const isValidEmail = {
@@ -54,12 +55,13 @@ export default function SignInScreen() {
       const payload = {
         email: email
       }
-      if(route.params){
+      if(route.params.type == "reset"){
         setIsLoading(true)
         const resent_payload = {
           "email": route.params.email,
           "purpose": "verification"
         }
+        
         resentOTP(resent_payload, (res, isSuccess)=>{
           if(isSuccess){
             setIsLoading(false)

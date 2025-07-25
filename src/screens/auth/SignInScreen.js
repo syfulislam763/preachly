@@ -168,7 +168,10 @@ export default function SignInScreen () {
               style={password.length>0?{...styles.input, ...styles.activeInput}:styles.input}
               placeholderColor='#607373'
             />
-            <Text style={styles.forgotPass}>Forgot password?</Text>
+            <Pressable onPress={() => navigation.navigate("SignUp", {type:"reset", email: email})}>
+              <Text style={styles.forgotPass}>Forgot password?</Text>
+            </Pressable>
+            
           </View>
         </ScrollView>
 
