@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     color: '#607373',
     fontSize: 18,
     fontFamily:'NunitoSemiBold',
+    width:"90%"
   },
   icon: {
     fontSize: 16,

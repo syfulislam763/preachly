@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Dimensions, ActivityIndicator} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WeeklyCalendar from '../../../components/WeeklyCalendar';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { getStyles } from './ProfileScreenStyle';
@@ -24,7 +24,19 @@ const ProfileScreen = () => {
   const {isSmall, isMedium,isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const [loading, setLoading] = useState(false)
-  const [uri, setUri] = useState(null)
+  const [uri, setUri] = useState(null);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor("transparent");
+      return () => {
+        StatusBar.setTranslucent(false);
+        StatusBar.setBackgroundColor("#ffffff");
+      }
+    }, [])
+  )
 
   return (
     <View style={{flex:1,backgroundColor:'#fff'}}>
@@ -34,7 +46,7 @@ const ProfileScreen = () => {
             style={styles.bgImage}
           />
 
-          <View style={styles.profileContainer}>
+          <View style={{...styles.profileContainer}}>
             <View style={{
                 width:110,
                 height:110,
@@ -43,7 +55,7 @@ const ProfileScreen = () => {
                 justifyContent:'center',
                 backgroundColor:'green',
                 objectFit:'contain',
-                overflow:'hidden'
+                overflow:'hidden',
             }}>
                 <Image 
                     source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/userProfile.png")}
@@ -82,7 +94,7 @@ const ProfileScreen = () => {
 
       </View>
 
-      <View style={styles.semiContainer}>
+      <View style={{...styles.semiContainer, marginTop: hp("12%")}}>
         <WeeklyCalendar/>
 
         <View style={styles.caption}>

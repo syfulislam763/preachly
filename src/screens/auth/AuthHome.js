@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, Pressable, ActivityIndicator} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, Pressable, ActivityIndicator, StatusBar} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import {
   SafeAreaView
@@ -10,7 +10,7 @@ import Divider from '../../components/Divider';
 import { getStyles } from './authStyles/AuthHomeStyle';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 import { googleSignIn, googleSignOut, googleLogin} from './AuthAPI';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
 
@@ -23,6 +23,17 @@ export default function AuthHome({}) {
   const [loading, setLoading] = useState(false)
   const [isLoginInfo, setIsLoginInfo] = useState(false)
   const [data, setData] = useState({})
+
+  useFocusEffect(
+    useCallback(() => {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor("transparent");
+      return () => {
+        StatusBar.setTranslucent(false);
+        StatusBar.setBackgroundColor("#ffffff");
+      }
+    }, [])
+  );
 
   const handleGoogleLogin = () => {
     // googleSignOut(success => {
@@ -74,7 +85,7 @@ export default function AuthHome({}) {
 
   return (
     <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
-        
+        {/* <StatusBar barStyle="dark-content" /> */}
 
          <ImageBackground
             source={require('../../../assets/img/bg_img2.png')}

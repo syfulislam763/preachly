@@ -1,7 +1,7 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "https://including-losses-pamela-solaris.trycloudflare.com";
-export const WEBSOCKET_URL = "ws://including-losses-pamela-solaris.trycloudflare.com";
+export const BASE_URL = "https://defence-tag-worlds-marked.trycloudflare.com";
+export const WEBSOCKET_URL = "ws://defence-tag-worlds-marked.trycloudflare.com";
 
 export const URL_CATEGORY = "/api"
 export const ROOT_URL = BASE_URL+URL_CATEGORY

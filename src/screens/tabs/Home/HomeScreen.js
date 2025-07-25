@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   bgImageContainer:{
-    height:150,
+    height:"auto",
     width:"100%",
     objectFit: 'contain',
     borderRadius: 20,

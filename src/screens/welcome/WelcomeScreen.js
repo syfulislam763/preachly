@@ -16,8 +16,6 @@ export default function WelcomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff', justifyContent:'space-between'}}>
-     
-      
       {/* <ImageSlider /> */}
       <CustomCarousel/>
 

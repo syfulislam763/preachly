@@ -11,7 +11,8 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  LayoutAnimation
+  LayoutAnimation,
+  StatusBar
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -112,8 +113,7 @@ export default function SignInScreen () {
         })
       }else{
         setLoading(false)
-        console.log(res.response)
-        handleToast("error", "Something went wrong, try again!", 3000, () => {})
+        handleToast("error", res.message, 3000, () => {})
       }
     })
   }
@@ -144,6 +144,7 @@ export default function SignInScreen () {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+    
       <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
         <ScrollView 
           contentContainerStyle={styles.scrollContent}

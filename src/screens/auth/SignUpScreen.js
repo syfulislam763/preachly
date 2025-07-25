@@ -11,7 +11,8 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  LayoutAnimation
+  LayoutAnimation,
+  StatusBar
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import CommonInput from '../../components/CommonInput';
@@ -30,7 +31,7 @@ import Indicator from '../../components/Indicator';
 import Toast from 'react-native-toast-message';
 import { useNavigation, useRoute, } from '@react-navigation/native';
 import { handleToast } from './AuthAPI';
-import { ro } from 'date-fns/locale';
+
 
 export default function SignInScreen() {
   const { login } = useAuth();
@@ -128,6 +129,7 @@ export default function SignInScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+    
       <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
         <ScrollView 
           contentContainerStyle={styles.scrollContent}

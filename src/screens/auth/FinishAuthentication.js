@@ -75,7 +75,17 @@ const FinishAuthentication = () => {
       </View>
         <Image
             source={require('../../../assets/img/Preachly.png')}
-            style={styles.bg_image}
+            style={{
+                height:'100%', 
+                width:'100%', 
+                objectFit:'contain',
+                position:'absolute',
+                top: (height*17)/100,
+                left:0,
+                right:0,
+                bottom:0,
+                zIndex: 1
+            }}
         />
 
         <View style={styles.btnContainer}>
