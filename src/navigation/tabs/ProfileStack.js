@@ -8,7 +8,6 @@ import BackButton from '../../components/BackButton';
 import CurrentGoals from '../../screens/tabs/Profile/CurrentGoals'
 import { useNavigation } from '@react-navigation/native';
 import WeeklyCheckIn from '../../screens/tabs/Profile/WeeklyCheckIn'
-import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_'
 
 import RegularCheckIn from '../../screens/tabs/Profile/RegularCheckIn'
 import PorfileFaith from '../../screens/tabs/Profile/ProfileFaith'
@@ -20,6 +19,7 @@ import ProfileSubscription from '../../screens/tabs/Profile/ProfileSubscription'
 import AboutApp from '../../screens/tabs/Profile/AboutApp'
 import DatePickerButton from '../../screens/tabs/Profile/PersonalInfoUtils/DatePickerButton';
 import ConfirmationCode from '../../screens/auth/ConfirmationCode';
+import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_';
 
 const Stack = createNativeStackNavigator();
 
@@ -200,6 +200,24 @@ export default function ProfileStack() {
         },
         headerLeft: () => <BackButton navigation={navigation}/>
       })} name="WeeklyCheckIn" component={WeeklyCheckIn} />
+      
+      <Stack.Screen options={({navigation}) => ({
+        title: 'Weekly Check-In',
+        headerTitleAlign: "center",
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: 'NunitoBold',
+          color: '#0b172A',
+          fontSize: 18
+        },
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+          backgroundColor: '#fff',
+        },
+        headerLeft: () => <BackButton navigation={navigation}/>
+      })} name="WeeklyCheckIn_" component={WeeklyCheckIn_} />
 
 
       <Stack.Screen 
@@ -221,6 +239,8 @@ export default function ProfileStack() {
       })}
       
       name="RegularCheckIn" component={RegularCheckIn} />
+
+      
 
 
       <Stack.Screen 

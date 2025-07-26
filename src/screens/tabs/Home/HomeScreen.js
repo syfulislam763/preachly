@@ -56,6 +56,7 @@ export default function HomeScreen() {
     }
     try{
       await Share.open(options)
+      console.log("df")
     }catch(e){
       console.log("share error ", e);
     }

@@ -5,7 +5,7 @@ import CommonButton from '../../../components/CommonButton';
 import { deepGreen, primaryText } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
 
-const Feedback = ({visible, onClose}) => {
+const Feedback = ({visible, onClose, feedback, setFeedback}) => {
 
     const {navigation} = useNavigation()
 
@@ -51,7 +51,7 @@ const Feedback = ({visible, onClose}) => {
                     route={""}
                     txtColor={primaryText}
                     bold='bold'
-                    handler={() => {}}
+                    handler={() => setFeedback("like")}
                     opacity={0.7}
                 />
             </View>

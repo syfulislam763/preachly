@@ -5,7 +5,7 @@ import CommonButton from '../../../components/CommonButton';
 import { deepGreen, primaryText } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
 
-const RatingMessage = ({visible, onClose}) => {
+const RatingMessage = ({visible, onClose, rating, setRatting}) => {
 
     const {navigation} = useNavigation()
 
@@ -67,7 +67,7 @@ const RatingMessage = ({visible, onClose}) => {
                     route={""}
                     txtColor={primaryText}
                     bold='bold'
-                    handler={() => {}}
+                    handler={() => setRatting(2)}
                     opacity={0.7}
                 />
             </View>

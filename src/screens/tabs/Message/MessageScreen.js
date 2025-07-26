@@ -31,11 +31,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Share from 'react-native-share'
 import useLogout from '../../../hooks/useLogout';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
 // import { TextInput } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import { setIsAudioActiveAsync } from 'expo-audio';
 
-export default function MessageScreen({ navigation }) {
+export default function MessageScreen() {
   useLogout();
   const flatListRef = useRef(null);
+  const [isFeedback, setIsFeedback] = useState(false);
+  const [isRating, setIsRating] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(0)
   ///
   const {store, updateStore} = useAuth();
 
@@ -43,8 +50,9 @@ export default function MessageScreen({ navigation }) {
   const [message, setMessage] = useState("")
   const [prevMsg, setPrevMsg] = useState("")
   const [session, setSession] = useState({});
+  const [isNewSession, setIsNewSession] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const navigation = useNavigation();
 
   const create_session = () =>{
     setLoading(true);
@@ -54,6 +62,7 @@ export default function MessageScreen({ navigation }) {
         setMessage("");
         setMessages([])
         setPrevMsg("");
+        setIsNewSession(true)
         updateStore({ session: res?.data})
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
@@ -92,6 +101,7 @@ export default function MessageScreen({ navigation }) {
           setMessages(msgs);
           setSession(store?.session);
           setLoading(false);
+          setIsNewSession(false);
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
@@ -106,9 +116,7 @@ export default function MessageScreen({ navigation }) {
     }
 
   },[]);
-  const predefinedMessage = (message)=>{
-    setMessage(message);
-  }
+  
   const handleCopy = async (message) =>{
     await Clipboard.setStringAsync(message);
     console.log("copy...");
@@ -207,6 +215,30 @@ export default function MessageScreen({ navigation }) {
 
   }, [messages, session]);
 
+  const handleSendPredefinedMessage = (message) => {
+    const payload = {
+      message: message,
+      session_id: session.id,
+      type: "message"
+    }
+    console.log(payload)
+    if(ws.current && message.trim()){
+      ws.current.send(JSON.stringify(payload));
+      const res = {
+        id: new Date().getTime(),
+        message_id: "",
+        type: 'user',
+        verseLink: "",
+        message: message
+      }
+      setMessages(prev => [...prev, res]);
+      setPrevMsg(message);
+      setMessage("")
+    }else{
+      console.log("problem..");
+    }
+  }
+
   const sendMessage = () =>{
     const payload = {
       message: message,
@@ -261,7 +293,16 @@ export default function MessageScreen({ navigation }) {
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
       <ReusableNavigation
-        leftComponent={() => <BackButton navigation={navigation} />}
+        leftComponent={() => <BackButton navigation={navigation} 
+            cb={() => {
+              if(isNewSession){
+                setIsFeedback(true);
+              }else{
+                navigation.goBack();
+              }
+              
+            }}
+         />}
         middleComponent={() => (
           <View style={{ alignItems: 'center' }}>
             <Image
@@ -298,16 +339,9 @@ export default function MessageScreen({ navigation }) {
             </Pressable>
           </View>
         )}
-        backgroundStyle={{ backgroundColor: '#fff' }}
+        backgroundStyle={{ backgroundColor: '#fff',height: 65 }}
       />
-      {/* <Feedback
-        visible={true}
-        onClose={() => {}}
-      /> */}
-      {/* <RatingMessage
-        visible={true}
-        onClose={() => {}}
-      /> */}
+     
       {/* <LostConnection/> */}
 
       <MessageWrapper 
@@ -315,6 +349,7 @@ export default function MessageScreen({ navigation }) {
         flatListRef={flatListRef}
         handleSendMessage={handleSendMessage}
         onChange={(text) => setMessage(text)}
+        onPredefinedMsg={handleSendPredefinedMessage}
         message={message}
         methods = {{
           handleBookmark,
@@ -323,6 +358,31 @@ export default function MessageScreen({ navigation }) {
           handleShare
         }}
       />
+
+      {isRating && <RatingMessage 
+        visible={isRating} 
+        onClose={() => {
+          setIsRating(false)
+          
+        }}
+
+        rating={rating}
+        setRatting={(res) =>{
+           setRating(res)
+          navigation.goBack();
+        }}
+      />}
+
+      {isFeedback && <Feedback 
+        visible={isFeedback} 
+        onClose={() => setIsFeedback(false)}
+        feedback={feedback}
+        setFeedback={res => {
+          setFeedback(res)
+          setIsRating(true)
+          setIsFeedback(false);
+        }}
+      />}
       
       {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
         <ActivityIndicator size={"large"}/>
@@ -332,11 +392,11 @@ export default function MessageScreen({ navigation }) {
 }
 
 
-const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, message, methods}) => {
+const MessageWrapper = ({flatListRef, messages,onChange, onPredefinedMsg, handleSendMessage, message, methods}) => {
   return <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 30}
     >
       {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <View 
@@ -360,7 +420,13 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
             contentContainerStyle={{
               paddingTop: 15,
               paddingHorizontal: 12,
-              paddingBottom: 100, // leave space for input
+              paddingBottom: 20, // leave space for input
+            }}
+            // ListFooterComponent={() => {
+            //   return message?null:<DummyQuestion onChange={onPredefinedMsg}/>
+            // }}
+            ListEmptyComponent={() => {
+              return <DummyQuestion onChange={onPredefinedMsg}/>
             }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
@@ -370,47 +436,7 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
             
           />
 
-          {/* Pass handler to ChatInput for sending */}
-          {/* <ChatInput onSendMessage={handleSendMessage} /> */}
-          {messages.length<=0 && <View style={{
-            // height: 200,
-            width:"100%",
-            backgroundColor:'#fff',
-            padding:20,
-            alignItems: 'center',
-            // shadowColor: '#000',
-            // shadowOffset: { width: 0, height: 3 },
-            // shadowOpacity: 1,
-            // elevation: 5, 
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10
-          }}>
-            <Text style={{
-              color:"#0B172A",
-              fontFamily:'NunitoBold',
-              fontSize: 18,
-              paddingVertical: 20,
-            }}>What do you want to ask?</Text>
-            <View style={{
-              
-            }}>
-              <Pressable onPress={()=>onChange("Why does God allow suffering and evil in the world?")}>
-                <Text style={styles.commonQuestion}>Why does God allow suffering and evil in the world?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange("How can we trust the Bible when it’s written by humans?")}>
-                <Text style={styles.commonQuestion}>How can we trust the Bible when it’s written by humans?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange("How can Jesus be both fully God and fully man?")}>
-                <Text style={styles.commonQuestion}>How can Jesus be both fully God and fully man?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange(`Can’t people be good without believing in God?`)}>
-                <Text style={styles.commonQuestion}>Can’t people be good without believing in God?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange(`How can I trust the church when it’s full of scandalsand corruption?`)}>
-                <Text style={styles.commonQuestion}>How can I trust the church when it’s full of scandalsand corruption?</Text>
-              </Pressable>
-            </View>
-          </View>}
+          
           <View style={styles.inputContainer}>
               {/* <Image
                 source={require("../../../../assets/img/24-addfile.png")}
@@ -447,6 +473,50 @@ const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, mess
         </View>
       {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
+}
+
+
+const DummyQuestion = ({onChange}) => {
+  return <View style={{
+    // height: 200,
+    marginTop: "40%",
+    width:"100%",
+    backgroundColor:'#fff',
+    padding:20,
+    alignItems: 'center',
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 3 },
+    // shadowOpacity: 1,
+    // elevation: 5, 
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10
+  }}>
+    <Text style={{
+      color:"#0B172A",
+      fontFamily:'NunitoBold',
+      fontSize: 18,
+      paddingVertical: 20,
+    }}>What do you want to ask?</Text>
+    <View style={{
+      
+    }}>
+      <Pressable onPress={()=>onChange("Why does God allow suffering and evil in the world?")}>
+        <Text style={styles.commonQuestion}>Why does God allow suffering and evil in the world?</Text>
+      </Pressable>
+      <Pressable onPress={() => onChange("How can we trust the Bible when it’s written by humans?")}>
+        <Text style={styles.commonQuestion}>How can we trust the Bible when it’s written by humans?</Text>
+      </Pressable>
+      <Pressable onPress={() => onChange("How can Jesus be both fully God and fully man?")}>
+        <Text style={styles.commonQuestion}>How can Jesus be both fully God and fully man?</Text>
+      </Pressable>
+      <Pressable onPress={() => onChange(`Can’t people be good without believing in God?`)}>
+        <Text style={styles.commonQuestion}>Can’t people be good without believing in God?</Text>
+      </Pressable>
+      <Pressable onPress={() => onChange(`How can I trust the church when it’s full of scandalsand corruption?`)}>
+        <Text style={styles.commonQuestion}>How can I trust the church when it’s full of scandalsand corruption?</Text>
+      </Pressable>
+    </View>
+  </View>
 }
 
 

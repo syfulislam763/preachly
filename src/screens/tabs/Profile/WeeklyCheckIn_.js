@@ -1,48 +1,70 @@
-import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { useState } from 'react'
+import {View, Text, StyleSheet, Image, FlatList, ActivityIndicator} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Indicator from '../../../components/Indicator';
+import { get_week_details_by_id } from '../TabsAPI';
+import { useRoute } from '@react-navigation/native';
+import { set } from 'date-fns';
+
 
 const WeeklyCheckIn_ = () => {
+
+    const [loading, setLoading] = useState(false);
+    const [questions, setQuestions] = useState([]);
+    const route = useRoute();
+
+    const handleGetDetails = () =>{
+        setLoading(true);
+        get_week_details_by_id(route.params.week_number, (res, success) => {
+            setLoading(false);
+            if(success){
+                setQuestions(res.data.responses);
+            }else{
+                console.log(res);
+            }
+        })
+    }
+
+
+    useState(() =>{
+        handleGetDetails()
+    }, [])
+
+
+    const renderItem = ({item}) => {
+        return <View style={styles.cardWrapper}>
+            <View style={styles.cardContainer}>
+                <View style={styles.cardSubContainer1}>
+                    <Text style={styles.number}>{item.question.order}.</Text>
+                </View>
+                <View style={styles.cardSubContainer2}>
+                    <Text style={styles.title}>{item.question.text}</Text>
+                    <Text style={styles.text}>Your Answer: <Text style={{fontFamily:"NunitoBold"}}>{item.selected_option.text}</Text></Text>
+                </View>
+            </View>
+        </View>
+    }
+
+
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
-        <View style={styles.cardWrapper}>
-            <View style={styles.cardContainer}>
-                <View style={styles.cardSubContainer1}>
-                    <Text style={styles.number}>1.</Text>
-                </View>
-                <View style={styles.cardSubContainer2}>
-                    <Text style={styles.title}>This week, how confident did you feel sharing your faith with others?</Text>
-                    <Text style={styles.text}>Your Answer: <Text style={{fontFamily:"NunitoBold"}}>Growing in bold ness</Text></Text>
-                </View>
-            </View>
-        </View>
 
 
 
-        <View style={styles.cardWrapper}>
-            <View style={styles.cardContainer}>
-                <View style={styles.cardSubContainer1}>
-                    <Text style={styles.number}>2.</Text>
-                </View>
-                <View style={styles.cardSubContainer2}>
-                    <Text style={styles.title}>This week, how confident did you feel sharing your faith with others?</Text>
-                    <Text style={styles.text}>Your Answer: <Text style={{fontFamily:"NunitoBold"}}>Growing in bold ness</Text></Text>
-                </View>
-            </View>
-        </View>
+        <FlatList
+            data={questions} 
+            keyExtractor={item => item.answered_at}
+            showsVerticalScrollIndicator={false}
+            renderItem={renderItem}
+
+        />
 
 
-        <View style={styles.cardWrapper}>
-            <View style={styles.cardContainer}>
-                <View style={styles.cardSubContainer1}>
-                    <Text style={styles.number}>3.</Text>
-                </View>
-                <View style={styles.cardSubContainer2}>
-                    <Text style={styles.title}>This week, how confident did you feel sharing your faith with others?</Text>
-                    <Text style={styles.text}>Your Answer: <Text style={{fontFamily:"NunitoBold"}}>Growing in bold ness</Text></Text>
-                </View>
-            </View>
-        </View>
+    
+
+        {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
+            <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </SafeAreaView>
   )
 }
@@ -78,7 +100,7 @@ const styles = StyleSheet.create({
         color:'#966F44'
     },
     cardSubContainer1:{
-        width:"5%",
+        width:"10%",
     },
     cardSubContainer2:{
         width:"90%"

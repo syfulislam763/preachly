@@ -53,12 +53,12 @@ const ProfileScreen = () => {
                 borderRadius: 110/2,
                 alignItems:'center',
                 justifyContent:'center',
-                backgroundColor:'green',
+                backgroundColor:'#ffffff',
                 objectFit:'contain',
                 overflow:'hidden',
             }}>
                 <Image 
-                    source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/userProfile.png")}
+                    source={store?.profileSettingData?.userInfo?.profile_picture?{uri:store?.profileSettingData?.userInfo?.profile_picture}:require("../../../../assets/img/user1.png")}
                     style={{
                         height: 110,
                         width:110,

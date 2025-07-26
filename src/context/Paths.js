@@ -46,3 +46,8 @@ export const SESSION_ID = "/chat/sessions/create/"
 
 //Home page
 export const RANDOM_VERSE = "/homepage/daily-verse/";
+
+//Weekly Check in
+export const CHECK_IN_HISTORY = "/checkin/weekly/history/";
+export const WEEKLY_CHECK_IN_QUESTIONS = "/checkin/weekly/questions/";
+export const SAVE_CHECK_IN = "/checkin/weekly/submit/"

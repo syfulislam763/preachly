@@ -12,14 +12,14 @@ const InactiveColor = "#90B2B2"
 const ActiveColor = "#004F4A"
 
 const progressPercentage = {
-    1: 10,
-    2: 30,
-    3: 50,
-    4: 70,
-    5: 100
+    0: 10,
+    1: 30,
+    2: 50,
+    3: 70,
+    4: 100
 }
 
-const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
+const Dot = ({dotNumber=0, left, top,activeDot,group, pressEvent}) => {
     return <Pressable
                 onPress={()=>pressEvent(dotNumber)}
                 style={{
@@ -53,24 +53,24 @@ const Dot = ({dotNumber=1, left, top,activeDot,group, pressEvent}) => {
 }
   
 
-function FaithQuestionSlider({Answers, selectedOption=1, ans, setAns}) {
+function FaithQuestionSlider({Answers, selectedOption=0, ans, setAns}) {
 
     const {isSmall,isMedium, height} = useLayoutDimention()
 
     const [progress, setProgress] = useState(0)
-    const [activeDot, setActiveDot] = useState({1:false,2:false,3:false,4:false, 5:false})
+    const [activeDot, setActiveDot] = useState({0:false,1:false,2:false,3:false, 4:false})
 
-    const [group, setGroup] = useState({1:false,2:false,3:false,4:false, 5:false})
+    const [group, setGroup] = useState({0:false,1:false,2:false,3:false, 4:false})
 
     const handleActiveDots = (label)=>{
-        let temp = {1:false,2:false,3:false,4:false, 5:false}
+        let temp = {0:false,1:false,2:false,3:false, 4:false}
         temp[label] = true;
         setActiveDot({...temp})
     }
 
     const handleGroupDots = (label)=>{
-        let temp = {1:false,2:false,3:false,4:false, 5:false}
-        for(let i=1;i<=label;i++){
+        let temp = {0:false,1:false,2:false,3:false, 4:false}
+        for(let i=0;i<=label;i++){
             temp[i]=true
         }
         setGroup({...temp})
@@ -117,46 +117,46 @@ function FaithQuestionSlider({Answers, selectedOption=1, ans, setAns}) {
                     fontSize:hp("4%"),
                     textAlign:'center',
                     color:'#0B172A'
-                }}>{ans}</Text>
+                }}>{ans?.option_text}</Text>
             </View>
 
             
             <Dot
-                dotNumber={3}
+                dotNumber={2}
                 left={(window.width*46)/100}
-                top={ activeDot[3]?-15:-12}
+                top={ activeDot[2]?-15:-12}
+                pressEvent={progressHandler}
+                activeDot={activeDot}
+                group={group}
+            />
+            <Dot
+                dotNumber={0}
+                left={(window.width*4)/100}
+                top={ activeDot[0]?50:55}
                 pressEvent={progressHandler}
                 activeDot={activeDot}
                 group={group}
             />
             <Dot
                 dotNumber={1}
-                left={(window.width*4)/100}
-                top={ activeDot[1]?50:55}
+                left={(window.width*23.5)/100}
+                top={ activeDot[1]?1:6}
                 pressEvent={progressHandler}
                 activeDot={activeDot}
                 group={group}
             />
             <Dot
-                dotNumber={2}
-                left={(window.width*23.5)/100}
-                top={ activeDot[2]?1:6}
+                dotNumber={3}
+                left={ (window.width*69)/100}
+                top={ activeDot[3]?3:6}
                 pressEvent={progressHandler}
                 activeDot={activeDot}
                 group={group}
             />
             <Dot
                 dotNumber={4}
-                left={ (window.width*69)/100}
-                top={ activeDot[4]?3:6}
-                pressEvent={progressHandler}
-                activeDot={activeDot}
-                group={group}
-            />
-            <Dot
-                dotNumber={5}
                 left={(window.width*87)/100}
-                top={ activeDot[5]?49:50}
+                top={ activeDot[4]?49:50}
                 pressEvent={progressHandler}
                 activeDot={activeDot}
                 group={group}

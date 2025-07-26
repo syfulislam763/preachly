@@ -174,7 +174,8 @@ const PersonalInfo = () => {
             }
 
           }else{
-        
+            console.log('got', JSON.stringify(response, null, 2))
+            console.log(profileInfo_payload)
             setLoading(false)
           }
         })

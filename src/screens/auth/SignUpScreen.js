@@ -42,7 +42,7 @@ export default function SignInScreen() {
   const route = useRoute()
 
   useEffect(() => {
-    if(route.params.type == "reset"){
+    if(route?.params?.type == "reset"){
       setEmail(route.params.email);
       navigation.setOptions({title:"Reset password"})
     }

@@ -1,6 +1,12 @@
 import axios from "axios";
 import api from "../../context/api";
-import { BIBLE_BIBLE_VERSIONS, SESSION_ID, RANDOM_VERSE } from "../../context/Paths";
+import { BIBLE_BIBLE_VERSIONS, 
+    SESSION_ID, 
+    RANDOM_VERSE,
+    CHECK_IN_HISTORY,
+    WEEKLY_CHECK_IN_QUESTIONS,
+    SAVE_CHECK_IN
+ } from "../../context/Paths";
 
 
 export const get_bible_versions = async (cb) => {
@@ -138,6 +144,43 @@ export const get_bookmarked_message = async (cb) =>{
 export const get_random_verses = async (cb) => {
     try{
         const res = await api.get(RANDOM_VERSE);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const get_weekly_check_in_history = async (cb) => {
+    try{
+        const res = await api.get(CHECK_IN_HISTORY);
+        cb(res.data, true);
+    }catch(e){
+        cb(e,false)
+    }
+}
+
+export const get_week_details_by_id = async (week_id, cb) => {
+    const url =  `/checkin/weekly/history/${week_id}/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const get_weekly_check_in_questions = async(cb) =>{
+    try{
+        const res = await api.get(WEEKLY_CHECK_IN_QUESTIONS);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const save_weekly_check_in = async(payload, cb) => {
+    try{
+        const res = await api.post(SAVE_CHECK_IN, payload);
         cb(res.data, true);
     }catch(e){
         cb(e, false);

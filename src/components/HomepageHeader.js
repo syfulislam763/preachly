@@ -2,18 +2,25 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
 import { useAuth } from '../context/AuthContext';
-
+import EvilIcons from '@expo/vector-icons/EvilIcons';
 
 const HomepageHeader = ({userInfo}) => {
   const {store} = useAuth();
-
+  
   return (
     <View style={styles.container}>
       {/* Left: Profile Picture and Greeting */}
       <View style={styles.leftSection}>
         <View>
+          {/* {userInfo?.profile_picture?
           <Image
             source={{uri:userInfo?.profile_picture}} 
+            style={styles.avatar}
+          />:
+          <EvilIcons style={{...styles.avatar}} name="user" size={40} color="black" />
+          } */}
+          <Image
+            source={userInfo?.profile_picture?{uri:userInfo?.profile_picture}:require("../../assets/img/user1.png")} 
             style={styles.avatar}
           />
         </View>

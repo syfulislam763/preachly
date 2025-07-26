@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native'
+import {View, Text, StyleSheet, Image, Dimensions, ActivityIndicator} from 'react-native'
 import CommonButton from '../../../components/CommonButton'
 import { deepGreen, primaryText } from '../../../components/Constant'
 import { useNavigation } from '@react-navigation/native'
@@ -8,157 +8,130 @@ import ProgressBar from '../../../components/ProgressBar'
 import FaithQuestionSlider from '../../../components/FaithQuestionSlider'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
-import useLayoutDimention from '../../../hooks/useLayoutDimention'
-
-const questions = {
-    1:{
-        question: `This week, how confident did you feel sharing your faith with others?`,
-        options: {
-            1:`Not at all`,
-            2: `Hesitant`,
-            3: `Growing in boldness`,
-            4: `Mostly confident`,
-            5: `Completely confident`
-        },
-        ans: 1
-    },
-    2:{
-        question: `When conversations about faith came up, how prepared did you feel to respond? `,
-        options: {
-            1:`Not prepared at all`,
-            2: `Caught off guard`,
-            3: `Finding my footing`,
-            4: `Mostly prepared`,
-            5: `Fully prepared`
-        },
-        ans: 1
-    },
-    3:{
-        question: `How clearly did scripture speak to you this week? `,
-        options: {
-            1:`Not clear at all`,
-            2: `A bit cloudy`,
-            3: `Starting to make sense`,
-            4: `Mostly clear`,
-            5: `Crystal clear`
-        },
-        ans: 1
-    },
-    4:{
-        question: ` When reflecting on your relationship with God, how much peace did you feel? `,
-        options: {
-            1:`Restless`,
-            2: `Wrestling with it`,
-            3: `Finding moments of peace`,
-            4: `Mostly at peace`,
-            5: `Completely at peace`
-        },
-        ans: 1
-    },
-    5:{
-        question: `How often did you create space to pray, reflect, or listen for God’s voice? `,
-        options: {
-            1:`Not at all`,
-            2: `Rarely, but I want to more`,
-            3: `Somewhat consistent`,
-            4: `Often`,
-            5: `Every day`
-        },
-        ans: 1
-    },
-    6:{
-        question: `How present did God feel in your daily life this week?`,
-        options: {
-            1:`Distant`,
-            2: `There in moments`,
-            3: `Becoming more aware`,
-            4: `Mostly present`,
-            5: `Very near`
-        },
-        ans: 1
-    },
-    7:{
-        question: `How confident do you feel about the direction of your faith journey?`,
-        options: {
-            1:`Uncertain`,
-            2: `Taking small steps`,
-            3: `Finding my rhythm`,
-            4: `Mostly confident`,
-            5: `Very confident`
-        },
-        ans: 1
-    },
-    8:{
-        question: `Looking back on this week, how much growth do you see in your faith? `,
-        options: {
-            1:`None at all`,
-            2: `A little, but I want more`,
-            3: `Some noticeable growth`,
-            4: `A lot of growth`,
-            5: `Tremendous growth`
-        },
-        ans: 1
-    },
-    9:{
-        question: `. How often did you feel uplifted and encouraged in your walk with God this week?`,
-        options: {
-            1:`Not at all`,
-            2: `Needed more encouragement`,
-            3: `Had some encouraging moments`,
-            4: `Often`,
-            5: `Constantly`
-        },
-        ans: 1
-    },
-    10:{
-        question: `How motivated are you to continue deepening your faith in the coming week?`,
-        options: {
-            1:`Not at all`,
-            2: `A little spark of motivation`,
-            3: `Starting to feel inspired `,
-            4: `Mostly motivated`,
-            5: `Fully motivated`
-        },
-        ans: 1
-    },
-}
-
+import useLayoutDimention from '../../../hooks/useLayoutDimention';
+import Indicator from '../../../components/Indicator';
+import { get_weekly_check_in_questions, save_weekly_check_in } from '../TabsAPI'
 
 
 const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
 
 
-    const [allQuestions, setAllQuestions] = useState(questions)
-    const [ans, setAns] = useState("")
+    const [allQuestions, setAllQuestions] = useState([])
+    const [ans, setAns] = useState({})
     const [currentQuestion, setCurrentQuestion]=useState({
-        question: ``,
-        options: {
-            1: ``,
-            2: ``,
-            3: ``,
-            4: ``,
-            5: ``
-        },
-        ans: 1
+        "question": "",
+        "order": 1,
+        "id": 41,
+        "options": [
+            {
+            "id": 201,
+            "option_text": "Not at all",
+            "option_order": 1
+            },
+            {
+            "id": 202,
+            "option_text": "Hesitant",
+            "option_order": 2
+            },
+            {
+            "id": 203,
+            "option_text": "Growing in boldness",
+            "option_order": 3
+            },
+            {
+            "id": 204,
+            "option_text": "Mostly confident",
+            "option_order": 4
+            },
+            {
+            "id": 205,
+            "option_text": "Completely confident",
+            "option_order": 5
+            }
+        ],
+        "ans": 0,
+        "option_ans": 201
     })
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1)
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-    const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
+    const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention();
+
+    const [loading, setLoading] = useState(false);
+    const [weeklyCheckInId, setWeeklyCheckInId] = useState({});
+    const [responses, setResponses] = useState([])
+
+    const handle_all_questions = () => {
+        setLoading(true);
+        get_weekly_check_in_questions((res, success) => {
+            setLoading(false);
+            if(success){
+                let temp = res.data.questions;
+
+                temp = temp.map(item => {
+                    return {
+                        question: item.question_text,
+                        order: item.question_order,
+                        id: item.id,
+                        options: item.options.sort((a,b) => a.option_order-b.option_order),
+                        ans: 0,
+                        option_ans: item.options.sort((a,b) => a.option_order-b.option_order)[0].id
+                    }
+                });
+
+
+                setAllQuestions(temp.sort((a,b) =>  a.order - b.order));
+                setCurrentQuestion(temp[currentQuestionIndex])
+                setAns(temp[currentQuestionIndex]?.options[currentQuestionIndex])
+                setWeeklyCheckInId({weekly_check_in_id: res.data.weekly_checkin_id, week_number:res?.data.week_number})
+            }else{
+                console.log(res)
+            }
+
+        })
+    }
+
+
+    const handle_save_questions = () => {
+        const payload = {
+            weekly_checkin_id: weeklyCheckInId.weekly_check_in_id,
+            responses: responses
+        };
+
+        console.log("pay ->", JSON.stringify(payload, null, 2))
+        setLoading(true);
+        save_weekly_check_in(payload, (res, success) => {
+            setLoading(false);
+            if(success){
+                setModalVisible(false),
+                navigation.navigate("PorfileFaith")
+            }else{
+                console.log(res);
+            }
+        })
+
+
+    
+    }
 
     useEffect(()=>{
-        setAllQuestions(questions)
-        setCurrentQuestion(questions[currentQuestionIndex])
-        setAns(questions[currentQuestion]?.options[currentQuestionIndex])
+        handle_all_questions();
+        // setAllQuestions(questions)
+        // setCurrentQuestion(questions[currentQuestionIndex])
+        // setAns(questions[currentQuestion]?.options[currentQuestionIndex])
     },[])
 
 
+    // console.log("q->", JSON.stringify(currentQuestion, null, 2))
+    // console.log("q->", JSON.stringify(ans, null, 2))
+
+
     const handleNext = () =>{
-        if(currentQuestionIndex<10){
+        if(currentQuestionIndex<9){
             setCurrentQuestionIndex(currentQuestionIndex+1)
             setCurrentQuestion(allQuestions[currentQuestionIndex+1])
+            setResponses(prev => [{"question": currentQuestion.id, "selected_option": ans.id}, ...prev])
         }else{
-            setModalVisible(false),
-            navigation.navigate("PorfileFaith")
+            handle_save_questions();
         }
     }
 
@@ -177,11 +150,11 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             flex:1,
             paddingVertical:0
         }}
-        title={() => <Text style={{fontFamily:'NunitoBold'}}>{currentQuestionIndex}/10</Text>}
+        title={() => <Text style={{fontFamily:'NunitoBold'}}>{currentQuestionIndex+1}/10</Text>}
         headerStyle={{paddingHorizontal:20, paddingVertical:10}}
     >
         <View style={{paddingVertical:10,paddingHorizontal:20}}>
-            <ProgressBar progress={currentQuestionIndex*10}/>
+            <ProgressBar progress={(1+currentQuestionIndex)*10}/>
         </View>
         <View style={{
             // maxHeight: hp("20%"),
@@ -199,8 +172,8 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
         </View>
         
         <FaithQuestionSlider
-            Answers={currentQuestion.options}
-            selectedOption={currentQuestion.ans}
+            Answers={currentQuestion?.options}
+            selectedOption={currentQuestion?.ans}
             ans={ans}
             setAns={a=> setAns(a)}
         />
@@ -222,6 +195,11 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             />
         </View>
 
+
+
+        {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
+            <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </CustomModal>
 
 }

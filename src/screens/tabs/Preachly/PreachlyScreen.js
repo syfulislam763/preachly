@@ -27,6 +27,7 @@ export default function PreachlyScreen() {
   const [bibleBook, setBibleBook] = useState({});
   const [loading, setLoading ] = useState(false);
   const [itemLoading, setItemLoading] = useState(false);
+  const [zoomText, setZoomText] = useState(14)
   
   const [chapters, setChapters] = useState([]);
   const [expanded, setExpanded] = useState(''); // Currently opened
@@ -52,6 +53,10 @@ export default function PreachlyScreen() {
     
     stopRef.current = false;
     Speech.stop();
+    if(! (content[0]?.verses) ){
+      setIsPaused(true);
+      return;
+    }
     const arr = content[0].verses;
     let len = (arr.length)*1.2;
     const scrollBy = contentHeight / len;
@@ -191,7 +196,7 @@ export default function PreachlyScreen() {
 
   useEffect(()=>{
     setSelectedBibleVersion(store?.profileSettingData?.bible_version);
-    
+    console.log(JSON.stringify(store.profileSettingData, null, 2))
   }, []);
 
 
@@ -221,26 +226,18 @@ export default function PreachlyScreen() {
 
   useFocusEffect(
     useCallback(()=>{
-
+      setZoomText(14)
       return () =>{
         stop_audio()
       }
     }, [])
   )
 
-  const get_local_storage_data = async (cb) => {
-    const current_bible = await AsyncStorage.getItem("current_bible");
-    cb(current_bible);
+  const handleZoom = () => {
+    if(zoomText < 25){
+      setZoomText(n => n+1)
+    }
   }
-  const set_local_storage_data = async(payload, cb) => {
-    await AsyncStorage.setItem("current_bible", JSON.stringify(payload));
-    cb()
-  }
-  const remove_local_storage_data = async (cb) =>{
-    await AsyncStorage.removeItem("current_bible");
-    cb()
-  }
-  
 
   // console.log("bible -> ", JSON.stringify(store.bible_versions, null, 2));
   // console.log("bible -> ", JSON.stringify(store.profileSettingData.bible_version, null, 2));
@@ -277,10 +274,12 @@ export default function PreachlyScreen() {
           marginBottom:20
         }}>
           
-          <Image
-            source={require("../../../../assets/img/24-smallcaps.png")}
-            style={{...styles.icon, marginRight:20}}
-          />
+          <Pressable onPress={handleZoom}>
+            <Image
+              source={require("../../../../assets/img/24-smallcaps.png")}
+              style={{...styles.icon, marginRight:20}}
+            />
+          </Pressable>
      
           <Pressable onPress={() => {
             stop_audio();
@@ -300,7 +299,22 @@ export default function PreachlyScreen() {
         padding:20,
         
       }}>
-      
+
+        {content.length == 0 && 
+        <View style={{height:400, alignItems:'center', justifyContent:'center'}}>
+
+          <Text 
+            style={{
+              color:'#966F44',
+              fontFamily:'NunitoBold'
+            }}
+          >
+          No Content Found!
+          </Text>
+
+
+        </View>}
+
         {content.map((chapter,i) => <View 
           key={i.toString()}
         >
@@ -311,11 +325,11 @@ export default function PreachlyScreen() {
               color:'#0B172A'
             }}>{chapter?.title}</Text>
 
-            {(chapter && chapter?.verses?.length)? chapter.verses.map((item,idx) => <Text
+            {(chapter?.verses?.length)? chapter.verses.map((item,idx) => <Text
               key={idx.toString()}
               style={{
                 fontFamily: 'NunitoSemiBold',
-                fontSize: 16,
+                fontSize: zoomText,
                 color:'#0B172A',
                 marginTop:20
               }}
@@ -325,20 +339,7 @@ export default function PreachlyScreen() {
                 fontFamily:'NunitoBold'
               }}>{item?.number+ " "}</Text>
               {item?.text}
-            </Text>):
-              <View style={{height:400, alignItems:'center', justifyContent:'center'}}>
-
-                <Text 
-                  style={{
-                    color:'#966F44',
-                    fontFamily:'NunitoBold'
-                  }}
-                >
-                No Content Found!
-                </Text>
-
-
-              </View>
+            </Text>): null
 
 
           }

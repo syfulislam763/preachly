@@ -49,7 +49,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
                 overflow:'hidden'
             }}>
                 <Image 
-                    source={uri?{uri:uri}:require("../../../../../assets/img/avatar.png")}
+                    source={uri?{uri:uri}:require("../../../../../assets/img/user1.png")}
                     style={{
                         height: 110,
                         width:110,

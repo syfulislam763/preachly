@@ -10,7 +10,8 @@ const baseStyle =  StyleSheet.create({
         fontFamily:'DMSerifDisplay',
         fontSize:32,
         color:'#0B172A',
-        paddingVertical:40
+        paddingVertical:40,
+        textAlign:'center'
     },
     text:{
         fontFamily:'NunitoSemiBold',
@@ -23,7 +24,8 @@ const baseStyle =  StyleSheet.create({
         height:250,
         width: 200,
         objectFit:'contain',
-        backgroundColor:'#fff'
+        backgroundColor:'#fff',
+        marginTop:hp("5%")
     }
 })
 
