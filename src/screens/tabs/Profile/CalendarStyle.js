@@ -33,7 +33,7 @@ const baseStyle =  StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 7.5,
-    zIndex:100
+    zIndex:100,
   },
   dayText:{ 
     fontFamily:'NunitoSemiBold', 

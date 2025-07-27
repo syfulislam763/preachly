@@ -186,3 +186,15 @@ export const save_weekly_check_in = async(payload, cb) => {
         cb(e, false);
     }
 }
+
+export const get_calendar_information = async (payload, cb ) => {
+    const url = `/checkin/calendar/?month=${payload.month}&year=${payload.year}`;
+
+    try{
+        const res = await api.get(url);
+        cb(res.data, true );
+    }catch(e){
+        cb(e, false);
+    }
+
+}

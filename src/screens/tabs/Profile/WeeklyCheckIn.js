@@ -30,31 +30,47 @@ const WeeklyCheckIn = () => {
     //         })
     //     }
     // },[navigation])
+    const timeAgo = (string) => {
+        const month_string = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        const now = new Date(string);
+        const day = now.getUTCDay();
+        const month = month_string[now.getUTCMonth()];
+        const year = now.getUTCFullYear();
+        return `${day} ${month} ${year}`
+    }
 
     const handleGetHistory = () => {
         setLoading(true);
         get_weekly_check_in_history((res, success) => {
             setLoading(false);
             if(success){
-                setHistory(res?.data?.completed_weekly_checkins)
+                setHistory(res?.data?.completed_weekly_checkins.filter(item => item.status != "locked"))
             }else{
                 console.log("error")
             }
             
         })
     }
-   
+    
+    useFocusEffect(
+        useCallback(() => {
+            handleGetHistory();
+        }, [])
+    )
 
-    useEffect(() => {
-        handleGetHistory();
-    },[]);
+
 
 
     const renderItem = ({item, index}) => {
 
-        return <TouchableWithoutFeedback onPress={() => {
+        return <Pressable style={{
+            // height:80,
+            // width:'100%',
+            // overflow:"hidden",
+            // borderRadius: 30
+        }} onPress={() => {
             if(item.is_completed){
-                navigation.navigate("WeeklyCheckIn_", {...item})
+                navigation.navigate("WeeklyCheckIn_", {...item, title: item.week_number+" Weekly Check-In"})
             }else{
                 navigation.navigate("RegularCheckIn", {title: item.week_number+" Weekly Check-In"})
             }
@@ -62,7 +78,7 @@ const WeeklyCheckIn = () => {
                 <ImageBackground
                     source={(index%2==0)?img1:img4}  // or use { uri: 'https://...' }
                     style={styles.background}
-                    resizeMode="contain"
+                    resizeMode="cover"
                 >
                     <View style={styles.card}>
 
@@ -81,7 +97,7 @@ const WeeklyCheckIn = () => {
                             </View>
                             <View>
                                 <Text style={(index%2==0)?{...styles.title}: {...styles.title, color:"#ffffff"}}>{item.week_number} Week Check-In</Text>
-                                <Text style={(index%2==0)?{...styles.text}: {...styles.text, color:"#90B2B2"}}>27 January 2025</Text>
+                                <Text style={(index%2==0)?{...styles.text}: {...styles.text, color:"#90B2B2"}}>{item?.completed_at && timeAgo(item?.completed_at)}</Text>
                             </View>
                         </View>
 
@@ -91,7 +107,7 @@ const WeeklyCheckIn = () => {
 
                     </View>
                 </ImageBackground>
-            </TouchableWithoutFeedback>
+            </Pressable>
     }
 
 
@@ -158,10 +174,11 @@ const styles = StyleSheet.create({
     background:{
         height:82,
         width:'100%',
-        borderRadius: 15,
         flexDirection:'row',
         alignItems:'center',
-        marginBottom:20
+        marginBottom:20,
+        overflow:'hidden',
+        borderRadius: 15
     },
     card:{
         display:'flex',

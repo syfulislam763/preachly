@@ -202,6 +202,7 @@ export default function ProfileStack() {
       })} name="WeeklyCheckIn" component={WeeklyCheckIn} />
       
       <Stack.Screen options={({navigation}) => ({
+        headerShown:false,
         title: 'Weekly Check-In',
         headerTitleAlign: "center",
         headerShadowVisible: false,

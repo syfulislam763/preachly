@@ -17,6 +17,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
 
 
     const [allQuestions, setAllQuestions] = useState([])
+    const [btnTxt, setBtnTxt] = useState("Next");
     const [ans, setAns] = useState({})
     const [currentQuestion, setCurrentQuestion]=useState({
         "question": "",
@@ -66,7 +67,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             setLoading(false);
             if(success){
                 let temp = res.data.questions;
-
+                
                 temp = temp.map(item => {
                     return {
                         question: item.question_text,
@@ -94,16 +95,17 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
     const handle_save_questions = () => {
         const payload = {
             weekly_checkin_id: weeklyCheckInId.weekly_check_in_id,
-            responses: responses
+            responses: [...responses, {"question": currentQuestion.id, "selected_option": ans.id}]
         };
 
+        console.log(payload.responses.length)
         console.log("pay ->", JSON.stringify(payload, null, 2))
         setLoading(true);
         save_weekly_check_in(payload, (res, success) => {
             setLoading(false);
             if(success){
                 setModalVisible(false),
-                navigation.navigate("PorfileFaith")
+                navigation.navigate("PorfileFaith", {week_number: res?.data?.week_number})
             }else{
                 console.log(res);
             }
@@ -130,7 +132,8 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             setCurrentQuestionIndex(currentQuestionIndex+1)
             setCurrentQuestion(allQuestions[currentQuestionIndex+1])
             setResponses(prev => [{"question": currentQuestion.id, "selected_option": ans.id}, ...prev])
-        }else{
+        }
+        else{
             handle_save_questions();
         }
     }
@@ -184,7 +187,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
 
         <View style={{paddingHorizontal:20, paddingBottom:0}}>
             <CommonButton
-                btnText={"Next"}
+                btnText={btnTxt}
                 bgColor={deepGreen}
                 navigation={navigation}
                 route={""}

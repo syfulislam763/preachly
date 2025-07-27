@@ -51,3 +51,4 @@ export const RANDOM_VERSE = "/homepage/daily-verse/";
 export const CHECK_IN_HISTORY = "/checkin/weekly/history/";
 export const WEEKLY_CHECK_IN_QUESTIONS = "/checkin/weekly/questions/";
 export const SAVE_CHECK_IN = "/checkin/weekly/submit/"
+export const PROFILE_URL = "/checkin/dashboard/"

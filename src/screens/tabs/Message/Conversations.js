@@ -5,12 +5,13 @@ import IconContainer from '../../../components/IconContainer';
 
 
 const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item}) => {
+
   return (
     <View style={styles.container}>
       {/* User Message */}
       {type === 'user' && (
         <View style={styles.userBubble}>
-          <Text style={styles.userText}>{message}</Text>
+          <Text style={{...styles.userText, color:"#ffffff"}}>{message}{" "}</Text>
         </View>
       )}
 
@@ -101,7 +102,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomLeftRadius:16,
-    maxWidth: '80%',
+    maxWidth: '100%',
+    color:'white'
   },
   userText: { color: 'white', fontSize: 16 },
 

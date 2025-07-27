@@ -1,28 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Dimensions, Image, StyleSheet } from 'react-native';
+import React, { use, useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity, FlatList, Dimensions, Image, StyleSheet,ActivityIndicator } from 'react-native';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
 import BackButton from '../../../components/BackButton';
 import Reward from '../../../components/Reward';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomModal from '../../../components/CustomModal';
 import CommonButton from '../../../components/CommonButton';
 import { deepGreen, primaryText } from '../../../components/Constant';
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { getStyles } from './CalendarStyle';
+import { get_calendar_information } from '../TabsAPI';
+import Indicator from '../../../components/Indicator';
+
 
 const screenWidth = Dimensions.get('window').width;
 const calendarPadding = 10;
 const daySize = (screenWidth - calendarPadding * 2) / 7 - 4;
 
 const Calendar = () => {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 0));
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 0, 2));
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const navigation = useNavigation()
-  const markedDates = [new Date(2025, 0, 1), new Date(2025, 0, 15), new Date(2025, 0, 27)];
+  const [markedDates, setMarkedDates] = useState([]);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const [loading , setLoading] = useState(false);
+  const [checkIns, setCheckIns] = useState([])
+
+  const handle_get_calendar_information = () => {
+    setLoading(true);
+    const payload = {
+      month: currentMonth.getUTCMonth()+1,
+      year: currentMonth.getUTCFullYear()
+    }
+    get_calendar_information(payload, (res, success) => {
+      setLoading(false);
+      if(success){
+        const marked = []
+
+        const temp = res?.data?.checkins;
+
+        temp.forEach(item => {
+          const date = new Date(item.checkin_date);
+          marked.push(date);
+        })
+        //marked.push(new Date("2025-08-24"))
+        setMarkedDates(marked)
+        console.log(JSON.stringify(marked, null, 2) , "***")
+      }else{
+        console.log(res);
+      }
+    })
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      handle_get_calendar_information();
+    }, [currentMonth])
+  );
+
+
+
+
+
+
+
 
   const renderHeader = () => (
     <View style={{ width: screenWidth - calendarPadding * 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 0, paddingVertical: 25 }}>
@@ -44,6 +88,8 @@ const Calendar = () => {
     </View>
   );
 
+
+
   const renderDaysOfWeek = () => {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return (
@@ -64,14 +110,30 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
 
   let bgColor = 'transparent';
   if (isSelected) bgColor = '#004d40';
-  else if (isMarked) bgColor = '#ffe0b2';
+  else if (isMarked) bgColor = '#f7f8fa';
+
+  let marked_style = {};
+  let text_color = {}
+
+
+  if(isMarked){
+    let temp = {
+      borderWidth:1,
+      borderColor: '#8eb6b4'
+    }
+    marked_style=temp;
+    let clr = {
+      color: '#8eb6b4'
+    }
+    text_color = clr
+  }
 
   return (
     <TouchableOpacity
       onPress={() => onSelect(day)}
-      style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}]}
+      style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}, marked_style]}
     >
-      <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }]}>{format(day, 'd')}</Text>
+      <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }, text_color]}>{format(day, 'd')}</Text>
     </TouchableOpacity>
   );
 };
@@ -117,7 +179,9 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
             day={item}
             selectedDate={selectedDate}
             currentMonth={currentMonth}
-            onSelect={setSelectedDate}
+            onSelect={(date) => {
+              //setSelectedDate(date)
+            }}
             markedDates={markedDates}
           />
         )}
@@ -179,6 +243,10 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
             
           </View>
         </CustomModal>}
+
+        {loading && <Indicator visible={loading} onClose={() => {setLoading(false)}}>
+          <ActivityIndicator size={"large"}/>
+        </Indicator>}
     </SafeAreaView>
   );
 };

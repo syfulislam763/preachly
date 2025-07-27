@@ -396,7 +396,7 @@ const MessageWrapper = ({flatListRef, messages,onChange, onPredefinedMsg, handle
   return <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 30}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
       {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <View 
