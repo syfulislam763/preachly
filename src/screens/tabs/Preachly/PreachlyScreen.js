@@ -14,6 +14,7 @@ import * as Speech from 'expo-speech';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import useLogout from '../../../hooks/useLogout';
 import { useFocusEffect } from '@react-navigation/native';
+import { finish_scripture } from '../TabsAPI';
 
 export default function PreachlyScreen() {
   useLogout();
@@ -355,7 +356,11 @@ export default function PreachlyScreen() {
           marginBottom:20
         }}>
           <Pressable 
-            onPress={() => handleNextPrevious("previous")}
+            onPress={() => {
+              finish_scripture((res, success) => {
+                handleNextPrevious("previous")
+              })
+            }}
           >
             <View style={{
               backgroundColor:'#005A55',
@@ -369,7 +374,11 @@ export default function PreachlyScreen() {
             </View>
           </Pressable>
           <Pressable 
-          onPress={() => handleNextPrevious("next")}
+          onPress={() => {
+            finish_scripture((res, success) => {
+              handleNextPrevious("next")
+            })
+          }}
           style={{
             backgroundColor:'#005A55',
             flexDirection:'row',

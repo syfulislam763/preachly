@@ -9,8 +9,7 @@ import Indicator from '../../../components/Indicator';
 import Entypo from '@expo/vector-icons/Entypo';
 
 const img1 = require('../../../../assets/img/card_bg8.png');
-const img2 = require('../../../../assets/img/card_bg9.png');
-const img3 = require('../../../../assets/img/card_bg10.png');
+
 const img4 = require('../../../../assets/img/card_bg11.png');
 const leaf_b = require('../../../../assets/img/leaf_b.png');
 const leaf_w = require('../../../../assets/img/leaf_w.png');

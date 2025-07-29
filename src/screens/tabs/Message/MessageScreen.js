@@ -12,7 +12,8 @@ import {
   StyleSheet,
   TextInput,
   ActivityIndicator,
-  Pressable
+  Pressable,
+  BackHandler
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
@@ -35,6 +36,7 @@ import { heightPercentageToDP } from 'react-native-responsive-screen';
 // import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { setIsAudioActiveAsync } from 'expo-audio';
+import { finish_share, finish_conversation } from '../TabsAPI';
 
 export default function MessageScreen() {
   useLogout();
@@ -63,7 +65,7 @@ export default function MessageScreen() {
         setMessages([])
         setPrevMsg("");
         setIsNewSession(true)
-        updateStore({ session: res?.data})
+        updateStore({ session: res?.data, isNewSession: true})
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
@@ -102,6 +104,7 @@ export default function MessageScreen() {
           setSession(store?.session);
           setLoading(false);
           setIsNewSession(false);
+          updateStore({isNewSession: false})
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
@@ -149,10 +152,13 @@ export default function MessageScreen() {
     }
     try{
       await Share.open(options)
+      finish_share((res, success) => {
+        //console.log(res);
+      })
     }catch(e){
-      console.log("share error ", e);
+
     }
-    console.log("share...");
+
   }
   const handleRegenerate = () =>{
     const payload = {
@@ -274,12 +280,10 @@ export default function MessageScreen() {
       }
     }, [])
   )
-  // console.log("msg = ", JSON.stringify(messages, null, 2))
-  // console.log("session->", JSON.stringify(session, null, 2))
-  // Auto-scroll when new message is added
+
   useEffect(() => {
     if (flatListRef.current) {
-     // flatListRef.current.scrollToEnd({ animated: true });
+     flatListRef.current.scrollToEnd({ animated: true });
     }
 
   }, [messages]);
@@ -289,17 +293,44 @@ export default function MessageScreen() {
     sendMessage()
     // setMessages((prev) => [...prev, newMessage]);
   };
+  console.log("st->", store.isNewSession)
+
+  const handleGoBack = () => {
+    console.log("hello", isNewSession)
+    console.log("st->", store.isNewSession)
+    if(store.isNewSession){
+      setIsFeedback(true);
+      
+    }else{
+      navigation.goBack();
+    }
+  }
+
+  console.log("hello", isNewSession)
+
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        handleGoBack();
+        return true; // prevents default exit
+      }
+    );
+ 
+    return () => backHandler.remove();
+  }, []);
+
+
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
       <ReusableNavigation
         leftComponent={() => <BackButton navigation={navigation} 
             cb={() => {
-              if(isNewSession){
-                setIsFeedback(true);
-              }else{
-                navigation.goBack();
-              }
+            
+              
+              handleGoBack();
               
             }}
          />}
@@ -378,9 +409,21 @@ export default function MessageScreen() {
         onClose={() => setIsFeedback(false)}
         feedback={feedback}
         setFeedback={res => {
-          setFeedback(res)
-          setIsRating(true)
-          setIsFeedback(false);
+          if(res){
+            finish_conversation((res, success) => {
+              handleGoBack()
+              navigation.goBack();
+              setFeedback(res)
+              // setIsRating(true)
+              setIsFeedback(false);
+            })
+          }else{
+            setFeedback(res);
+            navigation.goBack();
+            // setIsRating(true)
+            setIsFeedback(false);
+          }
+          
         }}
       />}
       

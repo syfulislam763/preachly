@@ -40,6 +40,10 @@ export const AuthProvider = ({ children }) => {
     setIsSubscribed(false);
     setStore({});
   };
+
+  useEffect(() => {
+    console.log("hello world->", store.isNewSession)
+  }, [store]);
   
 
   useEffect(() => {

@@ -18,13 +18,15 @@ const WeeklyCalendar = () => {
   });
 
   const renderItem = ({ item }) => {
-    const isSelected = false;//selectedDate === item.key
+    const isSelected = false//selectedDate === item.key
     const isToday = item.key === dayjs().format('YYYY-MM-DD');
 
     return (
       <TouchableOpacity
         style={styles.dayContainer}
-        onPress={() => setSelectedDate(item.key)}
+        onPress={() => {
+          //setSelectedDate(item.key)
+        }}
       >
         <Text style={[styles.dayText, isSelected && styles.selectedDayText]}>
           {item.day}

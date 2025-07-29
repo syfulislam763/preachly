@@ -48,7 +48,7 @@ const Calendar = () => {
         })
         //marked.push(new Date("2025-08-24"))
         setMarkedDates(marked)
-        console.log(JSON.stringify(marked, null, 2) , "***")
+        // console.log(JSON.stringify(marked, null, 2) , "***")
       }else{
         console.log(res);
       }

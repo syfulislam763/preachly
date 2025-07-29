@@ -11,7 +11,9 @@ import { useAuth } from '../../../context/AuthContext';
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
-import Indicator from '../../../components/Indicator'
+import Indicator from '../../../components/Indicator';
+import { get_profile_dashboard_data } from '../TabsAPI';
+import dayjs from 'dayjs';
 
 
 const ProfileScreen = () => {
@@ -19,13 +21,18 @@ const ProfileScreen = () => {
   
   const {updateStore, store} = useAuth()
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const [profileData, setProfileData] = useState({})
 
   const {isSmall, isMedium,isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const [loading, setLoading] = useState(false)
   const [uri, setUri] = useState(null);
 
+  
+  const startOfWeek = dayjs().startOf('week'); // Sunday
+  const [weekDays, setWeekDays] = useState([])
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -37,6 +44,39 @@ const ProfileScreen = () => {
       }
     }, [])
   )
+
+
+  const handle_get_profile_data = () =>{
+    setLoading(true);
+    get_profile_dashboard_data((res, success) => {
+      if(res){
+        setProfileData(res?.data);
+        let weekDays = Array.from({ length: 7 }).map((_, i) => {
+          const date = startOfWeek.add(i, 'day');
+          return {
+            key: date.format('YYYY-MM-DD'),
+            day: date.format('dd')[0], // First letter of day
+            date: date.date(),
+          };
+        });
+
+        for(let i =0; i < res.data; i++){
+          
+        }
+
+
+      }
+      setLoading(false);
+    })
+  }
+
+  useState(() =>{
+    handle_get_profile_data();
+  }, [])
+
+
+
+  
 
   return (
     <View style={{flex:1,backgroundColor:'#fff'}}>
@@ -105,7 +145,7 @@ const ProfileScreen = () => {
           />
 
           <Text style={{...styles.semitext, fontSize:14}}>
-            You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day 2</Text> of growing your faith confidence!
+            You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day {profileData?.streak?.longest_streak}</Text> of growing your faith confidence!
           </Text>
 
         </View>

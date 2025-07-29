@@ -1,7 +1,7 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "https://defence-tag-worlds-marked.trycloudflare.com";
-export const WEBSOCKET_URL = "ws://defence-tag-worlds-marked.trycloudflare.com";
+export const BASE_URL = "https://duties-california-customize-county.trycloudflare.com";
+export const WEBSOCKET_URL = "ws://duties-california-customize-county.trycloudflare.com";
 
 export const URL_CATEGORY = "/api"
 export const ROOT_URL = BASE_URL+URL_CATEGORY
@@ -52,3 +52,4 @@ export const CHECK_IN_HISTORY = "/checkin/weekly/history/";
 export const WEEKLY_CHECK_IN_QUESTIONS = "/checkin/weekly/questions/";
 export const SAVE_CHECK_IN = "/checkin/weekly/submit/"
 export const PROFILE_URL = "/checkin/dashboard/"
+export const ALL_GOAL = "/goals/stats/"

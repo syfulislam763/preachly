@@ -1,14 +1,19 @@
-import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import CustomModal from '../../../components/CustomModal';
 import CommonButton from '../../../components/CommonButton';
 import { deepGreen, primaryText } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
+import Foundation from '@expo/vector-icons/Foundation';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+
 
 const Feedback = ({visible, onClose, feedback, setFeedback}) => {
 
-    const {navigation} = useNavigation()
+    const navigation = useNavigation()
 
+    const [liked, setLiked] = useState(false);
+    const [toggle, setToggle] = useState(false);
 
   return (
     <CustomModal
@@ -30,17 +35,33 @@ const Feedback = ({visible, onClose, feedback, setFeedback}) => {
                 display:'flex',
                 flexDirection:'row',
                 alignItems:'center',
-                justifyContent:'center'
+                justifyContent:'center',
+                marginVertical: 30
             }}>
-                <Image
+                {/* <Image
                     source={require("../../../../assets/img/ThumbsUp.png")}
                     style={styles.star}
-                />
+                /> */}
+                <Pressable onPress={() => {
+                    setLiked(true);
+                    setToggle(false);
+                }} style={{
+                    marginRight: "10%"
+                }}>
+                    <Foundation name="like" size={50} color={liked?"green":"black"} />
+                </Pressable>
+           
+                <Pressable onPress={() => {
+                    setLiked(false);
+                    setToggle(true)
+                }}>
+                    <Foundation name="dislike" size={50} color={toggle?"green":"black"} />
+                </Pressable>
                 
-                <Image
+                {/* <Image
                     source={require("../../../../assets/img/ThumbsDown.png")}
                     style={[styles.star,{marginRight:0}]}
-                />
+                /> */}
             </View>
 
             <View style={{paddingBottom:20}}>
@@ -51,8 +72,8 @@ const Feedback = ({visible, onClose, feedback, setFeedback}) => {
                     route={""}
                     txtColor={primaryText}
                     bold='bold'
-                    handler={() => setFeedback("like")}
-                    opacity={0.7}
+                    handler={() => setFeedback(liked)}
+                    opacity={(liked|toggle)?1:0.7}
                 />
             </View>
         </View>

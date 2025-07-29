@@ -13,7 +13,7 @@ import { get_onboarding_user_data } from '../../personalization/PersonalizationA
 import { get_profile_info } from '../../auth/AuthAPI';
 import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
-import { get_random_verses } from '../TabsAPI';
+import { get_random_verses, finish_share } from '../TabsAPI';
 
 export default function HomeScreen() {
   useLogout()
@@ -56,7 +56,9 @@ export default function HomeScreen() {
     }
     try{
       await Share.open(options)
-      console.log("df")
+      finish_share((res,success) => {
+        
+      })
     }catch(e){
       console.log("share error ", e);
     }
