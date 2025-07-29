@@ -37,6 +37,7 @@ import { heightPercentageToDP } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import { setIsAudioActiveAsync } from 'expo-audio';
 import { finish_share, finish_conversation } from '../TabsAPI';
+import { useRoute } from '@react-navigation/native';
 
 export default function MessageScreen() {
   useLogout();
@@ -55,6 +56,7 @@ export default function MessageScreen() {
   const [isNewSession, setIsNewSession] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const route = useRoute();
 
   const create_session = () =>{
     setLoading(true);
@@ -66,6 +68,7 @@ export default function MessageScreen() {
         setPrevMsg("");
         setIsNewSession(true)
         updateStore({ session: res?.data, isNewSession: true})
+        
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
@@ -78,7 +81,7 @@ export default function MessageScreen() {
 
   useEffect(() =>{
     
-    if(store?.session?.id){
+    if((store?.session?.id)){
       setLoading(true);
       
       get_message_by_session_id(store?.session?.id, (res, success) => {
@@ -169,13 +172,13 @@ export default function MessageScreen() {
     if(ws.current && prevMsg.trim()){
       ws.current.send(JSON.stringify(payload))
     }
-    console.log("regenerate...");
+
   }
 
 
   const ws = useRef(null);
   useEffect(() =>{
-    if(!session.id)return;
+    if(!session.id)return () => {}
 
     const wsURL = WEBSOCKET_URL+`/ws/chat/${session.id}/?token=${store?.access}`;
     ws.current = new WebSocket(wsURL);
@@ -219,6 +222,17 @@ export default function MessageScreen() {
       console.log("socket disconnected...");
     }
 
+    
+
+    // if( (session?.id) && (route.params?.question) && ws.current){
+    //   handleSendPredefinedMessage(route.params?.question)
+    // }
+
+    // return () =>{
+    //   console.log("disconnecting")
+    //   ws.current?.close();
+    // }
+
   }, [messages, session]);
 
   const handleSendPredefinedMessage = (message) => {
@@ -227,7 +241,7 @@ export default function MessageScreen() {
       session_id: session.id,
       type: "message"
     }
-    console.log(payload)
+
     if(ws.current && message.trim()){
       ws.current.send(JSON.stringify(payload));
       const res = {
@@ -237,6 +251,7 @@ export default function MessageScreen() {
         verseLink: "",
         message: message
       }
+
       setMessages(prev => [...prev, res]);
       setPrevMsg(message);
       setMessage("")
@@ -244,6 +259,7 @@ export default function MessageScreen() {
       console.log("problem..");
     }
   }
+ 
 
   const sendMessage = () =>{
     const payload = {
@@ -289,24 +305,17 @@ export default function MessageScreen() {
   }, [messages]);
 
   const handleSendMessage = (newMessage) => {
-    console.log("message", newMessage);
+
     sendMessage()
-    // setMessages((prev) => [...prev, newMessage]);
+
   };
-  console.log("st->", store.isNewSession)
+
 
   const handleGoBack = () => {
-    console.log("hello", isNewSession)
-    console.log("st->", store.isNewSession)
-    if(store.isNewSession){
-      setIsFeedback(true);
-      
-    }else{
-      navigation.goBack();
-    }
+    setIsFeedback(true);
   }
 
-  console.log("hello", isNewSession)
+
 
 
   useEffect(() => {
@@ -328,10 +337,7 @@ export default function MessageScreen() {
       <ReusableNavigation
         leftComponent={() => <BackButton navigation={navigation} 
             cb={() => {
-            
-              
-              handleGoBack();
-              
+              navigation.goBack();
             }}
          />}
         middleComponent={() => (
@@ -361,7 +367,9 @@ export default function MessageScreen() {
             }}
           >
             <Pressable
-              onPress={() => create_session()}
+              onPress={() => {
+                handleGoBack();
+              }}
             >
               <Image
                 source={require('../../../../assets/img/newChat.png')}
@@ -411,16 +419,13 @@ export default function MessageScreen() {
         setFeedback={res => {
           if(res){
             finish_conversation((res, success) => {
-              handleGoBack()
-              navigation.goBack();
               setFeedback(res)
-              // setIsRating(true)
               setIsFeedback(false);
+              create_session()
             })
           }else{
             setFeedback(res);
-            navigation.goBack();
-            // setIsRating(true)
+            create_session()
             setIsFeedback(false);
           }
           
@@ -521,16 +526,12 @@ const MessageWrapper = ({flatListRef, messages,onChange, onPredefinedMsg, handle
 
 const DummyQuestion = ({onChange}) => {
   return <View style={{
-    // height: 200,
-    marginTop: "40%",
+   
+    marginTop: "100%",
     width:"100%",
     backgroundColor:'#fff',
     padding:20,
     alignItems: 'center',
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 3 },
-    // shadowOpacity: 1,
-    // elevation: 5, 
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10
   }}>

@@ -167,28 +167,28 @@ export default function HomeScreen() {
             
 
           <View style={styles.multiImageContainer}>
-              <View style={styles.commonMultiImage}>
+              <Pressable onPress={() => navigation.navigate("Preachly")} style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/OpenBook.png")}
                   style={styles.multiImage}
                 />
                 <Text style={styles.multiText}>Explore Scriptures</Text>
-              </View>
-              <View style={styles.commonMultiImage}>
+              </Pressable>
+              <Pressable onPress={() => navigation.navigate("MessageScreen")} style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/BrightsSun.png")}
                   style={styles.multiImage}
                 />
-                <Text style={styles.multiText}>Explore Scriptures</Text>
-              </View>
+                <Text style={styles.multiText}>Find Inspiration</Text>
+              </Pressable>
 
-              <View style={styles.commonMultiImage}>
+              <Pressable onPress={()=>navigation.navigate("History")} style={styles.commonMultiImage}>
                 <Image
                   source={require("../../../../assets/img/ReligeousBook.png")}
                   style={styles.multiImage}
                 />
-                <Text style={styles.multiText}>Explore Scriptures</Text>
-              </View>
+                <Text style={styles.multiText}>Saved Answers</Text>
+              </Pressable>
 
 
           </View>
@@ -203,18 +203,24 @@ export default function HomeScreen() {
             <ScrollView contentContainerStyle={{
               backgroundColor:'#fff'
             }} horizontal  showsHorizontalScrollIndicator={false}>
-                  <Image 
-                    source={require("../../../../assets/img/ThemeCard.png")}
-                    style={styles.imageHorizontalScroll}
-                  />
-                  <Image 
+                  <Pressable onPress={() => navigation.navigate("MessageScreen", {question:"Whats the proof that God exists?"})}>
+                    <Image 
+                      source={require("../../../../assets/img/ThemeCard.png")}
+                      style={styles.imageHorizontalScroll}
+                    />
+                  </Pressable>
+                  <Pressable onPress={() =>navigation.navigate("MessageScreen", {question: "How do i explain the resurrection?"})}>
+                    <Image 
                     source={require("../../../../assets/img/card8.png")}
                     style={styles.imageHorizontalScroll}
                   />
-                  <Image 
-                    source={require("../../../../assets/img/card9.png")}
-                    style={styles.imageHorizontalScroll}
-                  />
+                  </Pressable>
+                  <Pressable onPress={()=>navigation.navigate("MessageScreen", {question: "Can't people be good without believing in God?"})}>
+                    <Image 
+                      source={require("../../../../assets/img/card9.png")}
+                      style={styles.imageHorizontalScroll}
+                    />
+                  </Pressable>
             </ScrollView>
           </View>
 
@@ -260,7 +266,8 @@ const styles = StyleSheet.create({
   multiText:{
     fontFamily:'NunitoSemiBold',
     fontSize: 12,
-    color:'#2B4752'
+    color:'#2B4752',
+    textAlign:'center'
   },
   commonMultiImage:{
     width:"31%"
@@ -274,9 +281,10 @@ const styles = StyleSheet.create({
     display:'flex',
     flexDirection:'row',
     justifyContent:'space-between',
-    alignItems:'center',
+    alignItems:'flex-start',
     width: '100%',
     marginTop: 20,
+    height: "auto",
   },
   questionTitle3:{
     fontSize: 16,

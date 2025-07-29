@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   welcome: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#0B172A',
     fontFamily:'NunitoSemiBold'
   },
