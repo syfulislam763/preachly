@@ -250,3 +250,34 @@ export const get_profile_dashboard_data = async (cb) => {
         cb(e, false);
     }
 }
+
+export const get_notifications = async (cb) => {
+    const url = `/notifications/list/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const delete_notifications = async (id, cb) => {
+    
+    const url = `/notifications/list/${id}/`;
+    try{
+        const res = await api.delete(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const clear_all_notification = async (cb) => {
+    const url = `/notifications/list/clear_all/`;
+    try{
+        const res = await api.delete(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}

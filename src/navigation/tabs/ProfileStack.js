@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../../screens/tabs/Profile/ProfileScreen';
 import ProfileNotification from '../../screens/tabs/Profile/ProfileNotification';
@@ -20,11 +20,13 @@ import AboutApp from '../../screens/tabs/Profile/AboutApp'
 import DatePickerButton from '../../screens/tabs/Profile/PersonalInfoUtils/DatePickerButton';
 import ConfirmationCode from '../../screens/auth/ConfirmationCode';
 import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_';
+import { useRoute } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
 export default function ProfileStack() {
   const navigation = useNavigation()
+  const route = useRoute();
 
 
   return (

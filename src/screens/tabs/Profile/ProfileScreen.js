@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 
 const ProfileScreen = () => {
   useLogout()
+  const route = useRoute();
   
   const {updateStore, store} = useAuth()
 
@@ -33,6 +34,13 @@ const ProfileScreen = () => {
   const startOfWeek = dayjs().startOf('week'); // Sunday
   const [weekDays, setWeekDays] = useState([])
   
+  useEffect(() => {
+    console.log(route.params?.flag, "__")
+    if(route.params?.flag){
+      
+      navigation.navigate("Calendar")
+    }
+  }, [])
 
   useFocusEffect(
     useCallback(() => {
@@ -116,11 +124,23 @@ const ProfileScreen = () => {
           <View style={styles.iconContainer}>
             <Pressable 
               onPress={() => navigation.navigate("ProfileNotification")}
+              style={{
+                position:'relative'
+              }}
             >
               <Image 
                 source={require("../../../../assets/img/BellSimple.png")}
                 style={styles.icon}
               />
+              {/* <Text style={{
+                color:"#FF6C37",
+                fontFamily:"NunitoExtraBold",
+                position:"absolute",
+                width:50,
+                left:10,
+                top:-4,
+                zIndex:100,
+              }}>12</Text> */}
             </Pressable>
              <Pressable
               onPress={() => navigation.navigate("SettingHome")}

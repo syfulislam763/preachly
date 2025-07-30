@@ -1,6 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef, use } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadAuthToken } from './api';
+import { WEBSOCKET_URL } from './Paths';
 
 const AuthContext = createContext(null);
 
@@ -12,6 +13,109 @@ export const AuthProvider = ({ children }) => {
   const login = () => setIsAuthenticated(true);
   const completePersonalization = () => setIsPersonalized(true);
   const completeSubscription = () => setIsSubscribed(true);
+
+  const notificationRef = useRef(null);
+  const conversationRef = useRef(null);
+  const [messages, setMessages] = useState([]);
+  const [notifications, setNotifications] = useState([])
+
+  const [isNotificationSocketConnected, setIsNotificationSocketConnected] = useState(false);
+  const [isConversationSocketConnected, setIsConversationSocketConnected] = useState(false);
+
+  const initiateConversationSocket = (session_id, token) =>{
+    if(!session_id || !token)return;
+    const wsURL = WEBSOCKET_URL+`/ws/chat/${session_id}/?token=${token}`;
+
+    conversationRef.current = new WebSocket(wsURL);
+
+    conversationRef.current.onopen = () => {
+      console.log("conversation socket connected");
+      setIsConversationSocketConnected(true);
+    }
+
+    conversationRef.current.onmessage = (e) => {
+      try{
+        const data = JSON.parse(e.data);
+        const res = {
+          id: Date.now(),
+          message_id: data.message_id,
+          type: 'bot',
+          verseLink: "",
+          message: data.content,
+          bookmark:false,
+        }
+        if(data.type === "typing"){
+          res.message = "typing..."
+          setMessages(prev => [...prev, res])
+        }
+        if(data.type === "message"){
+          
+          setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
+
+        }
+      }catch(e){
+        console.error("WebSocket parse error", e);
+      }
+    }
+
+    conversationRef.current.onclose = () =>{
+      console.log("Socket disconnected");
+      setIsConversationSocketConnected(false);
+    }
+
+  };
+
+  const sendMessage = (msg) => {
+    if(conversationRef.current?.readyState === WebSocket.OPEN){
+      const payload = {
+        message: msg.message,
+        session_id: msg.session.id,
+        type: "message"
+      }
+      conversationRef.current.send(JSON.stringify(payload));
+      setMessages(prev => [...prev, msg]);
+    }
+  }
+
+  const disconnectConversationSocket = () => {
+    conversationRef.current.close();
+    conversationRef.current = null;
+  }
+
+
+
+  const initiateNotificationSocket = (token) => {
+    if(!(token)) return;
+    const wsURL = WEBSOCKET_URL+`/ws/notifications/?token=${token}`;
+    notificationRef.current = new WebSocket(wsURL);
+
+    notificationRef.current.onopen = () => {
+      console.log("notification socket connected");
+      setIsConversationSocketConnected(true);
+    }
+
+    notificationRef.current.onmessage = (e) => {
+      try{
+        const data = JSON.parse(e.data);
+        setNotifications(prev => [data.notification, ...prev])
+        console.log(data)
+      }catch(e){
+        console.error("Notificatio webSocket parse error", e);
+      }
+    }
+
+    notificationRef.current.onclose = (e) =>{
+      console.log("Notification socket disconnected");
+      console.log("CLOSED", e.code, e.reason);
+      setIsConversationSocketConnected(false);
+    }
+  }
+
+  const disconnectNotificationSocket = () => {
+    notificationRef.current.close();
+    notificationRef.current = null;
+  }
+
   
 
   const [store, setStore] = useState({})
@@ -41,9 +145,7 @@ export const AuthProvider = ({ children }) => {
     setStore({});
   };
 
-  useEffect(() => {
-    console.log("hello world->", store.isNewSession)
-  }, [store]);
+  
   
 
   useEffect(() => {
@@ -62,7 +164,31 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isPersonalized, isSubscribed, store, login,logout, completePersonalization, completeSubscription,updateStore }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      isPersonalized, 
+      isSubscribed, 
+      store,
+      socket:{
+        messages,
+        setMessages,
+        initiateConversationSocket,
+        initiateNotificationSocket,
+        sendMessage,
+        disconnectConversationSocket,
+        isNotificationSocketConnected,
+        isConversationSocketConnected,
+        disconnectNotificationSocket,
+        notifications,
+        setNotifications
+      },
+      login,
+      logout, 
+      completePersonalization, 
+      completeSubscription,
+      updateStore 
+    }}
+    >
       {children}
     </AuthContext.Provider>
   );

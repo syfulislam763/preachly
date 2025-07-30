@@ -13,7 +13,7 @@ import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { getStyles } from './CalendarStyle';
 import { get_calendar_information } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
-
+import { useRoute } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 const calendarPadding = 10;
@@ -151,7 +151,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
   };
 
   const [modalVisible, setModalVisible] = useState(false);
-
+  const route = useRoute();
   return (
     <SafeAreaView style={{ flex:1, backgroundColor:'#fff',justifyContent:"space-between"
     }}>
@@ -189,7 +189,8 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
         contentContainerStyle={{ alignItems: 'center', }}
       />
 
-      <View style={{backgroundColor:'white',  paddingHorizontal:20}}>
+        
+        { !(route?.params?.flag) && <View style={{backgroundColor:'white',  paddingHorizontal:20}}>
         <Text style={{
           fontFamily:'NunitoExtraBold',
           fontSize:20,
@@ -199,7 +200,9 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
           source={require("../../../../assets/img/weeklyStreakBg.png")}
           style={styles.weeklyCheckInImage}
         />
-      </View>
+      </View>}
+
+
         {modalVisible && <CustomModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

@@ -13,13 +13,13 @@ import { get_onboarding_user_data } from '../../personalization/PersonalizationA
 import { get_profile_info } from '../../auth/AuthAPI';
 import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
-import { get_random_verses, finish_share } from '../TabsAPI';
+import { get_random_verses, finish_share, get_notifications} from '../TabsAPI';
 
 export default function HomeScreen() {
   useLogout()
   const [loading,setLoading] = useState(false);
 
-  const {store, updateStore} = useAuth();
+  const {store, socket, updateStore} = useAuth();
   const [randomVerse, setRandomVerse] = useState({});
   const [profileInfo, setProfileInfo] = useState({})
   const navigation = useNavigation();
@@ -63,6 +63,24 @@ export default function HomeScreen() {
       console.log("share error ", e);
     }
   }
+  const handle_get_notification = () =>{
+    get_notifications((res, success) => {
+      if(success){
+        const temp = res?.data;
+        socket.setNotifications(temp);
+        if((store?.access) && !(socket?.isNotificationSocketConnected) ){
+          
+          socket.initiateNotificationSocket(store.access);
+        }
+      }
+    })
+  }
+  useEffect(() => {
+
+    handle_get_notification();
+   
+    
+  }, [store]);
 
 
   useEffect(() => {

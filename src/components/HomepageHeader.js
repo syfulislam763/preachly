@@ -3,10 +3,11 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
 import { useAuth } from '../context/AuthContext';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { useNavigation } from '@react-navigation/native';
 
 const HomepageHeader = ({userInfo}) => {
   const {store} = useAuth();
-  
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       {/* Left: Profile Picture and Greeting */}
@@ -32,7 +33,7 @@ const HomepageHeader = ({userInfo}) => {
 
       {/* Right: Icons */}
       <View style={styles.rightSection}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("Calendar", {flag:true})} style={styles.iconButton}>
             <Image
                 source={require('../../assets/img/24-calendar.png')} 
                 style={{
