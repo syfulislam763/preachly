@@ -36,7 +36,12 @@
       "expo-font",
       "@react-native-google-signin/google-signin",
       "expo-audio",
-      "@stripe/stripe-react-native",
+      [
+        "@stripe/stripe-react-native",{
+          "merchantIdentifier": "merchant.com.syful151.preachly",
+          "enableGooglePay": true
+        }
+      ],
       [
         "expo-image-picker",
         {
@@ -46,3 +51,6 @@
     ]
   }
 }
+
+
+
