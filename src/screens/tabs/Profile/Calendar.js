@@ -69,7 +69,7 @@ const Calendar = () => {
 
 
   const renderHeader = () => (
-    <View style={{ width: screenWidth - calendarPadding * 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 0, paddingVertical: 25 }}>
+    <View style={{ width: screenWidth - calendarPadding * 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 0, paddingVertical: 0 }}>
       <Text style={{ fontSize: 32, fontFamily:'DMSerifDisplay', color:'#0B172A', marginLeft: 25  }}>{format(currentMonth, 'MMMM, yyyy')}</Text>
       <View style={{ flexDirection: 'row', marginRight:0 }}>
         <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}>
@@ -153,7 +153,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const route = useRoute();
   return (
-    <SafeAreaView style={{ flex:1, backgroundColor:'#fff',justifyContent:"space-between"
+    <SafeAreaView style={{ flex:1, backgroundColor:'#fff',justifyContent:"flex-start"
     }}>
       <ReusableNavigation
         leftComponent={() => <BackButton navigation={navigation}/>}
@@ -167,6 +167,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
       />
 
       {renderHeader()}
+      <View style={{height:10}}></View>
       {renderDaysOfWeek()}
       <View style={{height:10}}></View>
       <FlatList
@@ -189,6 +190,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
         contentContainerStyle={{ alignItems: 'center', }}
       />
 
+        <View style={{height:0}}></View>
         
         { !(route?.params?.flag) && <View style={{backgroundColor:'white',  paddingHorizontal:20}}>
         <Text style={{

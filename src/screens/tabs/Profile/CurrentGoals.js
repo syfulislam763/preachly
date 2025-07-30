@@ -110,7 +110,7 @@ const CurrentGoals = () => {
                     ListHeaderComponent={() => {
                         return renderItem({item: currentWeek, isCurrent:true})
                     }}
-                    data={history}
+                    data={[]}
                     keyExtractor={(item, idx) => idx.toString()}
                     renderItem={renderItem}
                     showsVerticalScrollIndicator={false}

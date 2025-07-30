@@ -36,6 +36,7 @@
       "expo-font",
       "@react-native-google-signin/google-signin",
       "expo-audio",
+      "@stripe/stripe-react-native",
       [
         "expo-image-picker",
         {
