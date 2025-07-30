@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ImageBackground, StyleSheet, Image, Dimensions} from 'react-native';
 import { useAuth } from '../../../context/AuthContext';
 import {
@@ -11,11 +11,71 @@ import PlanSelector from '../../../components/SubscriptionPlan';
 import CustomHeader from '../../../components/CustomNavigation';
 import ParagraphIcon from '../../../components/ParagraphIcon';
 
+import {
+  presentGooglePay,
+  isGooglePaySupported,
+  initGooglePay,
+} from '@stripe/stripe-react-native';
 
 const window = Dimensions.get("window")
 
 export default function ProfileSubscription({ navigation }) {
   const { login } = useAuth();
+
+
+  const initialize = async () => {
+      const isSupported = await isGooglePaySupported();
+      if (!isSupported) {
+        console.log('Google Pay not supported on this device');
+        return;
+      }
+
+      const { error } = await initGooglePay({
+        testEnv: true,
+        merchantName: 'My Test Merchant',
+        countryCode: 'US',
+        billingAddressConfig: {
+          isRequired: false,
+          format: 'MIN',
+          isPhoneNumberRequired: false,
+        },
+        existingPaymentMethodRequired: false,
+      });
+
+      if (error) {
+        console.log('Init Error', error.message);
+      }
+    };
+
+
+  useEffect(() => {
+    console.log("init")
+    initialize();
+  }, [])
+
+
+  const payWithGooglePay = async () => {
+    try {
+      // const response = await fetch('http://192.168.0.101:8000/create-payment-intent', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ amount: 1000, currency: 'usd' }),
+      // });
+      // const { clientSecret } = await response.json();
+      const clientSecret = "pi_3NF9w3S9d2ABC123_secret_G2m8X45Y9zz9jHkV7gkJGKkPj"
+
+      const result = await presentGooglePay({ clientSecret });
+
+      if (result.error) {
+        console.log('Error', result.error.message);
+      } else {
+        console.log('Success', 'Payment completed!');
+      }
+    } catch (error) {
+      console.log('Error', error.message);
+    }
+  };
+
   
 
   return (
@@ -71,7 +131,8 @@ export default function ProfileSubscription({ navigation }) {
                 btnText={"Manage subscription"}
                 bgColor={"#005A55"}
                 navigation={navigation}
-                route={"SubscriptionConfirmedScreen"}
+                route={""}//"SubscriptionConfirmedScreen"
+                handler={() => payWithGooglePay()}
                 txtColor={"#fff"}
                 opacity={1}
             />
