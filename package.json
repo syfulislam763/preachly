@@ -31,6 +31,7 @@
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.4",
+    "react-native-credit-card-input": "^1.0.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.17.4",
