@@ -15,11 +15,18 @@ import { StripeProvider } from '@stripe/stripe-react-native';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
 import CustomModal from '../../../components/CustomModal';
 import PaymentScreen from './payment/PaymentScreen';
+import createPlan from './payment/createPlan';
 
 const window = Dimensions.get("window")
 
 export default function ProfileSubscription({ navigation }) {
   const { login } = useAuth();
+  const {
+    setSelectedPlanType,
+    monthlyPlan,
+    yearlyPlan,
+    startFreeTrial
+  } = createPlan();
 
   const [openPayment, setOpenPayment] = useState(false);
 
@@ -69,6 +76,9 @@ export default function ProfileSubscription({ navigation }) {
                       paddingBottom: 15
                       }}>Other Plans</Text>
                   }
+                  monthlyPlan={monthlyPlan}
+                  yearlyPlan={yearlyPlan}
+                  setSelectedPlanType={setSelectedPlanType}
               />
 
               <View style={{height:30}}></View>
@@ -83,7 +93,7 @@ export default function ProfileSubscription({ navigation }) {
                   bgColor={"#005A55"}
                   navigation={navigation}
                   route={""}//"SubscriptionConfirmedScreen"
-                  handler={() => setOpenPayment(true)}
+                  handler={() => startFreeTrial()}
                   txtColor={"#fff"}
                   opacity={1}
               />
@@ -91,14 +101,14 @@ export default function ProfileSubscription({ navigation }) {
 
          
 
-          <CustomModal 
+          {/* <CustomModal 
             modalContainerStyle={{height:"auto"}} 
             visible={openPayment} 
             onClose={() => setOpenPayment(false)}
             headerStyle={{paddingRight:10}}
           >
-            <PaymentScreen/>
-          </CustomModal>
+            <CreatePlan/>
+          </CustomModal> */}
       </View>
     </StripeProvider>
   );

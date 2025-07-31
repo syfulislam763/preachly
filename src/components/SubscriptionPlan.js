@@ -3,10 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import useLayoutDimention from '../hooks/useLayoutDimention';
 import { getStyles } from './SubscriptionPlanStyle';
 
-const PlanSelector = ({OtherPlan=null}) => {
+const PlanSelector = ({OtherPlan=null, setSelectedPlanType, monthlyPlan, yearlyPlan}) => {
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold);
+  const handlePlan = (label) => {
+    if(label=="monthly"){
+      setSelectedPlanType(label)
+    }else{
+      setSelectedPlanType("yearly");
+    }
+    setSelectedPlan(label);
+  }
   return (
     <View>
       {/* Monthly Plan */}
@@ -15,7 +23,7 @@ const PlanSelector = ({OtherPlan=null}) => {
           styles.planContainer,
           selectedPlan === 'monthly' && styles.selectedPlan,
         ]}
-        onPress={() => setSelectedPlan('monthly')}
+        onPress={() => handlePlan('monthly')}
       >
         <View>
           <Text style={styles.planTitle}>Monthly Plan</Text>
@@ -38,7 +46,7 @@ const PlanSelector = ({OtherPlan=null}) => {
           styles.planContainer,
           selectedPlan === 'annual' && styles.selectedPlan,
         ]}
-        onPress={() => setSelectedPlan('annual')}
+        onPress={() => handlePlan('annual')}
       >
         <View>
           <Text style={styles.planTitle}>Annual Plan</Text>
