@@ -38,6 +38,9 @@ import { useNavigation } from '@react-navigation/native';
 import { setIsAudioActiveAsync } from 'expo-audio';
 import { finish_share, finish_conversation } from '../TabsAPI';
 import { useRoute } from '@react-navigation/native';
+import voiceRecord from './voiceRecord';
+import VoiceMessageBubble from './VoiceMessageBubble';
+import MessageWrapper from './MessageWrapper';
 
 export default function MessageScreen() {
   useLogout();
@@ -57,6 +60,26 @@ export default function MessageScreen() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
+  const [recordings, setRecordings] = useState(null)
+
+  const {
+    recorderState,
+    audioRecorder,
+    stopRecording,
+    record
+  } = voiceRecord();
+
+
+  const handleStopRecording = () => {
+    stopRecording();
+    setRecordings(audioRecorder);
+    console.log(JSON.stringify(audioRecorder, null, 2), "record")
+  }
+  const handleStartRecording = () => {
+    record();
+    setRecordings(null);
+    console.log(JSON.stringify(recorderState, null, 2), "state")
+  }
 
   const create_session = () =>{
     setLoading(true);
@@ -66,6 +89,7 @@ export default function MessageScreen() {
         setMessage("");
         setMessages([])
         setPrevMsg("");
+        setRecordings(null)
         setIsNewSession(true)
         updateStore({ session: res?.data, isNewSession: true})
         
@@ -255,6 +279,7 @@ export default function MessageScreen() {
       setMessages(prev => [...prev, res]);
       setPrevMsg(message);
       setMessage("")
+      setRecordings(null);
     }else{
       console.log("problem..");
     }
@@ -280,6 +305,7 @@ export default function MessageScreen() {
       setMessages(prev => [...prev, res]);
       setPrevMsg(message);
       setMessage("")
+      setRecordings(null);
     }else{
       console.log("problem..");
     }
@@ -292,7 +318,9 @@ export default function MessageScreen() {
     useCallback(() =>{
       return () =>{
         console.log("disconnecting")
-        ws.current?.close();
+        if(ws.current){
+          ws.current?.close();
+        }
       }
     }, [])
   )
@@ -396,6 +424,11 @@ export default function MessageScreen() {
           handleRegenerate,
           handleShare
         }}
+        recorderState={recorderState}
+        startRocording = {handleStartRecording}
+        stopRecording={handleStopRecording}
+        recordings={recordings}
+        setRecordings={setRecordings}
       />
 
       {isRating && <RatingMessage 
@@ -438,162 +471,3 @@ export default function MessageScreen() {
     </SafeAreaView>
   );
 }
-
-
-const MessageWrapper = ({flatListRef, messages,onChange, onPredefinedMsg, handleSendMessage, message, methods}) => {
-  return <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-    >
-      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
-        <View 
-        style={{ flex: 1 }}
-        >
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Conversations
-                type={item.type}
-                message={item.message}
-                verseLink={item.verseLink}
-                methods={methods}
-                message_id={item.message_id}
-                item={item}
-              />
-          
-            )}
-            contentContainerStyle={{
-              paddingTop: 15,
-              paddingHorizontal: 12,
-              paddingBottom: 20, // leave space for input
-            }}
-            // ListFooterComponent={() => {
-            //   return message?null:<DummyQuestion onChange={onPredefinedMsg}/>
-            // }}
-            ListEmptyComponent={() => {
-              return <DummyQuestion onChange={onPredefinedMsg}/>
-            }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            onContentSizeChange={() =>
-              flatListRef.current?.scrollToEnd({ animated: true })
-            }
-            
-          />
-
-          
-          <View style={styles.inputContainer}>
-              {/* <Image
-                source={require("../../../../assets/img/24-addfile.png")}
-                style={styles.inputIcon}
-              /> */}
-              <TextInput
-                style={styles.inputField}
-                multiline={true}
-                numberOfLines={2}
-                value={message}
-                onChangeText={e=>onChange(e)}
-                placeholder={"what's on your heart? Ask anything - lets find and inspired answer.."}
-                placeholderTextColor={'#607373'}
-              />
-              
-              <Pressable 
-                onPress={()=>console.log("recording")}
-              >
-                <Image
-                  source={require("../../../../assets/img/24-microphone.png")}
-                  style={styles.inputIcon}
-                />
-              </Pressable>
-              <Pressable 
-                onPress={()=>handleSendMessage(message)}
-              >
-                <Image
-                  //source={require("../../../../assets/img/24-microphone.png")}
-                  source={require("../../../../assets/img/send_message.png")}
-                  style={styles.inputIcon}
-                />
-              </Pressable>
-          </View>
-        </View>
-      {/* </TouchableWithoutFeedback> */}
-    </KeyboardAvoidingView>
-}
-
-
-const DummyQuestion = ({onChange}) => {
-  return <View style={{
-   
-    marginTop: "100%",
-    width:"100%",
-    backgroundColor:'#fff',
-    padding:20,
-    alignItems: 'center',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10
-  }}>
-    <Text style={{
-      color:"#0B172A",
-      fontFamily:'NunitoBold',
-      fontSize: 18,
-      paddingVertical: 20,
-    }}>What do you want to ask?</Text>
-    <View style={{
-      
-    }}>
-      <Pressable onPress={()=>onChange("Why does God allow suffering and evil in the world?")}>
-        <Text style={styles.commonQuestion}>Why does God allow suffering and evil in the world?</Text>
-      </Pressable>
-      <Pressable onPress={() => onChange("How can we trust the Bible when it’s written by humans?")}>
-        <Text style={styles.commonQuestion}>How can we trust the Bible when it’s written by humans?</Text>
-      </Pressable>
-      <Pressable onPress={() => onChange("How can Jesus be both fully God and fully man?")}>
-        <Text style={styles.commonQuestion}>How can Jesus be both fully God and fully man?</Text>
-      </Pressable>
-      <Pressable onPress={() => onChange(`Can’t people be good without believing in God?`)}>
-        <Text style={styles.commonQuestion}>Can’t people be good without believing in God?</Text>
-      </Pressable>
-      <Pressable onPress={() => onChange(`How can I trust the church when it’s full of scandalsand corruption?`)}>
-        <Text style={styles.commonQuestion}>How can I trust the church when it’s full of scandalsand corruption?</Text>
-      </Pressable>
-    </View>
-  </View>
-}
-
-
-const styles = StyleSheet.create({
-  commonQuestion:{
-    color:'#0B172A',
-    fontFamily:'NunitoSemiBold',
-    fontSize: 15,
-    backgroundColor:'#FDF2D8',
-    paddingVertical:5,
-    paddingHorizontal:10,
-    marginBottom:10,
-    borderRadius: 20,
-  },
-  inputContainer:{
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    paddingHorizontal:20,
-    paddingVertical:10
-  },
-  inputField: {
-    borderWidth:1,
-    width: '75%',
-    borderColor:'#ACC6C5',
-    borderRadius: 30,
-    paddingVertical:10,
-    paddingHorizontal: 20
-  },
-  inputIcon:{
-    height:30,
-    width:30,
-    objectFit:'contain'
-  },
-})

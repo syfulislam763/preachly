@@ -27,6 +27,7 @@ export default function PersonalizationScreen2() {
       goals: allOptions
     };
     
+    console.log(payload, "onboarding")
     faith_goal(payload, (data, success) => {
       setLoading(false);
       if (success) {

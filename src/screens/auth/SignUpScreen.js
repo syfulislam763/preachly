@@ -55,7 +55,7 @@ export default function SignInScreen() {
       const payload = {
         email: email
       }
-      if(route.params.type == "reset"){
+      if(route.params?.type == "reset"){
         setIsLoading(true)
         const resent_payload = {
           "email": route.params.email,
