@@ -8,6 +8,7 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 
+
 export default function voiceRecord() {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);

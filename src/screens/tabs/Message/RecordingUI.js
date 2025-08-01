@@ -12,12 +12,12 @@ const RecordingUI = ({ duration = '0:21', onCancel, onMicPress }) => {
       </View>
 
       {/* Center - Cancel */}
-      <TouchableOpacity onPressOut ={onCancel}>
+      <TouchableOpacity onPress ={onCancel}>
         <Text style={styles.cancelText}>Cancel</Text>
       </TouchableOpacity>
 
       {/* Right - Mic Button */}
-      <TouchableOpacity onPressOut={onMicPress}>
+      <TouchableOpacity onPress={onMicPress}>
         <View style={styles.micOuter}>
           <View style={styles.micMiddle}>
             <View style={styles.micInner}>

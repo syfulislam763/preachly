@@ -57,22 +57,23 @@ const MessageWrapper = ({
   setRecordings
 }) => {
     
-    // const intervalRef = useRef(null);
+    const intervalRef = useRef(null);
     const [seconds, setSeconds] = useState(0);
 
 
     const startTimer = () => {
-        // if(intervalRef.current) clearInterval(intervalRef.current);
+        if(intervalRef.current) clearInterval(intervalRef.current);
 
-        // intervalRef.current = setInterval(() => {
-        //     setSeconds(prev => prev+1);
-        // }, 1000)
+        intervalRef.current = setInterval(() => {
+            setSeconds(prev => prev+1);
+            console.log("hi, run")
+        }, 1000)
     }
 
     const stopTimer = () => {
-        // clearInterval(intervalRef.current);
-        // intervalRef.current = null;
-        // setSeconds(0);
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        setSeconds(0);
     }
 
 
@@ -140,7 +141,7 @@ const MessageWrapper = ({
                 />
               :recordings?<>
 
-                <VoiceMessageBubble recordings={recordings} setRecordings={setRecordings}/>
+                <VoiceMessageBubble durations={recorderState.durationMillis} recordings={recordings} setRecordings={setRecordings}/>
                 <Pressable 
                     onPress={()=>handleSendMessage(message)}
                 >
@@ -164,7 +165,7 @@ const MessageWrapper = ({
                 />
             
                 <Pressable 
-                    onPressIn={()=> {
+                    onPress={()=> {
                         startRocording()
                         startTimer()
                     }}

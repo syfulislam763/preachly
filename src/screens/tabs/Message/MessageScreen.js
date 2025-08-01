@@ -41,6 +41,7 @@ import { useRoute } from '@react-navigation/native';
 import voiceRecord from './voiceRecord';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import MessageWrapper from './MessageWrapper';
+import voiceRecord_ from './voiceRecord_';
 
 export default function MessageScreen() {
   useLogout();
@@ -60,7 +61,9 @@ export default function MessageScreen() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
-  const [recordings, setRecordings] = useState(null)
+  const [recordings, setRecordings] = useState(null);
+  const [recordStartTime, setRecordStartTime] = useState(0)
+
 
   const {
     recorderState,
@@ -68,17 +71,32 @@ export default function MessageScreen() {
     stopRecording,
     record
   } = voiceRecord();
-
+  const {
+    startRecording,
+    stopRecording:stopRecording_
+  } = voiceRecord_();
 
   const handleStopRecording = () => {
-    stopRecording();
-    setRecordings(audioRecorder);
-    console.log(JSON.stringify(audioRecorder, null, 2), "record")
+    stopRecording_();
+
+    // stopRecording();
+    // const temp = {
+    //   currentTime: audioRecorder.currentTime,
+    //   startedTime: recordStartTime,
+    //   uri: audioRecorder.uri,
+    //   id: audioRecorder.id,
+    //   isRecording: audioRecorder.isRecording,
+    // }
+    // setRecordings(temp);
+    // console.log(temp)
+    // console.log(JSON.stringify(audioRecorder, null, 2), "record")
   }
   const handleStartRecording = () => {
-    record();
-    setRecordings(null);
-    console.log(JSON.stringify(recorderState, null, 2), "state")
+    stopRecording()
+    // record();
+    // setRecordings(null);
+    // setRecordStartTime(Date.now())
+    // console.log(JSON.stringify(recorderState, null, 2), "state")
   }
 
   const create_session = () =>{

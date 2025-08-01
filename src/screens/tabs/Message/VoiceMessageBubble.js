@@ -1,30 +1,47 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState, memo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 
-export default function VoiceMessageBubble({setRecordings, recordings}) {
+
+const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
 
     const player = useAudioPlayer(recordings.uri);
-    const [durations,setDuration] = useState("0:00")
+    
+    const [time, setTime ] = useState("0:00");
+    console.log("run baby")
+
+    const [play, setPlay] = useState(false);
+
+    const handlePlayStart = () => {
+      player.seekTo(0);
+      player.play();
+      console.log("str..")
+      setPlay(true);
+    }
+    const hanldePlayStop = () => {
+      player.seekTo(0);
+      setPlay(false);
+      console.log("sto..")
+    }
 
     useEffect(()=>{
-        let durations = "0:00"
-    if((recordings.currentTime)/1000 < 60) {
-        durations = "0:"+ (recordings.currentTime)/1000;
-    }else if((recordings.currentTime)/(1000*60) < 60){
-        let min = (recordings.currentTime)/(1000*60);
-        let sec = (recordings.currentTime)%(1000*60);
-        durations = min+":"+sec;
-    }else{
-        let hour = (recordings.currentTime)/(1000*60*60);
-        let min = ( (recordings.currentTime)%(1000*60*60) ) / (1000*60);
-        let sec = ( (recordings.currentTime)%(1000*60*60) ) % (1000*60);
-        durations = hour+":"+min+":"+sec;
-    }
-    setDuration(durations)
+      let temp = ""
+      if((durations)/1000 < 60) {
+          temp = "0:"+ Math.round((durations)/1000);
+      }else if((durations)/(1000*60) < 60){
+          let min = (durations)/(1000*60);
+          let sec = (durations)%(1000*60);
+          temp = Math.round(min)+":"+(Math.round(sec));
+      }else{
+          let hour = (durations)/(1000*60*60);
+          let min = ( (durations)%(1000*60*60) ) / (1000*60);
+          let sec = ( (durations)%(1000*60*60) ) % (1000*60);
+          temp = Math.round(hour)+":"+Math.round(min)+":"+Math.round(sec);
+      }
+      setTime(temp)
 
-    console.log(recordings, "888");
+      console.log(recordings, "888");
     }, [])
 
 
@@ -36,13 +53,18 @@ export default function VoiceMessageBubble({setRecordings, recordings}) {
       <TouchableOpacity onPress={() => setRecordings(null)} style={styles.closeButton}>
         <Entypo name="cross" size={24} color="#1C1B1F" />
       </TouchableOpacity>
-
+  
       {/* Audio Player */}
       <View style={styles.audioContainer}>
         {/* Play Button */}
-        <TouchableOpacity style={styles.playButton}>
-          <FontAwesome name="play" size={15} color="#000" />
-        </TouchableOpacity>
+        {!play ? 
+          <TouchableOpacity onPress={handlePlayStart}  style={styles.playButton}>
+            <FontAwesome name="play" size={15} color="#000" />
+          </TouchableOpacity>:
+          <TouchableOpacity onPress={hanldePlayStop} style={styles.playButton}>
+            <FontAwesome name="pause" size={15} color="#000" />
+          </TouchableOpacity>
+        }
 
         {/* Waveform (Fake Bars) */}
         <View style={styles.waveform}>
@@ -60,13 +82,13 @@ export default function VoiceMessageBubble({setRecordings, recordings}) {
         {/* Red Dot + Duration */}
         <View style={styles.durationWrapper}>
           <View style={styles.redDot} />
-          <Text style={styles.durationText}>{durations}</Text>
+          <Text style={styles.durationText}>{time}</Text>
         </View>
       </View>
     </View>
   );
 }
-
+export default memo(VoiceMessageBubble)
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
