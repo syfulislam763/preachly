@@ -36,12 +36,11 @@ import { heightPercentageToDP } from 'react-native-responsive-screen';
 // import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { setIsAudioActiveAsync } from 'expo-audio';
-import { finish_share, finish_conversation } from '../TabsAPI';
+import { finish_share, finish_conversation, send_voice_message } from '../TabsAPI';
 import { useRoute } from '@react-navigation/native';
-import voiceRecord from './voiceRecord';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import MessageWrapper from './MessageWrapper';
-import voiceRecord_ from './voiceRecord_';
+import { startRecording, stopRecording} from './voiceRecord_';
 
 export default function MessageScreen() {
   useLogout();
@@ -62,41 +61,26 @@ export default function MessageScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const [recordings, setRecordings] = useState(null);
+  const [audio, setAudio] = useState(null);
+  const [recordingState, setRecordingState] = useState(false);
+
+
+
   const [recordStartTime, setRecordStartTime] = useState(0)
+  const [isTest, setIsTest] = useState(false);
 
+  
 
-  const {
-    recorderState,
-    audioRecorder,
-    stopRecording,
-    record
-  } = voiceRecord();
-  const {
-    startRecording,
-    stopRecording:stopRecording_
-  } = voiceRecord_();
-
-  const handleStopRecording = () => {
-    stopRecording_();
-
-    // stopRecording();
-    // const temp = {
-    //   currentTime: audioRecorder.currentTime,
-    //   startedTime: recordStartTime,
-    //   uri: audioRecorder.uri,
-    //   id: audioRecorder.id,
-    //   isRecording: audioRecorder.isRecording,
-    // }
-    // setRecordings(temp);
-    // console.log(temp)
-    // console.log(JSON.stringify(audioRecorder, null, 2), "record")
+  const handleStopRecording = async () => {
+    const data = await stopRecording(recordings, setRecordings);
+    setAudio(data);
+    setRecordingState(false);
   }
-  const handleStartRecording = () => {
-    stopRecording()
-    // record();
-    // setRecordings(null);
-    // setRecordStartTime(Date.now())
-    // console.log(JSON.stringify(recorderState, null, 2), "state")
+  const handleStartRecording = async () => {
+    const res = await startRecording();
+    setRecordings(res.recording)
+    setRecordingState(true);
+    setAudio(null)
   }
 
   const create_session = () =>{
@@ -128,14 +112,24 @@ export default function MessageScreen() {
       
       get_message_by_session_id(store?.session?.id, (res, success) => {
         if(success){
-          const msgs = res?.data?.messages?.map(item => {
-            return item.is_user?{
+          let msgs = res?.data?.messages?.map(item => {
+            
+            return (item.is_user && !item.has_voice )?{
                 id: item?.id,
                 message_id: item?.id,
                 type: 'user',
                 verseLink: "",
                 message: item?.content
-              }:{
+              }: item.has_voice? 
+                {
+                  id: item?.id,
+                  message_id: item?.id,
+                  type: 'audio',
+                  verseLink: "",
+                  message: item?.content,
+                  uri: item.voice_file
+                }
+              : {
               id: item?.id,
               message_id: item?.id,
               type: 'bot',
@@ -145,7 +139,21 @@ export default function MessageScreen() {
             }
           });
 
-          setMessages(msgs);
+          let temp = []
+          for(let i=0;i<msgs.length;){
+            if(msgs[i].type == "audio"){
+              temp.push(msgs[i]);
+              i += 2;
+            }else{
+              temp.push(msgs[i]);
+              i++;
+            }
+            
+          }
+
+          console.log(JSON.stringify({}, null, 2), "etm")
+
+          setMessages(temp);
           setSession(store?.session);
           setLoading(false);
           setIsNewSession(false);
@@ -352,7 +360,66 @@ export default function MessageScreen() {
 
   const handleSendMessage = (newMessage) => {
 
-    sendMessage()
+    if(audio){
+      const payload = new FormData();
+      const temp = audio.file.split("/")
+      const voice_file = {
+        uri: audio.file,
+        name: audio.name,
+        type: 'audio/'+ temp[temp.length-1].split(".")[1]
+      }
+      payload.append("voice_file", voice_file)
+      payload.append("session_id", store?.session?.id)
+
+
+      const res = {
+        id: Date.now(),
+        message_id: Date.now(),
+        type: 'user',
+        verseLink: "",
+        message: "",
+        bookmark:false,
+      }
+      res.message = "sending..."
+      setMessages(prev => [...prev, res])
+     
+      
+      send_voice_message(payload, (res, success) => {
+        if(success){
+          const data = {
+            id: Date.now(),
+            message_id: res?.data.message_id,
+            type: 'audio',
+            verseLink: "",
+            message: res?.data?.transcript,
+            bookmark:false,
+            uri: res?.data?.voice_url
+          }
+          const payload = {
+            message: res?.data?.transcript,
+            session_id: session.id,
+            type: "message"
+          }
+          ws.current.send(JSON.stringify(payload))
+          setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
+          setAudio(null);
+          setMessage("")
+          console.log(res, "**");
+        }else{
+          setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
+          setAudio(null);
+          setMessage("")
+          console.log("err ", JSON.stringify(res, null, 2));
+        }
+      })
+    
+
+
+    }else{
+      sendMessage()
+    }
+
+    
 
   };
 
@@ -377,6 +444,7 @@ export default function MessageScreen() {
   }, []);
 
 
+  console.log(JSON.stringify(messages, null, 2), "testing")
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
@@ -442,11 +510,14 @@ export default function MessageScreen() {
           handleRegenerate,
           handleShare
         }}
-        recorderState={recorderState}
+        recorderState={recordingState}
+        setRecordingState={setRecordingState}
         startRocording = {handleStartRecording}
         stopRecording={handleStopRecording}
-        recordings={recordings}
-        setRecordings={setRecordings}
+        recordings={audio}
+        setRecordings={setAudio}
+        isTest={isTest}
+        setIsTest={setIsTest}
       />
 
       {isRating && <RatingMessage 

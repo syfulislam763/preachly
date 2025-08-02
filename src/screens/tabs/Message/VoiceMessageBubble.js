@@ -1,48 +1,56 @@
-import React, { useEffect, useMemo, useState, memo } from 'react';
+import React, { useEffect, useMemo, useState, memo, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
-
+import { Audio } from 'expo-av';
+import { useFocusEffect } from '@react-navigation/native';
 
 const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
 
-    const player = useAudioPlayer(recordings.uri);
+    const [sound, setSound] = useState(null);
     
+    console.log(recordings, "recordings")
+  
     const [time, setTime ] = useState("0:00");
-    console.log("run baby")
 
     const [play, setPlay] = useState(false);
 
-    const handlePlayStart = () => {
-      player.seekTo(0);
-      player.play();
-      console.log("str..")
+    const handlePlayStart = async () => {
+  
+      if(recordings.sound){
+        await recordings.sound.replayAsync();
+      }
+      setSound(recordings.sound);
+      
+      recordings.sound.setOnPlaybackStatusUpdate((status) => {
+      if (status.didJustFinish) {
+        setPlay(false);
+        console.log('Playback finished');
+      }
+    });
+
       setPlay(true);
     }
-    const hanldePlayStop = () => {
-      player.seekTo(0);
+    const hanldePlayStop = async () => {
       setPlay(false);
-      console.log("sto..")
+      if(sound)sound.stopAsync();
     }
 
     useEffect(()=>{
-      let temp = ""
-      if((durations)/1000 < 60) {
-          temp = "0:"+ Math.round((durations)/1000);
-      }else if((durations)/(1000*60) < 60){
-          let min = (durations)/(1000*60);
-          let sec = (durations)%(1000*60);
-          temp = Math.round(min)+":"+(Math.round(sec));
-      }else{
-          let hour = (durations)/(1000*60*60);
-          let min = ( (durations)%(1000*60*60) ) / (1000*60);
-          let sec = ( (durations)%(1000*60*60) ) % (1000*60);
-          temp = Math.round(hour)+":"+Math.round(min)+":"+Math.round(sec);
-      }
-      setTime(temp)
+      setTime(recordings.duration)
 
-      console.log(recordings, "888");
+      return () =>{
+        if(sound)sound.unloadAsync();
+      }
     }, [])
+
+    useFocusEffect(
+      useCallback(() => {
+        return () =>{
+          if(sound)sound.unloadAsync();
+        }
+      }, [])
+    )
 
 
 
@@ -68,7 +76,7 @@ const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
 
         {/* Waveform (Fake Bars) */}
         <View style={styles.waveform}>
-          {Array.from({ length: 33    }).map((_, index) => (
+          {Array.from({ length: 40    }).map((_, index) => (
             <View
               key={index}
               style={[

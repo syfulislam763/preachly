@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity ,Image, Pressable} from 'react-native';
 import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
-
+import AudioPlayerCard from './AudioPlayCard';
 
 const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item}) => {
 
@@ -12,6 +12,14 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
       {type === 'user' && (
         <View style={styles.userBubble}>
           <Text style={{...styles.userText, color:"#ffffff"}}>{message}{" "}</Text>
+        </View>
+      )}
+
+      {type==="audio" && (
+        <View style={{
+          alignSelf:"flex-end"
+        }}>
+          <AudioPlayerCard item={item}/>
         </View>
       )}
 

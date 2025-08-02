@@ -281,3 +281,18 @@ export const clear_all_notification = async (cb) => {
         cb(e, false);
     }
 }
+
+export const send_voice_message = async (payload, cb) => {
+    const url = `/chat/voice-to-text/`;
+    try{
+        const res = await api.post(url, payload, {
+            headers:{
+                Accept: '*/*',
+                "Content-Type": 'multipart/form-data',
+            }
+        });
+        cb(res.data, true)
+    }catch(e){
+        cb(e, false);
+    }
+}

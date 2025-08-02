@@ -41,6 +41,7 @@ import { useRoute } from '@react-navigation/native';
 import voiceRecord from './voiceRecord';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import RecordingUI from './RecordingUI';
+import voiceRecord_ from './voiceRecord_';
 
 const MessageWrapper = ({
   flatListRef, 
@@ -53,20 +54,20 @@ const MessageWrapper = ({
   startRocording,
   stopRecording,
   recorderState,
+  setRecordingState,
   recordings,
-  setRecordings
+  setRecordings,
+  isTest,
+  setIsTest
 }) => {
     
     const intervalRef = useRef(null);
     const [seconds, setSeconds] = useState(0);
 
-
     const startTimer = () => {
         if(intervalRef.current) clearInterval(intervalRef.current);
-
         intervalRef.current = setInterval(() => {
             setSeconds(prev => prev+1);
-            console.log("hi, run")
         }, 1000)
     }
 
@@ -75,6 +76,8 @@ const MessageWrapper = ({
         intervalRef.current = null;
         setSeconds(0);
     }
+
+    
 
 
   return <KeyboardAvoidingView
@@ -122,11 +125,8 @@ const MessageWrapper = ({
 
           
           <View style={styles.inputContainer}>
-              {/* <Image
-                source={require("../../../../assets/img/24-addfile.png")}
-                style={styles.inputIcon}
-              /> */}
-            {(recorderState.isRecording && !recordings)?
+              
+            {recorderState && ( !recordings)?
             //   <VoiceMessageBubble/>
                 <RecordingUI
                     duration={seconds}
@@ -141,7 +141,10 @@ const MessageWrapper = ({
                 />
               :recordings?<>
 
-                <VoiceMessageBubble durations={recorderState.durationMillis} recordings={recordings} setRecordings={setRecordings}/>
+                <VoiceMessageBubble durations={0} recordings={recordings} setRecordings={(a) => {
+                  setRecordings(a);
+                  setIsTest(false)
+                }}/>
                 <Pressable 
                     onPress={()=>handleSendMessage(message)}
                 >
@@ -192,11 +195,6 @@ const MessageWrapper = ({
             
             }
               
-              
-              {/* {!recorderState.isRecording?
-                  <Pressable onLongPress={()=>startRocording()} onPress={()=>startRocording()}><Text>start</Text></Pressable>:
-                  <Pressable onPress={()=>stopRecording()}><Text>stop</Text></Pressable>
-                } */}
               
           </View>
         </View>
