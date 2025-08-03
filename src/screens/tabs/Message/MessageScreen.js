@@ -242,17 +242,17 @@ export default function MessageScreen() {
         const data = JSON.parse(e.data);
         const res = {
           id: Date.now(),
-          message_id: data.message_id,
+          message_id: data?.message_id,
           type: 'bot',
           verseLink: "",
-          message: data.content,
+          message: data?.content,
           bookmark:false,
         }
-        if(data.type === "typing"){
+        if(data?.type === "typing"){
           res.message = "typing..."
           setMessages(prev => [...prev, res])
         }
-        if(data.type === "message"){
+        if(data?.type === "message"){
           
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
@@ -406,7 +406,7 @@ export default function MessageScreen() {
           setMessage("")
           console.log(res, "**");
         }else{
-          setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
+          setMessages(prev => [...prev.filter(item=> item.message != "sending...")])
           setAudio(null);
           setMessage("")
           console.log("err ", JSON.stringify(res, null, 2));

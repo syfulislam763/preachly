@@ -12,7 +12,7 @@ const ConfirmationCode = ({ }) => {
   const [isLoading, setIsloading] = useState(false)
   const route = useRoute()
   const navigation = useNavigation()
-  const {email, change, profileSettingData} = route.params
+  const {email, change, profileSettingData, faith_goal_questions} = route.params
   const {updateStore} = useAuth()
 
   const changeEmailVerify = (otp) => {
@@ -20,7 +20,7 @@ const ConfirmationCode = ({ }) => {
     verify_change_email({otp: otp}, (res, success) => {
       if(success){
       
-          updateStore({profileSettingData})
+          updateStore({profileSettingData, faith_goal_questions})
           handleToast("info", "Email Changed!",2000, () => {
               // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
               navigation.dispatch(state => {

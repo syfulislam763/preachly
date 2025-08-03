@@ -51,6 +51,7 @@ export const logoutUser = async (cb) => {
   await AsyncStorage.removeItem('accessToken');
   await AsyncStorage.removeItem('refreshToken');
   await AsyncStorage.removeItem('store');
+  await AsyncStorage.clear();
   delete api.defaults.headers.common['Authorization'];
 
   cb && cb();
