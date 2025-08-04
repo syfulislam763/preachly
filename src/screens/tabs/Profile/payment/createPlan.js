@@ -71,7 +71,7 @@ export default function createPlan() {
     }
   };
 
-  const startFreeTrial = async () => {
+  const startFreeTrial = async (cb=(a)=>{}) => {
     const selectedPlan = plans.find((p) =>
       selectedPlanType === 'yearly'
         ? p.plan_type === 'explorer_yearly'
@@ -85,6 +85,7 @@ export default function createPlan() {
       const status = await api.get(`/subscription/status/`);
       const active = status.data.data?.is_active || status.data.data?.is_trial_active;
       if (active) {
+        cb("active");
         //navigation.replace('Congratulation');
         console.log("go congratulations page")
         return;
@@ -125,11 +126,12 @@ export default function createPlan() {
           payment_method_id: paymentMethodId,
         }
       );
-
+      cb("success")
       console.log('Success', 'Free trial started!');
       //navigation.replace('Congratulation');
     } catch (e) {
       console.error('Stripe error:', e);
+      cb("error")
       if (e.message?.includes('canceled')) {
         console.log('Cancelled', 'Payment was cancelled');
       } else {
@@ -142,33 +144,10 @@ export default function createPlan() {
 
   return {
     setSelectedPlanType,
+    selectedPlanType,
     monthlyPlan,
     yearlyPlan,
     startFreeTrial
   }
 
-  return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Select a plan</Text>
-
-      {plans.map((plan) => (
-        <Button
-          key={plan.id}
-          title={`${plan.name} (${plan.interval})`}
-          onPress={() =>
-            setSelectedPlanType(plan.plan_type.includes('yearly') ? 'yearly' : 'monthly')
-          }
-          color={selectedPlanType === plan.plan_type.split('_')[1] ? 'green' : undefined}
-        />
-      ))}
-
-      <View style={{ marginTop: 20 }}>
-        {loading ? (
-          <ActivityIndicator size="large" color="teal" />
-        ) : (
-          <Button title="Start Free Trial" onPress={startFreeTrial} />
-        )}
-      </View>
-    </View>
-  );
 }

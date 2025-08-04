@@ -33,7 +33,14 @@ import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
 
-
+//     "conversation" = Confidence Goal
+// "scripture" = Scripture Knowledge
+// "share_faith" = Inspiration Goal
+const goals = {
+  "conversation":"Confidence Goal",
+  "scripture": "Scripture Knowledge",
+  "share_faith": "Inspiration Goal"
+}
 const PersonalInfo = () => {
   useLogout();
   const {store, updateStore} = useAuth()
@@ -45,6 +52,24 @@ const PersonalInfo = () => {
     bible_familiarity_data,
     faith_goal_questions
   } = store;
+
+  const faith_goal = [
+    {
+      id:1,
+      goal_type: "conversation",
+      name: "Confidence Goal"
+    },
+    {
+      id:2,
+      goal_type: "scripture",
+      name: "Scripture Knowledge"
+    },
+    {
+      id:3,
+      goal_type: "share_faith",
+      name: "Inspiration Goal"
+    },
+  ]
   
   const route = useRoute()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
@@ -119,25 +144,28 @@ const PersonalInfo = () => {
   const handleSaveUserInfo = () => {
     //navigation.goBack()
     const payload  = {
-      journey_reason: {
-        "journey_reason": faithGoal?.id
-      },
+      // journey_reason: {
+      //   "journey_reason": faithGoal?.id
+      // },
       denomination: {
         "denomination_option": selectedDenomination?.id
       },
-      faith_goal: {
-        goals: [
-          {
-            faith_goal_option: faithGoalQuestionOne?.id
-          },
-          {
-            faith_goal_option: faithGoalQuestionTwo?.id
-          },
-          {
-            faith_goal_option: faithGoalQuestionThree?.id
-          }
-        ]
+      goal_preference: {
+        goal_type: faithGoal?.goal_type
       },
+      // faith_goal: {
+      //   goals: [
+      //     {
+      //       faith_goal_option: faithGoalQuestionOne?.id
+      //     },
+      //     {
+      //       faith_goal_option: faithGoalQuestionTwo?.id
+      //     },
+      //     {
+      //       faith_goal_option: faithGoalQuestionThree?.id
+      //     }
+      //   ]
+      // },
       tone_preference: {
         "tone_preference_option": tone?.id
       },
@@ -183,7 +211,8 @@ const PersonalInfo = () => {
 
     // return 0;
 
-    
+      
+    console.log(payload)
  
     setLoading(true)
     post_onboarding_user_data(payload, (res, success) => {
@@ -195,20 +224,22 @@ const PersonalInfo = () => {
               denomination: selectedDenomination || {},
               bible_version: selectedBibleVersion || {},
               tone_preference: tone || {},
-              faith_reason: faithGoal || {},
+              goal_preference: faithGoal || {},
               bible_familiarity: Answer || {},
             }
-            const faith_goal_questions = res?.data.faith_goal.map(item => {
-              return {
-                ...item,
-                options: item.options.map(op => {
-                  return {
-                    ...op,
-                    name: op.option
-                  }
-                })
-              }
-            })
+            // const faith_goal_questions = res?.data.faith_goal.map(item => {
+            //   return {
+            //     ...item,
+            //     options: item.options.map(op => {
+            //       return {
+            //         ...op,
+            //         name: op.option
+            //       }
+            //     })
+            //   }
+            // })
+            const faith_goal_questions = undefined
+
             const oldEmail = store?.profileSettingData?.userInfo?.email
             setLoading(false)
 
@@ -247,7 +278,7 @@ const PersonalInfo = () => {
     setSelectedDenomination(store?.profileSettingData?.denomination)
     setSelectedBibleVersion(store?.profileSettingData?.bible_version)
     setTone(store?.profileSettingData?.tone_preference)
-    setFaithGoal(store?.profileSettingData?.faith_reason)
+    setFaithGoal(store?.profileSettingData?.goal_preference)
     setAnswer(store?.profileSettingData?.bible_familiarity)
 
     if(faith_goal_questions){
@@ -437,7 +468,7 @@ const PersonalInfo = () => {
         isVisible={faithGoalVisible}
         onClose={() => setFaithGoalVisible(false)}
         handleChage={handleFaithGoal}
-        options={faith_journey_reasons}
+        options={faith_goal}
         selectedItem={faithGoal}
       />
       <DropdownModal

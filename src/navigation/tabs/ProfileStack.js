@@ -168,7 +168,7 @@ export default function ProfileStack() {
       })} name="Calendar" component={Calendar} />
 
       <Stack.Screen options={({navigation}) => ({
-        title: 'Your Goals',
+        title: 'Your Current Goals',
         headerTitleAlign: "center",
         headerShadowVisible: false,
         headerTitleStyle: {

@@ -6,9 +6,26 @@ import { deepGreen, primaryText } from '../../../components/Constant'
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 const img1 = require('../../../../assets/img/card_bg9.png');
 const img2 = require('../../../../assets/img/card_bg10.png');
-import { get_all_goals } from '../TabsAPI'
+import { get_all_goals, get_current_goal } from '../TabsAPI'
 import Indicator from '../../../components/Indicator'
+import { useAuth } from '../../../context/AuthContext'
+import ProgressBar from '../../../components/ProgressBar'
 
+const scripture = require("../../../../assets/img/scripture.png")
+const conversation = require("../../../../assets/img/conversation.png")
+const share_faith = require("../../../../assets/img/share_faith.png")
+
+const lavel = {
+  "conversation":"Confidence Goal",
+  "scripture": "Scripture Knowledge",
+  "share_faith": "Inspiration Goal"
+}
+
+const images = {
+    "conversation": conversation,
+    "scripture": scripture,
+    "share_faith": share_faith
+}
 
 const CurrentGoals = () => {
     const navigation = useNavigation()
@@ -16,48 +33,73 @@ const CurrentGoals = () => {
     const [currentWeek, setCurrentWeek] = useState({});
     const [history, setHistory] = useState([]);
     const [week, setWeek] = useState(100)
+    const {store} = useAuth();
 
+    console.log(JSON.stringify(currentWeek, null, 2), "..")
 
 
     const renderItem = ({item, isCurrent = false}) => {
         const week_end = (item?.week_end)?timeAgo(item?.week_end):"";
         const week_start = (item?.week_start)?timeAgo(item?.week_start):""
-        const current = isCurrent?"(running)":"(ended)";
-        const goals = (item?.goals)?item?.goals:[]
+        const current = isCurrent?"":"";
+        const goals = item.goal || {}
         // const week_end = "";
         // const week_start = "";
-  
+        console.log(goals)
         return <Pressable style={{
             backgroundColor:'#ffffff'
         }} onPress={() => {
             
         }}>
-            <Text style={{
-                fontFamily:"NunitoSemiBold",
-                fontSize:15,
-                color:"#0B172A",
-                paddingLeft: 5,
-                marginBottom:10
-            }}>{`${week_start} - ${week_end} ${current}`}{" "}</Text>
             
-            {goals[0] && <Card 
-                index={0}
-                progress={`${goals[0].progress_percentage}%`}
-                title={goals[0].goal_display}
-                text={`${goals[0].current_count}/${goals[0].target_count} completed`}
-            />}
-            {goals[1] && <Card 
+            
+            {/* {goals && <Card 
                 index={1}
-                progress={`${goals[1].progress_percentage}%`}
-                title={goals[1].goal_display}
-                text={`${goals[1].current_count}/${goals[1].target_count} completed`}
-            />}
-            {goals[2] && <Card 
-                index={2}
-                progress={`${goals[2].progress_percentage}%`}
-                title={goals[2].goal_display}
-                text={`${goals[2].current_count}/${goals[2].target_count} completed`}
-            />}
+                progress={`${goals.progress_percentage}%`}
+                title={goals.goal_display}
+                text={`${goals?.current_count}/${goals?.target_count} completed`}
+            />} */}
+
+            <View style={{
+                alignContent:'center'
+            }}>
+                <Text style={styles.title2}>Your {goals?.goal_display} is heating up!</Text>
+            
+
+                <Image style={{
+                    height: "60%",
+                    width: "100%",
+                    objectFit:"contain"
+                }} source={images[goals?.goal_type]}/>
+                <View style={{height:20}}></View>
+                <Text 
+                    style={{...styles.title2, fontSize: 16, textAlign:'center'}}
+                >
+                    {`${goals?.current_count}/${goals?.target_count} completed`}
+                </Text>
+                <View style={{height:20}}></View>
+                {/* {backgroundColor:"#53381E",} */}
+                {/* {backgroundColor:"#53381E33"} */}
+                <ProgressBar filled={{}} container={{}} progress={`${goals.progress_percentage}`}/>
+                <View style={{height:20}}></View>
+                <Text style={{
+                    fontFamily:"NunitoSemiBold",
+                    fontSize:15,
+                    color:"#0B172A",
+                    marginBottom:10,
+                    textAlign:'center'
+                }}>{`${week_start} - ${week_end} ${current}`}{" "}</Text>
+
+                <Text style={{
+                    fontFamily:"NunitoSemiBold",
+                    fontSize:15,
+                    color:"#0B172A",
+                    marginBottom:10,
+                    textAlign:'center'
+                }}>{`Remaining days ${item?.days_remaining}`}{" "}</Text>
+
+            </View>
+            
            
         </Pressable>
     }
@@ -93,10 +135,23 @@ const CurrentGoals = () => {
         })
     }
 
+    const handle_get_current_goal = () => {
+     
+        setLoading(true);
+        get_current_goal((res, success) => {
+            if(success){
+                console.log(res,"res")
+                setCurrentWeek(res?.data);
+            }
+
+            setLoading(false);
+        })
+    }
+
 
     useFocusEffect(
         useCallback(() => {
-            handle_get_all_goals()
+           handle_get_current_goal();
         }, [])
     )
 
@@ -148,23 +203,15 @@ const Card = ({img, index = 0, title, text, progress}) => {
                 >
                     <View style={{
                         padding:15,
+                        justifyContent:'center',
+                        alignItems:'center'
                     }}>
                         <Text style={(index==1)?{...styles.title, color:"#ffffff"}:{...styles.title}}>{title || "Memorize 5 Scriptures"}</Text>
-                        <View style={styles.card_wrap}>
-                            <Text 
-                                style={(index==1)?{...styles.text, color:"#ffffff99"}:{...styles.text}}
-                            >
-                                {text || "3/5 completed"}
-                            </Text>
-
-                            <View style={{
-                                width:"40%"
-                            }}>
-                                <View style={[(index ==1)?{...styles.progressContainer,backgroundColor:"#ffffff99"}:styles.progressContainer]}>
-                                    <View style={[(index ==1)?{...styles.innerBar, backgroundColor:"#ffffff", width:progress || "40%"}:{...styles.innerBar, width:progress || "40%"}]}></View>
-                                </View>
-                            </View>
-                        </View>
+                        <Text 
+                            style={(index==1)?{...styles.text, color:"#ffffff99"}:{...styles.text}}
+                        >
+                            {text || "3/5 completed"}
+                        </Text>
                     </View>
                 </ImageBackground>
 }
@@ -189,8 +236,7 @@ const styles = StyleSheet.create({
     background:{
         height:82,
         width:'100%',
-        flexDirection:'column',
-        justifyContent:"center",
+        alignContent:"center",
         marginBottom:15,
         overflow:'hidden',
         borderRadius: 15,
@@ -200,6 +246,13 @@ const styles = StyleSheet.create({
         display:"flex",
         flexDirection:"row",
         alignItems:"center",
+    },
+    title2:{
+        fontFamily:'DMSerifDisplay',
+        fontSize:25,
+        textAlign:'center',
+        color:'#0B172A',
+        marginTop: 20,
     },
     title:{
         fontFamily:"NunitoSemiBold",

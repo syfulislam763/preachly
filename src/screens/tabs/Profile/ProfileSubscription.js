@@ -16,6 +16,7 @@ import { CardField, useStripe } from '@stripe/stripe-react-native';
 import CustomModal from '../../../components/CustomModal';
 import PaymentScreen from './payment/PaymentScreen';
 import createPlan from './payment/createPlan';
+import { KEY } from '../../../context/Paths';
 
 const window = Dimensions.get("window")
 
@@ -25,18 +26,15 @@ export default function ProfileSubscription({ navigation }) {
     setSelectedPlanType,
     monthlyPlan,
     yearlyPlan,
+    selectedPlanType,
     startFreeTrial
   } = createPlan();
 
   const [openPayment, setOpenPayment] = useState(false);
 
-  
-
-
-  const key = `pk_test_51RVMTHQU9tGM4LXBf8ZHLjC18DYzzWu4HnxSCojMGP58ZO8x1K2sFbNZ5xGLmIRt6KjZpo77V0RKs4m6dwoxoFLi00u06pnafX`
 
   return (
-    <StripeProvider publishableKey={key}>
+    <StripeProvider publishableKey={KEY}>
         <View style={{ flex:1, backgroundColor:'#fff', justifyContent:'space-between'}}>
           
 
@@ -78,6 +76,7 @@ export default function ProfileSubscription({ navigation }) {
                   }
                   monthlyPlan={monthlyPlan}
                   yearlyPlan={yearlyPlan}
+                  plan={selectedPlanType}
                   setSelectedPlanType={setSelectedPlanType}
               />
 

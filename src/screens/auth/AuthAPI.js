@@ -151,6 +151,7 @@ export const update_profile_info = async(payload, cb) => {
         })
         cb(res.data, true)
     }catch(e){
+        console.log(e.message, e)
         cb(e, false)
     }
 }
@@ -161,6 +162,20 @@ export const verify_change_email = async(payload, cb) => {
         cb(res.data, true)
     }catch(error){
         cb(error, false)
+    }
+}
+
+export const get_payment_status = async (token, cb) => {
+    const url = `/subscription/status/`;
+    try{
+        const res = await api.get(url,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        });
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
     }
 }
 

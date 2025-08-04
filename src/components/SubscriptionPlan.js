@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import useLayoutDimention from '../hooks/useLayoutDimention';
 import { getStyles } from './SubscriptionPlanStyle';
 
-const PlanSelector = ({OtherPlan=null, setSelectedPlanType, monthlyPlan, yearlyPlan}) => {
+const PlanSelector = ({OtherPlan=null, setSelectedPlanType, plan}) => {
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
@@ -15,6 +15,16 @@ const PlanSelector = ({OtherPlan=null, setSelectedPlanType, monthlyPlan, yearlyP
     }
     setSelectedPlan(label);
   }
+
+
+  useEffect(()=>{
+    if(plan=="yearly"){
+      setSelectedPlan("annual")
+    }else{
+      setSelectedPlan(plan)
+    }
+  })
+
   return (
     <View>
       {/* Monthly Plan */}

@@ -296,3 +296,13 @@ export const send_voice_message = async (payload, cb) => {
         cb(e, false);
     }
 }
+
+export const get_current_goal = async (cb) => {
+    const url = `/goals/current-week/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data , true);
+    }catch(e){
+        cb(e, false)
+    }
+}

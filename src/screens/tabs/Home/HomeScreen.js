@@ -14,7 +14,11 @@ import { get_profile_info } from '../../auth/AuthAPI';
 import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
 import { get_random_verses, finish_share, get_notifications} from '../TabsAPI';
-
+const goals = {
+  "conversation":"Confidence Goal",
+  "scripture": "Scripture Knowledge",
+  "share_faith": "Inspiration Goal"
+}
 export default function HomeScreen() {
   useLogout()
   const [loading,setLoading] = useState(false);
@@ -82,7 +86,6 @@ export default function HomeScreen() {
     
   }, [store]);
 
-
   useEffect(() => {
        
     setLoading(true)
@@ -108,6 +111,10 @@ export default function HomeScreen() {
                 })
               }
             })
+            const goal_preference = {
+              ...res?.data?.goal_preference,
+              name: goals[res?.data?.goal_preference.goal_type]
+            };
             
 
             const profileSettingData = {
@@ -117,6 +124,7 @@ export default function HomeScreen() {
               tone_preference: tone_preference[0] || {},
               faith_reason: faith_reason[0] || {},
               bible_familiarity: bible_familiarity[0] || {},
+              goal_preference: goal_preference || {}
             }
             setLoading(false)
             updateStore({profileSettingData, faith_goal_questions})

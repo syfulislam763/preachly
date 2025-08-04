@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import { ROOT_URL , TOKEN_URL} from './Paths';
+import { handleToast } from '../screens/auth/AuthAPI';
 
 
 // Replace with your API base URL
@@ -60,10 +61,13 @@ export const logoutUser = async (cb) => {
 api.interceptors.response.use(
   response => response,
   async error => {
+    if(error.response?.status == 523){
+      //handleToast("error", "Try again please, network error", 2000, ()=>{})
+    }
     if (error.response?.status === 401) {
       // Access to navigation should be passed manually
       // OR use a global navigationRef pattern if needed
-      console.warn('Token expired or unauthorized. Handle logout manually.');
+      handleToast("error", "Login again please", 2000, ()=>{})
     }
     return Promise.reject(error);
   }
