@@ -11,15 +11,32 @@ import { useAuth } from '../context/AuthContext';
 
 export default function QuestionSlider({savedOptions, setSavedOptions}) {
   const {store} = useAuth();
+
+  //console.log(JSON.stringify(store?.faith_goal_questions, null, 2), "y")
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
-  const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const styles = getStyles(isSmall, isMedium, isLarge, isFold);
+ 
+
   const handleSelect = (option) => {
-    setSelectedOptions((prev) => [...prev, option]);
-    
-    setSavedOptions((prev) => [...prev, option.id]);
+    if(currentIndex>store?.faith_goal_questions.length-1 || currentIndex < 0 || !(store?.faith_goal_questions)){
+      return;
+    }
+    const temp = store?.faith_goal_questions?.sort((a, b) => a.id - b.id)[currentIndex]?.options;
+
+    let filtered = selectedOptions;
+    temp.forEach(item => {
+      filtered = filtered.filter(opt => opt.id != item.id);
+    })
+
+    filtered.push(option);
+
+
+    setSelectedOptions(filtered);
+    //console.log(filtered.map(item=>item.id))
+    setSavedOptions(filtered.map(item=>item.id));
   };
 
   const goNext = () => {
@@ -56,7 +73,7 @@ export default function QuestionSlider({savedOptions, setSavedOptions}) {
         <Text style={styles.questionText}>{store?.faith_goal_questions[currentIndex].question}</Text>
       </View>
 
-      {store?.faith_goal_questions.sort((a, b) => a.id - b.id)[currentIndex].options.map(renderRadio)}
+      {store?.faith_goal_questions?.sort((a, b) => a.id - b.id)[currentIndex].options.map(renderRadio)}
 
       <View style={{
         alignItems:'center',

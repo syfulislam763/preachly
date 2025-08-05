@@ -23,7 +23,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
         if(!result.canceled){
            
             onChange(result.assets[0])
-            console.log("image ->", result.assets[0])
+         
         }else{
             onChange({})
         }

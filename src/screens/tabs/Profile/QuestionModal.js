@@ -85,7 +85,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
                 setAns(temp[currentQuestionIndex]?.options[currentQuestionIndex])
                 setWeeklyCheckInId({weekly_check_in_id: res.data.weekly_checkin_id, week_number:res?.data.week_number})
             }else{
-                console.log(res)
+             
             }
 
         })
@@ -98,8 +98,6 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
             responses: [...responses, {"question": currentQuestion.id, "selected_option": ans.id}]
         };
 
-        console.log(payload.responses.length)
-        console.log("pay ->", JSON.stringify(payload, null, 2))
         setLoading(true);
         save_weekly_check_in(payload, (res, success) => {
             setLoading(false);
@@ -107,7 +105,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
                 setModalVisible(false),
                 navigation.navigate("PorfileFaith", {week_number: res?.data?.week_number})
             }else{
-                console.log(res);
+           
             }
         })
 
@@ -123,8 +121,7 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
     },[])
 
 
-    // console.log("q->", JSON.stringify(currentQuestion, null, 2))
-    // console.log("q->", JSON.stringify(ans, null, 2))
+   
 
 
     const handleNext = () =>{
@@ -138,7 +135,6 @@ const QuestionModal = ({modalVisible, setModalVisible, navigation}) => {
         }
     }
 
-    // console.log(currentQuestion)
 
     return <CustomModal
         visible={modalVisible}

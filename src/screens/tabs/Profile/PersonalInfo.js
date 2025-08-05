@@ -254,13 +254,13 @@ const PersonalInfo = () => {
             }
 
           }else{
-            console.log('got', JSON.stringify(response, null, 2))
+           
             console.log(profileInfo_payload)
             setLoading(false)
           }
         })
       }else{
-        console.log("update onboarding -> ", res)
+   
         setLoading(false)
       }
     })
@@ -271,6 +271,7 @@ const PersonalInfo = () => {
 
 
   useEffect(() => {
+
     setName(store?.profileSettingData?.userInfo?.name)
     setDob(store?.profileSettingData?.userInfo?.date_of_birth)
     setEmail(store?.profileSettingData?.userInfo?.email)
@@ -494,7 +495,7 @@ const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
       value={value}
       keyboardType={isDate?'numeric':'default'}
       onChangeText={onChange}
-      placeholder={isDate?"dd.month.year":`Enter ${label.toLowerCase()}`}
+      placeholder={isDate?"year-month-day":`Enter ${label.toLowerCase()}`}
       textAlign="right"
       editable={isEditable}
       returnKeyType="done"

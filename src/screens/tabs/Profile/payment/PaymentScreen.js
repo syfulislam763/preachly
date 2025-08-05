@@ -126,7 +126,6 @@ export default function CustomCardPayment() {
     try {
       // Step 1: Create setup intent first
       const clientSecret = await createSetupIntent();
-        console.log(clientSecret, "87")
       // Step 2: Confirm setup intent with card details directly
       const { setupIntent, error: setupError } = await confirmSetupIntent(clientSecret, {
         paymentMethodType: 'Card',
@@ -141,7 +140,7 @@ export default function CustomCardPayment() {
       });
 
       if (setupError) {
-        console.log('Setup Error', setupError.message);
+       
         return;
       }
 
@@ -212,7 +211,7 @@ export default function CustomCardPayment() {
         setCvc('');
         
         // You might want to navigate to a success screen here
-        console.log('Subscription created:', subscriptionData);
+      
       }
 
     } catch (error) {

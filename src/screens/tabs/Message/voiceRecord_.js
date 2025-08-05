@@ -21,7 +21,6 @@ export async function startRecording() {
       }
     } catch (err) {
         return {err, success:false}
-      console.log('Recording error', err);
     }
 }
 

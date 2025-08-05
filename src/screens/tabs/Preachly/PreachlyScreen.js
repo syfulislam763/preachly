@@ -121,11 +121,11 @@ export default function PreachlyScreen() {
     //setItemLoading(true)
     setChapters([]);
     get_bible_books_chapter(payload, (res, success) =>{
-      // console.log("he-=", JSON.stringify(res.data, null,2))
+
       if(success){
         setChapters(res?.data?.chapters);
         if(isDefault){
-          console.log("+++" , bibleBook)
+  
           get_contents(res?.data?.chapters[0], bible_id, res?.data?.chapters[0]?.id)
         }
       }
@@ -153,10 +153,9 @@ export default function PreachlyScreen() {
     get_bible_chapter_content(payload, (res, success) => {
       if(success){
         setContent([res?.data?.chapter]);
-        console.log(bibleBook, "---")
-        //setExpanded(bibleBook?.name);
+  
         setSelected(chapter_id.split(".")[1]);
-        //console.log("content -> ", JSON.stringify(res?.data, null, 2));
+  
         setOpenChapterList(false);
       }
       setLoading(false)
@@ -169,19 +168,18 @@ export default function PreachlyScreen() {
       chapter_id:chapter?.id,
       route: route
     }
-    console.log("payload--", payload);
+
     setLoading(true);
     next_previous(payload, (res, success) =>{
       if(success){
-        //console.log("hdhd-", JSON.stringify(res.data.chapter, null, 2));
-        console.log(res?.data?.chapter?.verses?.length, "-")
+     
         if(res?.data?.chapter?.verses?.length>0){
           setContent([res?.data?.chapter]);
           setSelected(res?.data?.chapter?.id?.split(".")[1]);
           setChapter({id:res?.data?.chapter?.id, reference: res?.data?.chapter?.reference})
         }
       }else{
-        console.log("--", res);
+
       }
       setLoading(false);
     })
@@ -197,7 +195,6 @@ export default function PreachlyScreen() {
 
   useEffect(()=>{
     setSelectedBibleVersion(store?.profileSettingData?.bible_version);
-    console.log(JSON.stringify(store.profileSettingData, null, 2))
   }, []);
 
 
@@ -240,8 +237,7 @@ export default function PreachlyScreen() {
     }
   }
 
-  // console.log("bible -> ", JSON.stringify(store.bible_versions, null, 2));
-  // console.log("bible -> ", JSON.stringify(store.profileSettingData.bible_version, null, 2));
+
   return (
     <View  style={{flex:1, backgroundColor:'#edf3f3'}}>
 

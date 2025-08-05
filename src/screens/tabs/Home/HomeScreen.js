@@ -13,7 +13,12 @@ import { get_onboarding_user_data } from '../../personalization/PersonalizationA
 import { get_profile_info } from '../../auth/AuthAPI';
 import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
-import { get_random_verses, finish_share, get_notifications} from '../TabsAPI';
+import { get_random_verses, finish_share, get_notifications, get_profile_dashboard_data} from '../TabsAPI';
+import CommonCard from './CommonCard';
+
+
+
+
 const goals = {
   "conversation":"Confidence Goal",
   "scripture": "Scripture Knowledge",
@@ -26,6 +31,7 @@ export default function HomeScreen() {
   const {store, socket, updateStore} = useAuth();
   const [randomVerse, setRandomVerse] = useState({});
   const [profileInfo, setProfileInfo] = useState({})
+  const [dashboard, setDashboard] = useState({})
   const navigation = useNavigation();
   
   const {
@@ -47,9 +53,22 @@ export default function HomeScreen() {
     }, [])
   )
 
+  const handle_get_profile_data = () =>{
+      setLoading(true);
+      get_profile_dashboard_data((res, success) => {
+        if(success){
+          updateStore({profile_dashboard: res?.data})
+          setDashboard(res?.data)
+        }
+        setLoading(false);
+      })
+    }
+  
+  useState(() =>{
+    handle_get_profile_data();
+  }, [])
   useFocusEffect(
     useCallback(() => {
-      console.log("hdhf")
       setProfileInfo(store?.profileSettingData?.userInfo)
     }, [store])
   )
@@ -67,6 +86,7 @@ export default function HomeScreen() {
       console.log("share error ", e);
     }
   }
+  
   const handle_get_notification = () =>{
     get_notifications((res, success) => {
       if(success){
@@ -86,14 +106,15 @@ export default function HomeScreen() {
     
   }, [store]);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
        
     setLoading(true)
     get_onboarding_user_data((res, success) => {
       if(success){
         get_profile_info((res1, success1) => {
           if(success1){
-
+           
             const userInfo = res1?.data
             const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
             const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
@@ -111,9 +132,10 @@ export default function HomeScreen() {
                 })
               }
             })
+            console.log(res?.data?.goal_preference, "goal")
             const goal_preference = {
               ...res?.data?.goal_preference,
-              name: goals[res?.data?.goal_preference.goal_type]
+              name: goals[res?.data?.goal_preference?.goal_type]
             };
             
 
@@ -126,10 +148,13 @@ export default function HomeScreen() {
               bible_familiarity: bible_familiarity[0] || {},
               goal_preference: goal_preference || {}
             }
+            //console.log(profileSettingData, "..")
             setLoading(false)
-            updateStore({profileSettingData, faith_goal_questions})
+            updateStore({ profileSettingData, faith_goal_questions})
+            setProfileInfo(userInfo)
           }else{
             setLoading(false)
+            console.log(res1)
           }
         })
       }else{
@@ -143,12 +168,12 @@ export default function HomeScreen() {
   
         
       }, [])
-
+    );
 
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#fff', paddingHorizontal:20}}>
-        <HomepageHeader userInfo={profileInfo}/>
+        <HomepageHeader dashboard={dashboard} userInfo={profileInfo}/>
         <ScrollView showsVerticalScrollIndicator={false}>
 
           <ImageBackground
@@ -261,25 +286,15 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          <View style={{
-            backgroundColor:'#fff',
-            paddingBottom:100
-          }}>
-            <Image 
-              source={require("../../../../assets/img/weekly_checkin_card.png")}
-              style={styles.bgProgress}
-            />
-            {/* <Image 
-              source={require("../../../../assets/img/weekly_checkin_card.png")}
-              style={styles.bgProgress}
-            />
-            <Image 
-              source={require("../../../../assets/img/weekly_checkin_card.png")}
-              style={styles.bgProgress}
-            /> */}
-          </View>
-          
 
+
+          <CommonCard 
+            title={`Don't forget to reflect on this week's progress and earn your badge!`}
+            text={`Days left ${1} days`}
+            onPress={()=> navigation.navigate("CurrentGoals")}
+          />
+          
+      
         </ScrollView>
         {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
           <ActivityIndicator size={"large"}/>

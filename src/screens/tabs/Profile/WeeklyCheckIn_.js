@@ -17,13 +17,13 @@ const WeeklyCheckIn_ = () => {
 
     const handleGetDetails = () =>{
         setLoading(true);
-        console.log(route.params.week_number)
+      
         get_week_details_by_id(route.params.week_number, (res, success) => {
             setLoading(false);
             if(success){
                 setQuestions(res.data.questions_and_answers);
             }else{
-                console.log(res);
+             
             }
         })
     }

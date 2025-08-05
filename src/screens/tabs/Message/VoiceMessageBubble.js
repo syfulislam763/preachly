@@ -9,7 +9,6 @@ const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
 
     const [sound, setSound] = useState(null);
     
-    console.log(recordings, "recordings")
   
     const [time, setTime ] = useState("0:00");
 
@@ -24,10 +23,9 @@ const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
       
       recordings.sound.setOnPlaybackStatusUpdate((status) => {
       if (status.didJustFinish) {
-        setPlay(false);
-        console.log('Playback finished');
-      }
-    });
+          setPlay(false);
+        }
+      });
 
       setPlay(true);
     }

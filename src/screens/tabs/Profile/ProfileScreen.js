@@ -35,7 +35,7 @@ const ProfileScreen = () => {
   const [weekDays, setWeekDays] = useState([])
   
   useEffect(() => {
-    console.log(route.params?.flag, "__")
+   
     if(route.params?.flag){
       
       navigation.navigate("Calendar")
@@ -59,19 +59,6 @@ const ProfileScreen = () => {
     get_profile_dashboard_data((res, success) => {
       if(res){
         setProfileData(res?.data);
-        let weekDays = Array.from({ length: 7 }).map((_, i) => {
-          const date = startOfWeek.add(i, 'day');
-          return {
-            key: date.format('YYYY-MM-DD'),
-            day: date.format('dd')[0], // First letter of day
-            date: date.date(),
-          };
-        });
-
-        for(let i =0; i < res.data; i++){
-          
-        }
-
 
       }
       setLoading(false);

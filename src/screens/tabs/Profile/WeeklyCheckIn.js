@@ -45,7 +45,7 @@ const WeeklyCheckIn = () => {
             if(success){
                 setHistory(res?.data?.completed_weekly_checkins.filter(item => item.status != "locked"))
             }else{
-                console.log("error")
+          
             }
             
         })

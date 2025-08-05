@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   dropdownList: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 35,
     paddingVertical: 10,
     maxHeight: 300,
     elevation: 5,
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   dropdownItem: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth:0.5,
-    borderBottomColor: '#dddddd',
+    //borderBottomWidth:0.5,
+    //borderBottomColor: '#005055',
   },
 });
 

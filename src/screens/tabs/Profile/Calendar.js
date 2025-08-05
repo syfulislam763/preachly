@@ -15,15 +15,45 @@ import { get_calendar_information } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
 import { useRoute } from '@react-navigation/native';
 
+
 const screenWidth = Dimensions.get('window').width;
 const calendarPadding = 10;
 const daySize = (screenWidth - calendarPadding * 2) / 7 - 4;
-
+const test = [
+  {
+    type:"a",
+    date: new Date("2025-08-24"),
+  },
+  {
+    type:"b",
+    date: new Date("2025-08-24"),
+  },
+  {
+    type:"a",
+    date: new Date("2025-08-23"),
+  },
+  {
+    type:"a",
+    date: new Date("2025-08-22"),
+  },
+  {
+    type:"a",
+    date: new Date("2025-08-21"),
+  },
+  {
+    type:"a",
+    date: new Date("2025-08-20"),
+  },
+  {
+    type:"c",
+    date: new Date("2025-08-20"),
+  }
+]
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const navigation = useNavigation()
-  const [markedDates, setMarkedDates] = useState([]);
+  const [markedDates, setMarkedDates] = useState(test);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const [loading , setLoading] = useState(false);
@@ -40,17 +70,17 @@ const Calendar = () => {
       if(success){
         const marked = []
 
-        const temp = res?.data?.checkins;
-
+        const temp = res?.data?.calendar_events;
+        console.log(JSON.stringify(temp, null, 2), "....")
         temp.forEach(item => {
-          const date = new Date(item.checkin_date);
-          marked.push(date);
+          const date = new Date(item.date);
+          marked.push({...item, date: date});
         })
         //marked.push(new Date("2025-08-24"))
         setMarkedDates(marked)
         // console.log(JSON.stringify(marked, null, 2) , "***")
       }else{
-        console.log(res);
+    
       }
     })
   }
@@ -105,27 +135,64 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
   const isToday = isSameDay(day, new Date());
   const isSelected = isSameDay(day, selectedDate);
   const inCurrentMonth = isSameMonth(day, currentMonth);
-  const isMarked = markedDates?.some(marked => isSameDay(marked, day));
-  
+  const marked = markedDates?.filter(opt => isSameDay(opt.date, day));
+  //console.log("marked", JSON.stringify(marked, null, 2));
+  const isMarked = marked.some(item => item.type == "daily_checkin");
+  const goal_completed = marked.some(item => item.type == "goal_completion");
+  const weekly_checkin_completion = marked.some(item => item.type == "weekly_checkin_completion");
+
 
   let bgColor = 'transparent';
-  if (isSelected) bgColor = '#004d40';
-  else if (isMarked) bgColor = '#f7f8fa';
-
   let marked_style = {};
   let text_color = {}
 
-
-  if(isMarked){
-    let temp = {
-      borderWidth:1,
-      borderColor: '#8eb6b4'
-    }
-    marked_style=temp;
-    let clr = {
+  if (isSelected) bgColor = '#004d40';
+  else if (isMarked || goal_completed || weekly_checkin_completion) {
+    bgColor = '#f7f8fa';
+    text_color = {
       color: '#8eb6b4'
     }
-    text_color = clr
+  }
+
+
+  if(weekly_checkin_completion && isMarked && goal_completed){
+    return <TouchableOpacity
+      onPress={() => onSelect(day)}
+        style={[{...styles.day, height:44.5,width:44.5}, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:"#FDD263"}, {borderWidth:1, borderColor:"#FDD263", position:'relative'}]}
+      >
+        <View style={{height:5,width:5, backgroundColor:"#004d40", borderRadius:5/2, position:'absolute', top:-10}}/>
+        <View
+          style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}, {borderWidth:1, borderColor:"#8eb6b4"}]}
+        >
+          <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }, text_color]}>{format(day, 'd')}</Text>
+        </View>
+      </TouchableOpacity>
+  }
+
+  if(goal_completed){
+    return <TouchableOpacity
+        onPress={() => onSelect(day)}
+        style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}, {borderWidth:1, borderColor:"#8eb6b4", position:'relative'}]}
+      >
+        <View style={{height:5,width:5, backgroundColor:"#004d40", borderRadius:5/2, position:'absolute', top:-10}}/>
+        <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }, text_color]}>{format(day, 'd')}</Text>
+      </TouchableOpacity>
+  }
+  
+  
+  if(weekly_checkin_completion){
+    return (
+    <TouchableOpacity
+      onPress={() => onSelect(day)}
+        style={[{...styles.day, height:44.5,width:44.5}, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:"#FDD263"}, {borderWidth:1, borderColor:"#FDD263"}]}
+      >
+        <View
+          style={[styles.day, {opacity: inCurrentMonth ? 1 : 0.4, backgroundColor:bgColor}, marked_style]}
+        >
+          <Text style={[styles.dayText, {color: isSelected ? 'white' : '#3F5862', }, text_color]}>{format(day, 'd')}</Text>
+        </View>
+      </TouchableOpacity>
+    )
   }
 
   return (

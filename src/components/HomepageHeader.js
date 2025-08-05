@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { useNavigation } from '@react-navigation/native';
 
-const HomepageHeader = ({userInfo}) => {
+const HomepageHeader = ({userInfo, dashboard}) => {
   const {store} = useAuth();
   const navigation = useNavigation();
   return (
@@ -53,7 +53,7 @@ const HomepageHeader = ({userInfo}) => {
                     objectFit:'contain'
                 }}
             />
-          <Text style={styles.countText}>0</Text>
+          <Text style={styles.countText}>{dashboard?.streak?.current_streak || "0"}</Text>
         </TouchableOpacity>
       </View>
     </View>

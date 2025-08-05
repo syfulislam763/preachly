@@ -15,7 +15,6 @@ export default function voiceRecord() {
 
   const record = async () => {
     await audioRecorder.prepareToRecordAsync();
-    console.log("started")
     audioRecorder.record();
   };
 

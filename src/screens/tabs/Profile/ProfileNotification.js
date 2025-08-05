@@ -45,7 +45,7 @@ function ProfileNotification() {
         });
       } else {
         setLoading(false);
-        console.log(res);
+   
       }
     });
   };
