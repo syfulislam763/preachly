@@ -36,7 +36,6 @@
       "expo-font",
       "@react-native-google-signin/google-signin",
       "expo-av",
-      "expo-linear-gradient",
       [
         "expo-audio",
         {
