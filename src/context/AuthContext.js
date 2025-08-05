@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useRef, use } fr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadAuthToken } from './api';
 import { WEBSOCKET_URL } from './Paths';
+import { da } from 'date-fns/locale';
 
 const AuthContext = createContext(null);
 
@@ -116,13 +117,25 @@ export const AuthProvider = ({ children }) => {
     notificationRef.current = null;
   }
 
-  
 
-  const [store, setStore] = useState({})
+ 
+  
+ 
+
+  const [store, setStore] = useState({});
+  const [session, setSession] = useState({});
+  const [currentGoal, setCurrentGoal] = useState({})
+
+  const updateSession = (sess) => {
+    setSession({...session, ...sess})
+  }
 
   const updateStore = (data, control=true) => {
     if(control){
-      setStore({...store, ...data})
+      // console.log("check, ", JSON.stringify(store, null, 2))
+      const temp = JSON.stringify(store);
+      const temp1 = JSON.stringify(data);
+      setStore({...JSON.parse(temp), ...JSON.parse(temp1)})
     }
     else{
       setStore(data)
@@ -169,6 +182,10 @@ export const AuthProvider = ({ children }) => {
       isPersonalized, 
       isSubscribed, 
       store,
+      session,
+      updateSession,
+      currentGoal,
+      setCurrentGoal,
       socket:{
         messages,
         setMessages,

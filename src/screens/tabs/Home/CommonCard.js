@@ -10,9 +10,10 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 
 const img2 = require('../../../../assets/img/card_bg10.png');
+const img4 = require('../../../../assets/img/card_bg11.png');
 const bookOpen = require('../../../../assets/img/BookOpen.png');
 
-const CommonCard = ({title="", text="", onPress=()=>{}}) => {
+const CommonCard = ({index =0, title="", text="", onPress=()=>{}}) => {
     const navigation = useNavigation()
  
     const [loading, setLoading] = useState(false);
@@ -36,14 +37,12 @@ const CommonCard = ({title="", text="", onPress=()=>{}}) => {
                     onPress();
                 }}>
                 <ImageBackground
-                    source={img2}  // or use { uri: 'https://...' }
+                    source={index?img4:img2}  // or use { uri: 'https://...' }
                     style={styles.background}
                     resizeMode="cover"
                 >
                     <View style={styles.card}>
-
-                        <View style={styles.card_wrap}>
-                            <View style={{
+                        <View style={{
                                 width: 30,
                             }}>
                                 <Image
@@ -54,14 +53,14 @@ const CommonCard = ({title="", text="", onPress=()=>{}}) => {
                                         objectFit:'contain',
                                     }}
                                 />
-                            </View>
-                            <View style={{width:"95%"}}>
-                                <Text style={{...styles.title, color:"#ffffff"}}>{title}</Text>
-                                <Text style={{...styles.text, color:"#90B2B2"}}>{text}</Text>
-                            </View>
                         </View>
-
-                        <View style={{marginBottom:30}}>
+                        <View style={{width:"75%"}}>
+                            <Text style={{...styles.title, color:"#ffffff"}}>{title}</Text>
+                            <Text style={{...styles.text, color:"#90B2B2"}}>{text}</Text>
+                        </View>
+                        
+                        
+                        <View style={{}}>
                             <Entypo name="chevron-thin-right" size={24} color="white" />
                         </View>
 
@@ -100,12 +99,12 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         marginBottom:20,
         overflow:'hidden',
-        borderRadius: 15
+        borderRadius: 15,
     },
     card:{
         display:'flex',
         flexDirection:'row',
-        alignItems:'center',
+        alignItems:'flex-start',
         justifyContent:'space-between',
         paddingHorizontal: 10,
         paddingVertical: 10,

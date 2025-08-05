@@ -117,24 +117,6 @@ const CurrentGoals = () => {
         return `${day} ${month} ${year}`
     }
 
-    const handle_get_all_goals = () =>{
-        setLoading(true);
-        const week = 12
-        get_all_goals(week, (res, success) => {
-            setLoading(false);
-            if(success){
-                const temp = res?.data?.weeks;
-                const current_week = temp.filter(item => item?.is_current_week);
-                const history = temp.filter(item => !(item.is_current_week))
-                setCurrentWeek(current_week[0]);
-                setHistory(history)
-                console.log("...", JSON.stringify(current_week[0], null, 2))
-            }else{
-                console.log(res);
-            }
-        })
-    }
-
     const handle_get_current_goal = () => {
      
         setLoading(true);

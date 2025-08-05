@@ -14,50 +14,24 @@ import { getStyles } from './CalendarStyle';
 import { get_calendar_information } from '../TabsAPI';
 import Indicator from '../../../components/Indicator';
 import { useRoute } from '@react-navigation/native';
-
+import CommonCard from '../Home/CommonCard';
+import { useAuth } from '../../../context/AuthContext';
 
 const screenWidth = Dimensions.get('window').width;
 const calendarPadding = 10;
 const daySize = (screenWidth - calendarPadding * 2) / 7 - 4;
-const test = [
-  {
-    type:"a",
-    date: new Date("2025-08-24"),
-  },
-  {
-    type:"b",
-    date: new Date("2025-08-24"),
-  },
-  {
-    type:"a",
-    date: new Date("2025-08-23"),
-  },
-  {
-    type:"a",
-    date: new Date("2025-08-22"),
-  },
-  {
-    type:"a",
-    date: new Date("2025-08-21"),
-  },
-  {
-    type:"a",
-    date: new Date("2025-08-20"),
-  },
-  {
-    type:"c",
-    date: new Date("2025-08-20"),
-  }
-]
+
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const navigation = useNavigation()
-  const [markedDates, setMarkedDates] = useState(test);
+  const [markedDates, setMarkedDates] = useState([]);
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const [loading , setLoading] = useState(false);
-  const [checkIns, setCheckIns] = useState([])
+  const [checkIns, setCheckIns] = useState([]);
+  const {store} = useAuth();
+
 
   const handle_get_calendar_information = () => {
     setLoading(true);
@@ -229,7 +203,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
           color: '#0b172A',
           fontSize: 18
         }}>Calendar</Text>)}
-        RightComponent={() => <Reward count={2} handler={() => setModalVisible(true)}/>}
+        RightComponent={() => <Reward count={store?.profile_dashboard?.streak?.current_streak} handler={() => setModalVisible(true)}/>}
         backgroundStyle={{backgroundColor:'#fff'}}
       />
 
@@ -265,9 +239,14 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
           fontSize:20,
           color:'#0B172A',
         }}>Weekly Check-In Reminder</Text>
-        <Image
-          source={require("../../../../assets/img/weeklyStreakBg.png")}
-          style={styles.weeklyCheckInImage}
+      
+        <CommonCard 
+          title='Keep the faith--and your streak!       '
+          text='Time to check in'
+          onPress={()=>{
+            navigation.navigate("WeeklyCheckIn")
+          }}
+          index={1}
         />
       </View>}
 
@@ -288,7 +267,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
             </View>
 
             <View>
-              <Text style={styles.text}>You've checked in for <Text style={{fontFamily:'NunitoExtraBold'}}>2 days</Text> straight! </  Text> 
+              <Text style={styles.text}>You've checked in for <Text style={{fontFamily:'NunitoExtraBold'}}>{store?.profile_dashboard?.streak?.current_streak || "0"} days</Text> straight! </  Text> 
               <Text style={styles.text}>Keep the momentum going -- stay consistent, stay inspired, and unlock new titiles along the way.</Text>
             </View>
 

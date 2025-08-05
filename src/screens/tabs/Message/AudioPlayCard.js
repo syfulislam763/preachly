@@ -4,9 +4,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { BASE_URL } from '../../../context/Paths';
 
-export default function AudioPlayerCard({item}) {
+export default function AudioPlayerCard({item, currentId, playSound, stopSound}) {
 
-  console.log(item, "i")
+    console.log("testing", currentId)
+
     const [sound, setSound] = useState(null);
     const [duration, setDuration] = useState(0)
 
@@ -19,23 +20,25 @@ export default function AudioPlayerCard({item}) {
     const [play, setPlay] = useState(false);
     
     const handlePlayStart = async () => {
-        if(sound){
-            await sound.replayAsync();
-        }
-        setSound(sound);
+        playSound({id:item.id, uri: BASE_URL+item.uri })
+        // if(sound){
+        //     await sound.replayAsync();
+        // }
+        // setSound(sound);
         
-        sound.setOnPlaybackStatusUpdate((status) => {
-            if (status.didJustFinish) {
-                setPlay(false);
-                console.log('Playback finished');
-            }
-        });
+        // sound.setOnPlaybackStatusUpdate((status) => {
+        //     if (status.didJustFinish) {
+        //         setPlay(false);
+        //         console.log('Playback finished');
+        //     }
+        // });
 
-        setPlay(true);
+        // setPlay(true);
     }
     const hanldePlayStop = async () => {
-        setPlay(false);
-        if(sound)sound.stopAsync();
+        stopSound()
+        // setPlay(false);
+        // if(sound)sound.stopAsync();
     }
 
     const handleAudio = async () => {
@@ -61,7 +64,7 @@ export default function AudioPlayerCard({item}) {
 
   return (
     <View style={styles.container}>
-        {!play ? 
+        {!(currentId == item?.id) ? 
             <TouchableOpacity onPress={handlePlayStart}  style={styles.playButton}>
                 <FontAwesome name="play" size={15} color="#fff" />
             </TouchableOpacity>:

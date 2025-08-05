@@ -42,6 +42,8 @@ import voiceRecord from './voiceRecord';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import RecordingUI from './RecordingUI';
 import voiceRecord_ from './voiceRecord_';
+import { BASE_URL } from '../../../context/Paths';
+import { Audio } from 'expo-av';
 
 const MessageWrapper = ({
   flatListRef, 
@@ -77,7 +79,46 @@ const MessageWrapper = ({
         setSeconds(0);
     }
 
-    
+
+    const soundRef = useRef(null);
+    const [currentId, setCurrentId] = useState(0);
+
+    const playSound = async (item) => {
+ 
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync({ uri: item.uri }, {shouldPlay: true});
+      soundRef.current = sound;
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+            stopSound()
+        }
+      });
+
+      setCurrentId(item.id);
+
+      
+    };
+
+    const stopSound = async () => {
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+        setCurrentId(0)
+      }
+    }
+
+
+    useFocusEffect(
+      useCallback(() => {
+        stopSound()
+      }, [])
+    )
+
 
 
   return <KeyboardAvoidingView
@@ -101,6 +142,9 @@ const MessageWrapper = ({
                 methods={methods}
                 message_id={item.message_id}
                 item={item}
+                currentId={currentId}
+                playSound={playSound}
+                stopSound={stopSound}
               />
           
             )}
@@ -141,7 +185,7 @@ const MessageWrapper = ({
                 />
               :recordings?<>
 
-                <VoiceMessageBubble durations={0} recordings={recordings} setRecordings={(a) => {
+                <VoiceMessageBubble playSound={playSound} stopSound={stopSound} currentId={currentId} recordings={recordings} setRecordings={(a) => {
                   setRecordings(a);
                   setIsTest(false)
                 }}/>

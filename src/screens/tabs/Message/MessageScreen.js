@@ -43,19 +43,19 @@ import MessageWrapper from './MessageWrapper';
 import { startRecording, stopRecording} from './voiceRecord_';
 
 export default function MessageScreen() {
-  useLogout();
+  //useLogout();
   const flatListRef = useRef(null);
   const [isFeedback, setIsFeedback] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0)
   ///
-  const {store, updateStore} = useAuth();
+  const {store, updateStore, updateSession, session} = useAuth();
 
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("")
   const [prevMsg, setPrevMsg] = useState("")
-  const [session, setSession] = useState({});
+
   const [isNewSession, setIsNewSession] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -63,13 +63,15 @@ export default function MessageScreen() {
   const [recordings, setRecordings] = useState(null);
   const [audio, setAudio] = useState(null);
   const [recordingState, setRecordingState] = useState(false);
-
-
+  
 
   const [recordStartTime, setRecordStartTime] = useState(0)
   const [isTest, setIsTest] = useState(false);
 
-  
+  const [doneOne, setDoneOne] = useState(false);
+  const [doneTwo, setDoneTwo] = useState(false);
+
+
 
   const handleStopRecording = async () => {
     const data = await stopRecording(recordings, setRecordings);
@@ -83,18 +85,20 @@ export default function MessageScreen() {
     setAudio(null)
   }
 
-  const create_session = () =>{
+  const create_session = (cb = ()=>{}) =>{
     setLoading(true);
     get_session_id((res,success)=>{
       if(success){
-        setSession(res?.data);
+        console.log("created new session")
+        //setSession(res?.data);
         setMessage("");
         setMessages([])
         setPrevMsg("");
         setRecordings(null)
-        setIsNewSession(true)
-        updateStore({ session: res?.data, isNewSession: true})
-        
+        //setIsNewSession(true)
+        updateSession({ ...res.data, isNewSession: true})
+        setDoneOne(true)
+        cb();
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
@@ -106,11 +110,11 @@ export default function MessageScreen() {
   //console.log("***", JSON.stringify(store, null, 2))
 
   useEffect(() =>{
-    
-    if((store?.session?.id)){
+    console.log(session, "session")
+    if((session?.id)){
       setLoading(true);
       
-      get_message_by_session_id(store?.session?.id, (res, success) => {
+      get_message_by_session_id(session?.id, (res, success) => {
         if(success){
           let msgs = res?.data?.messages?.map(item => {
             
@@ -154,10 +158,11 @@ export default function MessageScreen() {
           console.log(JSON.stringify({}, null, 2), "etm")
 
           setMessages(temp);
-          setSession(store?.session);
+          //setSession(session);
           setLoading(false);
-          setIsNewSession(false);
-          updateStore({isNewSession: false})
+          //setIsNewSession(false);
+          setDoneOne(true)
+          updateSession({isNewSession: false})
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
@@ -169,6 +174,11 @@ export default function MessageScreen() {
    
     }else{
       create_session();
+    }
+
+
+    return () =>{
+      
     }
 
   },[]);
@@ -216,7 +226,7 @@ export default function MessageScreen() {
   const handleRegenerate = () =>{
     const payload = {
       message: "Answer this question more deeply and precisely please " + prevMsg,
-      session_id: session.id,
+      session_id: session?.id,
       type: "message"
     }
     if(ws.current && prevMsg.trim()){
@@ -225,15 +235,15 @@ export default function MessageScreen() {
 
   }
 
-
   const ws = useRef(null);
   useEffect(() =>{
-    if(!session.id)return () => {}
+    if(!session?.id)return () => {}
 
-    const wsURL = WEBSOCKET_URL+`/ws/chat/${session.id}/?token=${store?.access}`;
+    const wsURL = WEBSOCKET_URL+`/ws/chat/${session?.id}/?token=${store?.access}`;
     ws.current = new WebSocket(wsURL);
 
     ws.current.onopen = () => {
+      setDoneTwo(true)
       console.log("socket connected...");
     }
 
@@ -262,33 +272,18 @@ export default function MessageScreen() {
         console.log("message err", err)
       }
     }
-
     ws.current.onerror = (e) =>{
       console.log("socket error ->", e.message);
     }
-
-
     ws.current.onclose = () =>{
       console.log("socket disconnected...");
     }
-
-    
-
-    // if( (session?.id) && (route.params?.question) && ws.current){
-    //   handleSendPredefinedMessage(route.params?.question)
-    // }
-
-    // return () =>{
-    //   console.log("disconnecting")
-    //   ws.current?.close();
-    // }
-
-  }, [messages, session]);
+  }, [store]);
 
   const handleSendPredefinedMessage = (message) => {
     const payload = {
       message: message,
-      session_id: session.id,
+      session_id: session?.id,
       type: "message"
     }
 
@@ -307,15 +302,14 @@ export default function MessageScreen() {
       setMessage("")
       setRecordings(null);
     }else{
-      console.log("problem..");
+      
     }
   }
  
-
   const sendMessage = () =>{
     const payload = {
       message: message,
-      session_id: session.id,
+      session_id: session?.id,
       type: "message"
     }
     console.log(payload)
@@ -333,12 +327,11 @@ export default function MessageScreen() {
       setMessage("")
       setRecordings(null);
     }else{
-      console.log("problem..");
+      
     }
     
   }
 
- 
 
   useFocusEffect(
     useCallback(() =>{
@@ -355,11 +348,13 @@ export default function MessageScreen() {
     if (flatListRef.current) {
      flatListRef.current.scrollToEnd({ animated: true });
     }
-
+    
+    return ()=>{
+     
+    }
   }, [messages]);
 
   const handleSendMessage = (newMessage) => {
-
     if(audio){
       const payload = new FormData();
       const temp = audio.file.split("/")
@@ -369,7 +364,7 @@ export default function MessageScreen() {
         type: 'audio/'+ temp[temp.length-1].split(".")[1]
       }
       payload.append("voice_file", voice_file)
-      payload.append("session_id", store?.session?.id)
+      payload.append("session_id", session?.id)
 
 
       const res = {
@@ -397,14 +392,13 @@ export default function MessageScreen() {
           }
           const payload = {
             message: res?.data?.transcript,
-            session_id: session.id,
+            session_id: session?.id,
             type: "message"
           }
           ws.current.send(JSON.stringify(payload))
           setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
           setAudio(null);
           setMessage("")
-          console.log(res, "**");
         }else{
           setMessages(prev => [...prev.filter(item=> item.message != "sending...")])
           setAudio(null);
@@ -412,8 +406,7 @@ export default function MessageScreen() {
           console.log("err ", JSON.stringify(res, null, 2));
         }
       })
-    
-
+  
 
     }else{
       sendMessage()
@@ -423,28 +416,21 @@ export default function MessageScreen() {
 
   };
 
-
   const handleGoBack = () => {
     setIsFeedback(true);
   }
 
 
-
-
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        handleGoBack();
-        return true; // prevents default exit
+
+    if(doneOne && doneTwo){
+      console.log("yes i am ready")
+      if( (session?.id) && (route.params?.question) && ws.current){
+        handleSendPredefinedMessage(route.params?.question)
       }
-    );
- 
-    return () => backHandler.remove();
-  }, []);
+    }
 
-
-  console.log(JSON.stringify(messages, null, 2), "testing")
+  }, [doneOne, doneTwo])
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
@@ -541,14 +527,19 @@ export default function MessageScreen() {
         setFeedback={res => {
           if(res){
             finish_conversation((res, success) => {
-              setFeedback(res)
-              setIsFeedback(false);
-              create_session()
+              
+              create_session(() => {
+                setFeedback(res)
+                setIsFeedback(false);
+              })
             })
           }else{
-            setFeedback(res);
-            create_session()
-            setIsFeedback(false);
+            
+            create_session(() => {
+              setFeedback(res);
+              setIsFeedback(false);
+            })
+            
           }
           
         }}

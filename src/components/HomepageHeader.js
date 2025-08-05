@@ -53,7 +53,7 @@ const HomepageHeader = ({userInfo, dashboard}) => {
                     objectFit:'contain'
                 }}
             />
-          <Text style={styles.countText}>{dashboard?.streak?.current_streak || "0"}</Text>
+          <Text style={styles.countText}>{store?.profile_dashboard?.streak?.current_streak || "0"}</Text>
         </TouchableOpacity>
       </View>
     </View>

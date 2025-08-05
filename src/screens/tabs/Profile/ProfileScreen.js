@@ -7,7 +7,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { getStyles } from './ProfileScreenStyle';
 import { useAuth } from '../../../context/AuthContext';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
@@ -158,11 +158,24 @@ const ProfileScreen = () => {
         </View>
 
         <View style={{height:hp("1%")}}/>
+        
+        <LinearGradient
+          // Button Linear Gradient
+          colors={['#4c669f', '#3b5998', '#192f6a']}
+          style={{
+            width:"100%",
+            height: 200,
+          }}>
+          <Text style={{}}>Sign in with Facebook</Text>
+        </LinearGradient>
 
         <Image
             source={require("../../../../assets/img/rooted.png")}
             style={styles.img}
         />
+
+
+
         <View style={{height:hp("1%")}}/>
         <Pressable 
           onPress={() => navigation.navigate("Calendar")}

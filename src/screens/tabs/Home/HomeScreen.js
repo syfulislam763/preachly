@@ -15,7 +15,7 @@ import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
 import { get_random_verses, finish_share, get_notifications, get_profile_dashboard_data} from '../TabsAPI';
 import CommonCard from './CommonCard';
-
+import { get_current_goal } from '../TabsAPI';
 
 
 
@@ -28,7 +28,7 @@ export default function HomeScreen() {
   useLogout()
   const [loading,setLoading] = useState(false);
 
-  const {store, socket, updateStore} = useAuth();
+  const {store, socket, updateStore, currentGoal, setCurrentGoal} = useAuth();
   const [randomVerse, setRandomVerse] = useState({});
   const [profileInfo, setProfileInfo] = useState({})
   const [dashboard, setDashboard] = useState({})
@@ -53,22 +53,11 @@ export default function HomeScreen() {
     }, [])
   )
 
-  const handle_get_profile_data = () =>{
-      setLoading(true);
-      get_profile_dashboard_data((res, success) => {
-        if(success){
-          updateStore({profile_dashboard: res?.data})
-          setDashboard(res?.data)
-        }
-        setLoading(false);
-      })
-    }
+
   
-  useState(() =>{
-    handle_get_profile_data();
-  }, [])
   useFocusEffect(
     useCallback(() => {
+      
       setProfileInfo(store?.profileSettingData?.userInfo)
     }, [store])
   )
@@ -99,59 +88,77 @@ export default function HomeScreen() {
       }
     })
   }
+  
+  const handle_get_current_goal = () => {
+    get_current_goal((res, success) => {
+        if(success){
+            setCurrentGoal(res?.data);
+        }
+
+        setLoading(false);
+    })
+  }
   useEffect(() => {
 
     handle_get_notification();
-   
+    handle_get_current_goal()
     
   }, [store]);
 
-  useFocusEffect(
-  useCallback(() => {
+  //useFocusEffect(
+  useEffect(() => {
        
     setLoading(true)
     get_onboarding_user_data((res, success) => {
       if(success){
         get_profile_info((res1, success1) => {
           if(success1){
-           
-            const userInfo = res1?.data
-            const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
-            const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
-            const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
-            const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
-            const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
-            const faith_goal_questions = res?.data.faith_goals.map(item => {
-              return {
-                ...item,
-                options: item.options.map(op => {
+            get_profile_dashboard_data((dashboard, success) => {
+              if(success){
+                const userInfo = res1?.data
+                const denomination = denominations.filter(item => item.id === res?.data?.denomination?.denomination_option)
+                const bible_version = bible_versions.filter(item => item.id === res?.data?.bible_version?.bible_version_option)
+                const tone_preference = tone_preference_data.filter(item => item.id === res?.data?.tone_preference?.tone_preference_option)
+                const faith_reason = faith_journey_reasons.filter(item => item.id === res?.data?.journey_reason?.journey_reason)
+                const bible_familiarity = bible_familiarity_data.filter(item => item.id === res?.data?.bible_familiarity?.bible_familiarity_option)
+                const faith_goal_questions = res?.data.faith_goals.map(item => {
                   return {
-                    ...op,
-                    name: op.option
+                    ...item,
+                    options: item.options.map(op => {
+                      return {
+                        ...op,
+                        name: op.option
+                      }
+                    })
                   }
                 })
-              }
-            })
-            console.log(res?.data?.goal_preference, "goal")
-            const goal_preference = {
-              ...res?.data?.goal_preference,
-              name: goals[res?.data?.goal_preference?.goal_type]
-            };
-            
+                console.log(res?.data?.goal_preference, "goal")
+                const goal_preference = {
+                  ...res?.data?.goal_preference,
+                  name: goals[res?.data?.goal_preference?.goal_type]
+                };
+                
 
-            const profileSettingData = {
-              userInfo:userInfo || {},
-              denomination: denomination[0] || {},
-              bible_version: bible_version[0] || {},
-              tone_preference: tone_preference[0] || {},
-              faith_reason: faith_reason[0] || {},
-              bible_familiarity: bible_familiarity[0] || {},
-              goal_preference: goal_preference || {}
-            }
-            //console.log(profileSettingData, "..")
-            setLoading(false)
-            updateStore({ profileSettingData, faith_goal_questions})
-            setProfileInfo(userInfo)
+                const profileSettingData = {
+                  userInfo:userInfo || {},
+                  denomination: denomination[0] || {},
+                  bible_version: bible_version[0] || {},
+                  tone_preference: tone_preference[0] || {},
+                  faith_reason: faith_reason[0] || {},
+                  bible_familiarity: bible_familiarity[0] || {},
+                  goal_preference: goal_preference || {}
+                }
+                //console.log(profileSettingData, "..")
+                setLoading(false)
+                updateStore({ profileSettingData, faith_goal_questions, profile_dashboard: dashboard?.data})
+                setProfileInfo(userInfo)
+
+              }
+              else{
+                console.log("eer", dashboard);
+              }
+              setLoading(false);
+            })
           }else{
             setLoading(false)
             console.log(res1)
@@ -168,7 +175,7 @@ export default function HomeScreen() {
   
         
       }, [])
-    );
+   // );
 
 
   return (
@@ -290,7 +297,7 @@ export default function HomeScreen() {
 
           <CommonCard 
             title={`Don't forget to reflect on this week's progress and earn your badge!`}
-            text={`Days left ${1} days`}
+            text={`Days left ${currentGoal?.days_remaining || 0} days`}
             onPress={()=> navigation.navigate("CurrentGoals")}
           />
           

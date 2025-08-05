@@ -5,36 +5,25 @@ import { useAudioPlayer } from 'expo-audio';
 import { Audio } from 'expo-av';
 import { useFocusEffect } from '@react-navigation/native';
 
-const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
+const  VoiceMessageBubble = ({setRecordings, recordings, playSound, stopSound, currentId}) =>{
 
     const [sound, setSound] = useState(null);
     
-  
+    console.log(currentId, "test")
     const [time, setTime ] = useState("0:00");
 
+    const [id, setId] = useState("buble");
     const [play, setPlay] = useState(false);
 
-    const handlePlayStart = async () => {
-  
-      if(recordings.sound){
-        await recordings.sound.replayAsync();
-      }
-      setSound(recordings.sound);
-      
-      recordings.sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.didJustFinish) {
-          setPlay(false);
-        }
-      });
-
-      setPlay(true);
+    const handlePlayStart = () => {
+      playSound({id:"buble", uri: recordings.file})
     }
-    const hanldePlayStop = async () => {
-      setPlay(false);
-      if(sound)sound.stopAsync();
+    const hanldePlayStop = () => {
+      stopSound()
     }
 
     useEffect(()=>{
+      //console.log("recording", recordings)
       setTime(recordings.duration)
 
       return () =>{
@@ -63,7 +52,7 @@ const  VoiceMessageBubble = ({setRecordings, recordings, durations=0}) =>{
       {/* Audio Player */}
       <View style={styles.audioContainer}>
         {/* Play Button */}
-        {!play ? 
+        {! (currentId == id) ? 
           <TouchableOpacity onPress={handlePlayStart}  style={styles.playButton}>
             <FontAwesome name="play" size={15} color="#000" />
           </TouchableOpacity>:
@@ -129,6 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     flex: 1,
+    overflow:'hidden'
   },
   bar: {
     width: 2,

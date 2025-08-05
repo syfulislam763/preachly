@@ -4,7 +4,7 @@ import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
 import AudioPlayerCard from './AudioPlayCard';
 
-const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item}) => {
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound}) => {
 
   return (
     <View style={styles.container}>
@@ -19,7 +19,7 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
         <View style={{
           alignSelf:"flex-end"
         }}>
-          <AudioPlayerCard item={item}/>
+          <AudioPlayerCard currentId={currentId} playSound={playSound} stopSound={stopSound} item={item}/>
         </View>
       )}
 
