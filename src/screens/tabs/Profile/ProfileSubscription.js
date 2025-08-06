@@ -18,7 +18,7 @@ import PaymentScreen from './payment/PaymentScreen';
 import createPlan from './payment/createPlan';
 import { KEY } from '../../../context/Paths';
 import { usePlatformPay } from '@stripe/stripe-react-native';
-import GooglePayHandler from './payment/GooglePayHandler';
+//import GooglePayHandler from './payment/GooglePayHandler';
 
 const window = Dimensions.get("window")
 
@@ -98,7 +98,7 @@ export default function ProfileSubscription({ navigation }) {
 
           </View>
 
-          <GooglePayHandler/>
+          {/* <GooglePayHandler/> */}
 
           <View style={{
               padding:20
