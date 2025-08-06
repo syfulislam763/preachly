@@ -39,9 +39,9 @@ const DropdownModal = ({ isVisible, onClose, handleChage, options, selectedItem 
               <Text style={styles.optionText}>{item?.name}</Text>
               <View style={[
                 styles.radioCircle,
-                selectedItem.name === item?.name && {borderColor:'#005A55'}
+                selectedItem?.name === item?.name && {borderColor:'#005A55'}
               ]}>
-                <View style={selectedItem.name === item.name? styles.radioSelected:{}} />
+                <View style={selectedItem?.name === item.name? styles.radioSelected:{}} />
               </View>
             </TouchableOpacity>
           )}

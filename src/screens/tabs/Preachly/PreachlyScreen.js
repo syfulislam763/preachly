@@ -194,7 +194,7 @@ export default function PreachlyScreen() {
 
 
   useEffect(()=>{
-    setSelectedBibleVersion(store?.profileSettingData?.bible_version);
+    //setSelectedBibleVersion(store?.profileSettingData?.bible_version);
   }, []);
 
 
@@ -203,12 +203,23 @@ export default function PreachlyScreen() {
     const payload = {
       version_id: selectedBibleVersion?.api_bible_id,
     }
+    if(Object.keys(selectedBibleVersion).length > 0){
+      payload.version_id = selectedBibleVersion?.api_bible_id
+    }else{
+      payload.version_id = store?.profileSettingData?.bible_version?.api_bible_id
+    }
+
+    console.log("bible issue", payload);
     setLoading(true)
     get_bible_books(payload, (res, success) => {
 
       if(success){
         setBibleBooks(res?.data);
         setOpenBibleVersion(false)
+        if(Object.keys(selectedBibleVersion).length <= 0){
+          setSelectedBibleVersion(store?.profileSettingData?.bible_version)
+        }
+        
 
         const book = res?.data?.books[0];
         const bible_id = res?.data?.bible_id;

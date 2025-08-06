@@ -213,7 +213,7 @@ export const get_all_goals = async (week, cb) =>{
 }
 
 export const finish_scripture = async (cb) => {
-    const URL = `/goals/track-scripture/`;
+    const URL = `/goals/track/scripture/`;
     try{
         const res = await api.post(URL);
         cb(res.data, true);
@@ -222,18 +222,20 @@ export const finish_scripture = async (cb) => {
     }
 }
 export const finish_conversation = async(cb) => {
-    const URL = `/goals/track-conversation/`;
+    const URL = `/goals/track/conversation/`;
     try{
         const res = await api.post(URL);
-        cb(res.data, true);
+        cb(res, true);
+        console.log(res)
     }catch(e){
+        console.log(JSON.stringify(e, null, 2), "show")
         cb(e, false);
     }
 }
 
 
 export const finish_share = async (cb) => {
-    const URL = `/goals/track-share/`;
+    const URL = `/goals/track/share/`;
     try{
         const res = await api.post(URL);
         cb(res.data, true);

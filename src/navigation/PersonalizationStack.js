@@ -29,6 +29,7 @@ export default function PersonalizationStack() {
 
   
   const {store} = useAuth()
+  
   const isMainTab = (store?.onboarding_completed) && (store?.payment?.is_active);
   const isPaymentTab = (store?.onboarding_completed)
 

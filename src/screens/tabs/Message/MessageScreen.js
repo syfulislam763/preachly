@@ -527,11 +527,15 @@ export default function MessageScreen() {
         setFeedback={res => {
           if(res){
             finish_conversation((res, success) => {
-              
-              create_session(() => {
-                setFeedback(res)
+              console.log(res, "feedback");
+              if(success){
+                create_session(() => {
+                  setFeedback(res)
+                  setIsFeedback(false);
+                })
+              }else{
                 setIsFeedback(false);
-              })
+              }
             })
           }else{
             

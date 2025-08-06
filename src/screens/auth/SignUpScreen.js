@@ -30,7 +30,7 @@ import { sign_up, resentOTP } from './AuthAPI';
 import Indicator from '../../components/Indicator';
 import Toast from 'react-native-toast-message';
 import { useNavigation, useRoute, } from '@react-navigation/native';
-import { handleToast } from './AuthAPI';
+import { handleToast, forget_password } from './AuthAPI';
 
 
 export default function SignInScreen() {
@@ -59,15 +59,15 @@ export default function SignInScreen() {
         setIsLoading(true)
         const resent_payload = {
           "email": route.params.email,
-          "purpose": "verification"
         }
         
-        resentOTP(resent_payload, (res, isSuccess)=>{
+        forget_password(resent_payload, (res, isSuccess)=>{
           if(isSuccess){
             setIsLoading(false)
-            console.log("resent otp", res)
+            console.log("forget otp", res)
+
             handleToast("info", "OTP has sent again!",3000, () => {
-              navigation.navigate("ConfirmationEmail", payload)
+              navigation.navigate("ConfirmationEmail", {...payload, type:"reset"})
             })
           }else{
             setEmail("")

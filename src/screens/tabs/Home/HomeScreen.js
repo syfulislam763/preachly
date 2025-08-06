@@ -161,11 +161,12 @@ export default function HomeScreen() {
             })
           }else{
             setLoading(false)
-            console.log(res1)
+            console.log(res1, "profile")
           }
         })
       }else{
         setLoading(false)
+        console.log("onboarding", res)
       }
   })
   

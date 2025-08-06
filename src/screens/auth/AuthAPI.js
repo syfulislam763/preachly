@@ -180,3 +180,33 @@ export const get_payment_status = async (token, cb) => {
 }
 
 
+export const forget_password = async (payload, cb) => {
+    const url = `/auth/password/reset-request/`
+    try{
+        const res = await api.post(url, payload);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const verify_forget_password = async (payload, cb) => {
+    const url = `/auth/password/reset-verify-otp/`;
+    try{
+        const res = await api.post(url, payload);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+
+}
+
+export const confirm_forget_password = async (payload, cb) => {
+    const url = `/auth/password/reset-confirm/`;
+    try{
+        const res = await api.post(url, payload);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}

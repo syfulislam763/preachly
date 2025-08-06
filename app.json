@@ -36,6 +36,7 @@
       "expo-font",
       "@react-native-google-signin/google-signin",
       "expo-av",
+      "npm i react-native-google-pay",
       [
         "expo-audio",
         {

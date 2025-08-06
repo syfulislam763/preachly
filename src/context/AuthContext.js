@@ -118,10 +118,6 @@ export const AuthProvider = ({ children }) => {
   }
 
 
- 
-  
- 
-
   const [store, setStore] = useState({});
   const [session, setSession] = useState({});
   const [currentGoal, setCurrentGoal] = useState({})

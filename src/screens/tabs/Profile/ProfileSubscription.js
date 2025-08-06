@@ -17,6 +17,8 @@ import CustomModal from '../../../components/CustomModal';
 import PaymentScreen from './payment/PaymentScreen';
 import createPlan from './payment/createPlan';
 import { KEY } from '../../../context/Paths';
+import { usePlatformPay } from '@stripe/stripe-react-native';
+import GooglePayHandler from './payment/GooglePayHandler';
 
 const window = Dimensions.get("window")
 
@@ -31,6 +33,18 @@ export default function ProfileSubscription({ navigation }) {
   } = createPlan();
 
   const [openPayment, setOpenPayment] = useState(false);
+
+  const {isPlatformPaySupported} = usePlatformPay();
+
+  useEffect(() => {
+    ( async function () {
+      if(!(await isPlatformPaySupported({googlePay: {testEnv:true}}))){
+        console.log("google pay support!")
+      }else{
+        console.log("google pay not support")
+      }
+    })()
+  }, [])
 
 
   return (
@@ -83,6 +97,8 @@ export default function ProfileSubscription({ navigation }) {
               <View style={{height:30}}></View>
 
           </View>
+
+          <GooglePayHandler/>
 
           <View style={{
               padding:20

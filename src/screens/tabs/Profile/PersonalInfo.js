@@ -33,6 +33,7 @@ import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
 
+
 //     "conversation" = Confidence Goal
 // "scripture" = Scripture Knowledge
 // "share_faith" = Inspiration Goal
@@ -189,10 +190,12 @@ const PersonalInfo = () => {
       profileInfo_payload.append("email", email);
 
     // if(oldDOB != dob)
-    profileInfo_payload.append("date_of_birth", dob);
+    if(dob)
+      profileInfo_payload.append("date_of_birth", dob);
 
     // if(oldName != name)
-    profileInfo_payload.append("name", name);
+    if(name)
+      profileInfo_payload.append("name", name);
     
     if(oldImage != img)
       profileInfo_payload.append("profile_picture", {
@@ -272,6 +275,7 @@ const PersonalInfo = () => {
 
   useEffect(() => {
 
+    console.log(JSON.stringify(store?.profileSettingData, null, 2), "heo")
     setName(store?.profileSettingData?.userInfo?.name)
     setDob(store?.profileSettingData?.userInfo?.date_of_birth)
     setEmail(store?.profileSettingData?.userInfo?.email)

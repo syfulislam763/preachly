@@ -24,12 +24,13 @@ import {
 } from '../../components/Constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CommonButton from '../../components/CommonButton';
-import { create_password, handleToast } from './AuthAPI';
+import { create_password, handleToast, confirm_forget_password } from './AuthAPI';
 import { useRoute } from '@react-navigation/native';
 import Indicator from '../../components/Indicator';
 import { useNavigation } from '@react-navigation/native';
 import { onboarding_status } from '../personalization/PersonalizationAPIs';
 import { get_onboarding_all_data } from '../personalization/PersonalizationAPIs';
+import { CommonActions } from '@react-navigation/native';
 
 export default function CreatePassword() {
   const { updateStore } = useAuth();
@@ -40,6 +41,49 @@ export default function CreatePassword() {
   const navigation = useNavigation()
   
   const [loading, setLoading] = useState(false)
+
+  const handleResetComplete = () => {
+     const payload = {
+      email: route.params.email,
+      otp: route.params.otp,
+      new_password: password,
+      new_password2: password
+    }
+
+    setLoading(true);
+    console.log(payload, "899")
+    confirm_forget_password(payload, (res, success) => {
+      console.log(res);
+      if(success){
+        handleToast("info", "Password changed successfully, login again!",3000, () => {
+            // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
+            navigation.dispatch(state => {
+            
+            const routes = state.routes.slice(0,-5);
+            
+            routes.push({
+              name: 'SignIn',
+              params: payload
+            });
+            
+          return CommonActions.reset({
+            ...state,
+            index: routes.length - 1,
+            routes
+            });
+          });
+        })
+      }
+
+      setLoading(false);
+    })
+
+
+
+
+  }
+
+
   const handleSignUpComplete = () => {
     const payload = {
       ...route.params,
@@ -48,6 +92,7 @@ export default function CreatePassword() {
     }
     
     //
+    
     setLoading(true)
     create_password(payload, (res, isSuccess)=>{
       if(isSuccess){
@@ -135,7 +180,13 @@ export default function CreatePassword() {
             bgColor={(password.length>8 && password === rePassword)?deepGreen:lightgreen1}
             navigation={navigation}
             route={""}
-            handler={handleSignUpComplete}
+            handler={() => {
+              if(route?.params?.type == "reset"){
+                handleResetComplete()
+              }else{
+                handleSignUpComplete()
+              }
+            }}
             txtColor={(password.length>8 && password === rePassword)?lightgreen1: deepGreen}
             bold='bold'
             opacity={1}
