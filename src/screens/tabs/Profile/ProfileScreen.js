@@ -12,7 +12,8 @@ import useStaticData from '../../../hooks/useStaticData';
 import useLogout from '../../../hooks/useLogout'
 import { useRoute } from '@react-navigation/native';
 import Indicator from '../../../components/Indicator';
-import { get_profile_dashboard_data } from '../TabsAPI';
+import { get_profile_dashboard_data, update_static_badge, get_static_badge } from '../TabsAPI';
+import { BASE_URL } from '../../../context/Paths';
 import dayjs from 'dayjs';
 
 
@@ -29,6 +30,7 @@ const ProfileScreen = () => {
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const [loading, setLoading] = useState(false)
   const [uri, setUri] = useState(null);
+  const [badge, setBadge] = useState(null)
 
   
   const startOfWeek = dayjs().startOf('week'); // Sunday
@@ -54,24 +56,32 @@ const ProfileScreen = () => {
   )
 
 
-  const handle_get_profile_data = () =>{
-    setLoading(true);
-    get_profile_dashboard_data((res, success) => {
-      if(res){
-        setProfileData(res?.data);
+  console.log(badge, "bd")
 
+  const handle_get_static_badge = () =>{
+    setLoading(true);
+    update_static_badge((res, success) => {
+      if(success){
+        get_static_badge((data, isOk) => {
+          setLoading(false);
+          if(isOk){
+            setBadge(data?.data?.latest_badge)
+          }
+        })
+      }else{
+        setLoading(false);
       }
-      setLoading(false);
     })
   }
 
   useState(() =>{
-    handle_get_profile_data();
+    handle_get_static_badge();
   }, [])
 
+  let badge_uri = badge?.badge_template?.image || ""
 
+  if(badge_uri) badge_uri = BASE_URL+ badge_uri;
 
-  
 
   return (
     <View style={{flex:1,backgroundColor:'#fff'}}>
@@ -152,31 +162,60 @@ const ProfileScreen = () => {
           />
 
           <Text style={{...styles.semitext, fontSize:14}}>
-            You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day {profileData?.streak?.longest_streak}</Text> of growing your faith confidence!
+            You're on <Text style={{color:'#2B4752', fontFamily:'NunitoBold'}}>Day {store?.profile_dashboard?.streak?.longest_streak}</Text> of growing your faith confidence!
           </Text>
 
         </View>
 
-        <View style={{height:hp("1%")}}/>
+        <View style={{height:hp("2%")}}/>
         
+      
         <LinearGradient
-          // Button Linear Gradient
-          colors={['#4c669f', '#3b5998', '#192f6a']}
+          colors={['#FFF7E4', '#FFEEC4', '#FEE5A4', '#FDD263']}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
           style={{
             width:"100%",
-            height: 200,
+            height: 120,
+            borderRadius: 15,
+            display:'flex',
+            flexDirection:'row',
+            alignItems:'center'
+          }}
+        >
+
+          <View>
+            {
+              badge && <Image
+              source={{uri: badge_uri}}
+
+              style={{
+                height: 80,
+                width: 80,
+                objectFit:"contain"
+              }}
+            />
+            }
+            
+          </View>
+
+          <View style={{
+            width:"60%"
           }}>
-          <Text style={{}}>Sign in with Facebook</Text>
+            <Text>{badge?.badge_template?.title}</Text>
+            <Text>{badge?.badge_template?.description}</Text>
+          </View>
+
         </LinearGradient>
 
-        <Image
+        {/* <Image
             source={require("../../../../assets/img/rooted.png")}
             style={styles.img}
-        />
+        /> */}
 
 
 
-        <View style={{height:hp("1%")}}/>
+        <View style={{height:hp("2%")}}/>
         <Pressable 
           onPress={() => navigation.navigate("Calendar")}
         >

@@ -306,3 +306,23 @@ export const get_current_goal = async (cb) => {
         cb(e, false)
     }
 }
+
+export const update_static_badge = async (cb) => {
+    const url = `/checkin/badges/check-awards/`;
+    try{
+        const res = await api.post(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
+
+export const get_static_badge = async (cb) => {
+    const url  = `/checkin/badges/my-badges/`;
+    try{
+        const res = await api.get(url);
+        cb(res.data, true);
+    }catch(e){
+        cb(e, false);
+    }
+}
