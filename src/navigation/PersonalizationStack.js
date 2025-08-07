@@ -34,7 +34,7 @@ export default function PersonalizationStack() {
   const isPaymentTab = (store?.onboarding_completed)
 
 
-  //console.log("auth test ->", JSON.stringify(store, null, 2))
+  console.log("auth test ->", JSON.stringify(store, null, 2))
 
   return (
     <Stack.Navigator>

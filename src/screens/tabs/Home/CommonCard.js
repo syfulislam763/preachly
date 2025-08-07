@@ -31,9 +31,8 @@ const CommonCard = ({index =0, title="", text="", onPress=()=>{}}) => {
  
 
   return (
-        <SafeAreaView style={styles.container} >
-            <View style={styles.subContainer}>
-                <Pressable onPress={() => {
+        <>
+            <Pressable onPress={() => {
                     onPress();
                 }}>
                 <ImageBackground
@@ -67,11 +66,10 @@ const CommonCard = ({index =0, title="", text="", onPress=()=>{}}) => {
                     </View>
                 </ImageBackground>
             </Pressable>
-            </View>
             {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
                 <ActivityIndicator size={'large'}/>
             </Indicator>}
-        </SafeAreaView>
+        </>
   )
 }
 
@@ -82,6 +80,7 @@ const styles = StyleSheet.create({
     container: {
         // flex:1,
         // backgroundColor:'#fff',
+        height:102,
     },
     subContainer:{
         // height:"100%",
@@ -92,6 +91,7 @@ const styles = StyleSheet.create({
         // paddingBottom: 100
     },
     background:{
+        
         height:102,
         width:'100%',
         flexDirection:'row',

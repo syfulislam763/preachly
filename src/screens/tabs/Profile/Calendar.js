@@ -238,6 +238,7 @@ const Day = ({ day, selectedDate, currentMonth, onSelect, markedDates }) => {
           fontFamily:'NunitoExtraBold',
           fontSize:20,
           color:'#0B172A',
+          marginBottom:20,
         }}>Weekly Check-In Reminder</Text>
       
         <CommonCard 
