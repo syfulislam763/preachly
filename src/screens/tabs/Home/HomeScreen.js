@@ -299,7 +299,7 @@ export default function HomeScreen() {
           <CommonCard 
             title={`Don't forget to reflect on this week's progress and earn your badge!`}
             text={`Days left ${currentGoal?.days_remaining || 0} days`}
-            onPress={()=> navigation.navigate("CurrentGoals")}
+            onPress={()=> navigation.navigate("WeeklyCheckIn")}
           />
           
       

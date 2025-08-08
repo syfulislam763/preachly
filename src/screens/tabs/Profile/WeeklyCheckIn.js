@@ -19,16 +19,8 @@ const WeeklyCheckIn = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // useLayoutEffect(()=>{
-    //     navigation.getParent()?.setOptions({
-    //         tabBarStyle: {display:'none'}
-    //     })
-    //     return () => {
-    //         navigation.getParent()?.setOptions({
-    //             tabBarStyle: undefined
-    //         })
-    //     }
-    // },[navigation])
+    console.log("historty", JSON.stringify(history, null, 2))
+
     const timeAgo = (string) => {
         const month_string = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         const now = new Date(string);
@@ -95,8 +87,8 @@ const WeeklyCheckIn = () => {
                                 />
                             </View>
                             <View>
-                                <Text style={(index%2==0)?{...styles.title}: {...styles.title, color:"#ffffff"}}>{item.week_number} Week Check-In</Text>
-                                <Text style={(index%2==0)?{...styles.text}: {...styles.text, color:"#90B2B2"}}>{item?.completed_at && timeAgo(item?.completed_at)}</Text>
+                                <Text style={(index%2==0)?{...styles.title}: {...styles.title, color:"#ffffff"}}>{(history.length-item.week_number)+1}. Week Check-In</Text>
+                                <Text style={(index%2==0)?{...styles.text}: {...styles.text, color:"#90B2B2"}}>{item?.completed_at?timeAgo(item?.completed_at):"Available"}</Text>
                             </View>
                         </View>
 
@@ -117,7 +109,7 @@ const WeeklyCheckIn = () => {
 
                     
                     <FlatList
-                        data={history.sort((a,b)=> a.week_number-b.week_number)}
+                        data={history.sort((a,b)=> b.week_number-a.week_number)}
                         keyExtractor={(item) => item.week_number}
                         renderItem={renderItem}
                         contentContainerStyle={{

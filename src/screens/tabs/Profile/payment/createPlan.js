@@ -9,6 +9,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { ROOT_URL } from '../../../../context/Paths';
 import api from '../../../../context/api';
+import { handleToast } from '../../../auth/AuthAPI';
 
 const headers = {
   Authorization: 'Bearer YOUR_LOGIN_TOKEN', // 🔁 Replace with actual auth token
@@ -87,6 +88,7 @@ export default function createPlan() {
       if (active) {
         cb("active");
         //navigation.replace('Congratulation');
+        handleToast("info", "The selected plan has been activated", 3000, ()=>{})
         console.log("go congratulations page")
         return;
       }
