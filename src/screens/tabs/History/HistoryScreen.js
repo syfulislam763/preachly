@@ -331,7 +331,7 @@ const HistoryScreen = () => {
       </View>
 
       <FlatList
-        data={searchedData}
+        data={searchedData.sort((a,b) => a.timeAgo - b.timeAgo)}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}

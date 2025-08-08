@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { get_random_verses, finish_share, get_notifications, get_profile_dashboard_data} from '../TabsAPI';
 import CommonCard from './CommonCard';
 import { get_current_goal } from '../TabsAPI';
+import HomeModal from './HomeModal';
 
 
 
@@ -95,7 +96,7 @@ export default function HomeScreen() {
             setCurrentGoal(res?.data);
         }
 
-        setLoading(false);
+        //setLoading(false);
     })
   }
   useEffect(() => {
@@ -149,7 +150,7 @@ export default function HomeScreen() {
                   goal_preference: goal_preference || {}
                 }
                 //console.log(profileSettingData, "..")
-                setLoading(false)
+                //setLoading(false)
                 updateStore({ profileSettingData, faith_goal_questions, profile_dashboard: dashboard?.data})
                 setProfileInfo(userInfo)
 
@@ -157,15 +158,15 @@ export default function HomeScreen() {
               else{
                 console.log("eer", dashboard);
               }
-              setLoading(false);
+              //setLoading(false);
             })
           }else{
-            setLoading(false)
+            //setLoading(false)
             console.log(res1, "profile")
           }
         })
       }else{
-        setLoading(false)
+        //setLoading(false)
         console.log("onboarding", res)
       }
   })
@@ -304,9 +305,10 @@ export default function HomeScreen() {
           
       
         </ScrollView>
-        {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
+        <HomeModal modalVisible={loading} setModalVisible={()=>setLoading(false)} current_streak={store?.profile_dashboard?.streak?.current_streak} />
+        {/* {loading && <Indicator onClose={() => setLoading(false)} visible={loading}>
           <ActivityIndicator size={"large"}/>
-        </Indicator>}
+        </Indicator>} */}
     </SafeAreaView>
   );
 }

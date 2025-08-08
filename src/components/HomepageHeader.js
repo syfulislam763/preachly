@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
 import { useAuth } from '../context/AuthContext';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { useNavigation } from '@react-navigation/native';
+import HomeModal from '../screens/tabs/Home/HomeModal';
+
 
 const HomepageHeader = ({userInfo, dashboard}) => {
   const {store} = useAuth();
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false)
+
+
   return (
     <View style={styles.container}>
       {/* Left: Profile Picture and Greeting */}
@@ -44,7 +49,7 @@ const HomepageHeader = ({userInfo, dashboard}) => {
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.countButton}>
+        <TouchableOpacity onPress={()=>{setModalVisible(true)}} style={styles.countButton}>
             <Image
                 source={require('../../assets/img/Fire.png')} 
                 style={{
@@ -53,9 +58,12 @@ const HomepageHeader = ({userInfo, dashboard}) => {
                     objectFit:'contain'
                 }}
             />
-          <Text style={styles.countText}>{store?.profile_dashboard?.streak?.current_streak || "0"}</Text>
+          <Text style={styles.countText}>{store?.profile_dashboard?.streak?.current_streak || "1"}</Text>
         </TouchableOpacity>
       </View>
+
+
+      <HomeModal setModalVisible={setModalVisible} current_streak={store?.profile_dashboard?.streak?.current_streak} modalVisible={modalVisible}/>
     </View>
   );
 };

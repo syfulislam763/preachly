@@ -9,6 +9,7 @@ import WeeklyCheckIn_ from '../../screens/tabs/Profile/WeeklyCheckIn_';
 import RegularCheckIn from '../../screens/tabs/Profile/RegularCheckIn';
 import ProfileFaith from '../../screens/tabs/Profile/ProfileFaith';
 import QuestionScreen from '../../screens/tabs/Profile/QuestionScreen';
+import MessageScreen from '../../screens/tabs/Message/MessageScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -123,6 +124,16 @@ export default function HistoryStack() {
         },
         headerLeft: () => <BackButton navigation={navigation}/>
       })} name="CurrentGoals" component={CurrentGoals} />
+
+
+      <Stack.Screen 
+        name="MessageScreen" 
+        component={MessageScreen} 
+        options={{
+          presentation: 'modal',
+          headerBackTitleVisible: false
+        }}
+      />
     </Stack.Navigator>
   );
 }
