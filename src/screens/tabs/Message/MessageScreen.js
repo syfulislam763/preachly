@@ -42,6 +42,7 @@ import VoiceMessageBubble from './VoiceMessageBubble';
 import MessageWrapper from './MessageWrapper';
 import { startRecording, stopRecording} from './voiceRecord_';
 
+
 export default function MessageScreen() {
   //useLogout();
   const flatListRef = useRef(null);
@@ -70,6 +71,8 @@ export default function MessageScreen() {
 
   const [doneOne, setDoneOne] = useState(false);
   const [doneTwo, setDoneTwo] = useState(false);
+
+  const [isTyping, setIsTyping] = useState(false);
 
 
 
@@ -259,11 +262,13 @@ export default function MessageScreen() {
           bookmark:false,
         }
         if(data?.type === "typing"){
+          setIsTyping(true);
           res.message = "typing..."
+          res.type = "wave";
           setMessages(prev => [...prev, res])
         }
         if(data?.type === "message"){
-          
+          setIsTyping(false);
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
         }
@@ -418,8 +423,10 @@ export default function MessageScreen() {
 
   const handleGoBack = () => {
     setIsFeedback(true);
+    console.log("hello")
   }
 
+  console.log("feed", isFeedback)
 
   useEffect(() => {
 
@@ -468,7 +475,7 @@ export default function MessageScreen() {
           >
             <Pressable
               onPress={() => {
-                handleGoBack();
+                setIsFeedback(true);
               }}
             >
               <Image
@@ -504,6 +511,7 @@ export default function MessageScreen() {
         setRecordings={setAudio}
         isTest={isTest}
         setIsTest={setIsTest}
+        isTyping={isTyping}
       />
 
       {isRating && <RatingMessage 
@@ -520,7 +528,7 @@ export default function MessageScreen() {
         }}
       />}
 
-      {isFeedback && <Feedback 
+      {<Feedback 
         visible={isFeedback} 
         onClose={() => setIsFeedback(false)}
         feedback={feedback}

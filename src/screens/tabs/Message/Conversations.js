@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity ,Image, Pressable} from 'react
 import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
 import AudioPlayerCard from './AudioPlayCard';
+import TypingIndicator from './TypingIndicator';
 
-const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound}) => {
+
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound, isTyping}) => {
 
   return (
     <View style={styles.container}>
@@ -24,6 +26,8 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
       )}
 
       {/* Bot Message */}
+      {type==="wave" && <TypingIndicator isTyping={type==="wave"}/>}
+
       {type === 'bot' && (
         <View style={styles.botContainer}>
           <View style={styles.botBubble}>
@@ -82,17 +86,17 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
           </View>}
 
           {/* Follow-up Prompt */}
-          {/* <View style={styles.promptContainer}>
+          <View style={styles.promptContainer}>
             <Text style={styles.promptText}>Need more clarity?</Text>
             <View style={styles.promptButtons}>
-              <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={onYes}>
+              <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={()=>{}}>
                 <Text style={{...styles.promptButtonText, color:'white'}}>Yes</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.promptButton} onPress={onNo}>
+              <TouchableOpacity style={styles.promptButton} onPress={()=>{}}>
                 <Text style={styles.promptButtonText}>No</Text>
               </TouchableOpacity>
             </View>
-          </View> */}
+          </View>
         </View>
       )}
     </View>

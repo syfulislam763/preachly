@@ -49,7 +49,8 @@ const FinishAuthentication = () => {
 
           const faith_goal_questions = [...res?.data?.faith_goal_questions];
           const temp = {...store,denominations, faith_goal_questions, faith_journey_reasons, bible_versions, bible_familiarity_data, tone_preference_data }
-          updateStore(temp)
+          updateStore(temp);
+          console.log(JSON.stringify(temp, null, 2), "test")
 
           setAuthToken(store?.access, store?.refresh, async () => {
             await AsyncStorage.setItem('store', JSON.stringify(temp));

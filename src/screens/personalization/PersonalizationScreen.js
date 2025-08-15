@@ -18,7 +18,7 @@ export default function PersonalizationScreen() {
  
   const { logout, store } = useAuth();
 
-  const [cardOne, setCardOne] = useState(true)
+  const [cardOne, setCardOne] = useState(false)
   const [cardTwo, setCardTwo] = useState(false)
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState(store?.faith_journey_reasons[0]?.id)
@@ -26,9 +26,14 @@ export default function PersonalizationScreen() {
   const navigation = useNavigation();
 
 
-  const handleIsActive = (id) => {
-    setCardOne(!cardOne)
-    setCardTwo(!cardTwo)
+  const handleIsActive = (id, toggle) => {
+    if(toggle){
+      setCardOne(true);
+      setCardTwo(false);
+    }else{
+      setCardOne(false);
+      setCardTwo(true);
+    }
     setId(id)
   }
 
@@ -80,13 +85,13 @@ export default function PersonalizationScreen() {
         <View style={styles.imageContainer}>
             <PhotoCard
               isActive={cardOne}
-              setIsActive={() => handleIsActive(store?.faith_journey_reasons[0]?.id)}
+              setIsActive={() => handleIsActive(store?.faith_journey_reasons[0]?.id, true)}
               img={require("../../../assets/img/card_bg1.png")}
               text={store?.faith_journey_reasons[0]?.name}
             />
             <PhotoCard
               isActive={cardTwo}
-              setIsActive={() => handleIsActive(store?.faith_journey_reasons[1]?.id)}
+              setIsActive={() => handleIsActive(store?.faith_journey_reasons[1]?.id, false)}
               img={require("../../../assets/img/card_bg2.png")}
               text={store?.faith_journey_reasons[1]?.name}
             />

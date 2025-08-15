@@ -20,8 +20,8 @@ export default function PersonalizationScreen() {
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
   const [isLoading, setIsLoading] = useState(false)
-  const [index, setIndex] = useState(0);
-  const [id, setId] = useState(null)
+  const [index, setIndex] = useState(-1);
+  const [id, setId] = useState(null);
   const navigation = useNavigation();
   const handleSubmit = () => {
     const payload = {

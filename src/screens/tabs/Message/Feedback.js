@@ -14,6 +14,7 @@ const Feedback = ({visible, onClose, feedback, setFeedback}) => {
 
     const [liked, setLiked] = useState(false);
     const [toggle, setToggle] = useState(false);
+    console.log(visible)
 
   return (
     <CustomModal
