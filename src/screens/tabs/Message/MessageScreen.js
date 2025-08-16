@@ -77,11 +77,19 @@ export default function MessageScreen() {
 
 
   const handleStopRecording = async () => {
-    const data = await stopRecording(recordings, setRecordings);
-    setAudio(data);
-    setRecordingState(false);
+    if(recordings){
+      const data = await stopRecording(recordings, setRecordings);
+      setAudio(data);
+      setRecordingState(false);
+    }
   }
   const handleStartRecording = async () => {
+    if(recordings){
+      const data = await stopRecording(recordings, setRecordings);
+      setAudio(data);
+      setRecordingState(false);
+      return;
+    }
     const res = await startRecording();
     setRecordings(res.recording)
     setRecordingState(true);

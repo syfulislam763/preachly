@@ -18,8 +18,11 @@ const  VoiceMessageBubble = ({setRecordings, recordings, playSound, stopSound, c
     const handlePlayStart = () => {
       playSound({id:"buble", uri: recordings.file})
     }
-    const hanldePlayStop = () => {
+    const hanldePlayStop = (f=false) => {
       stopSound()
+      if(f){
+        setRecordings(null)
+      }
     }
 
     useEffect(()=>{
@@ -45,7 +48,7 @@ const  VoiceMessageBubble = ({setRecordings, recordings, playSound, stopSound, c
   return (
     <View style={styles.container}>
       {/* Close Icon */}
-      <TouchableOpacity onPress={() => setRecordings(null)} style={styles.closeButton}>
+      <TouchableOpacity onPress={() => hanldePlayStop(true)} style={styles.closeButton}>
         <Entypo name="cross" size={24} color="#1C1B1F" />
       </TouchableOpacity>
   
