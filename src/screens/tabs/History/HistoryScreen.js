@@ -57,7 +57,7 @@ const HistoryScreen = () => {
   
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
-  const {updateStore} = useAuth()
+  const {updateStore, updateSession} = useAuth()
 
   const handleDelete = (id) => {
     setData((prev) => prev.filter((item) => item.id !== id));
@@ -126,7 +126,7 @@ const HistoryScreen = () => {
     get_all_sessions((res, success) => {
       if(success){
         //const temp_data = res?.data
-        const temp_data = res?.data?.sessions?.map(item => {
+        let temp_data = res?.data?.sessions?.map(item => {
           let snippet = "";
           let searchContent = "";
           if(item?.messages?.length){
@@ -144,6 +144,7 @@ const HistoryScreen = () => {
             timeAgo: timeAgo(item?.created_at),
             isFavorite: item?.is_favorite,
             searchContent: searchContent,
+            time: new Date(item?.created_at).getTime(),
             type: 'chat',
           }
         });
@@ -162,14 +163,14 @@ const HistoryScreen = () => {
                   isFavorite: false,
                   isBookmarked: msg.bookmark,
                   searchContent: msg.content,
+                  time: new Date(item?.created_at).getTime(),
                   type: 'answer',
                 }
               )
             }
           })
         })
-
-        //console.log("test -> ", JSON.stringify(temp_data, null, 2))
+        temp_data = temp_data.sort((a,b) => b.time-a.time)
         setData(temp_data)
         handleFilter(selectedFilter, temp_data);
       }else{
@@ -214,6 +215,8 @@ const HistoryScreen = () => {
   
   searchedData = searchText.length?searchedData:filteredData
 
+
+  //console.log("data", JSON.stringify(searchedData, null, 2))
     // .filter(item => {
     //   item.searchContent.split(" ").includes(searchText.toLowerCase())
     // })
@@ -238,8 +241,9 @@ const HistoryScreen = () => {
   const renderContent = (item) => (
     <TouchableOpacity onPress={() => {
       if(item.type != "answer"){
-        updateStore({ session: {id: item.id}})
-        navigation.navigate("MessageScreen")
+        console.log("id_", item.id)
+        updateSession(item)
+        navigation.navigate("MessageScreen", {session_id: item.id})
       }
     }}>
       <View style={styles.itemContainer}>
@@ -331,7 +335,7 @@ const HistoryScreen = () => {
       </View>
 
       <FlatList
-        data={searchedData.sort((a,b) => a.timeAgo - b.timeAgo)}
+        data={searchedData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}

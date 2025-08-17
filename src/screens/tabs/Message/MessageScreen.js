@@ -122,11 +122,13 @@ export default function MessageScreen() {
 
   useEffect(() =>{
     console.log(session, "session")
+    
     if((session?.id)){
       setLoading(true);
       
       get_message_by_session_id(session?.id, (res, success) => {
         if(success){
+
           let msgs = res?.data?.messages?.map(item => {
             
             return (item.is_user && !item.has_voice )?{
@@ -149,7 +151,7 @@ export default function MessageScreen() {
               message_id: item?.id,
               type: 'bot',
               verseLink: "",
-              message: item?.content,
+              message:  item?.content.substring(item?.content.indexOf("Scriptural Rebuttal"), item?.content.length),
               bookmark:item.bookmark
             }
           });
@@ -166,7 +168,7 @@ export default function MessageScreen() {
             
           }
 
-          console.log(JSON.stringify({}, null, 2), "etm")
+          //console.log(JSON.stringify(res?.data, null, 2), "etm")
 
           setMessages(temp);
           //setSession(session);
@@ -268,14 +270,19 @@ export default function MessageScreen() {
           verseLink: "",
           message: data?.content,
           bookmark:false,
+          summary: data?.summary || []
         }
-        if(data?.type === "typing"){
+        if(data?.type === "typing" && data?.is_typing){
           setIsTyping(true);
           res.message = "typing..."
           res.type = "wave";
           setMessages(prev => [...prev, res])
         }
-        if(data?.type === "message"){
+        if(data?.type === "preachly_response"){
+          let idx = res.message.indexOf("Scriptural Rebuttal");
+          if(idx != -1){
+            res.message = res.message.substring(idx, res.message.length);
+          }
           setIsTyping(false);
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
@@ -291,13 +298,14 @@ export default function MessageScreen() {
     ws.current.onclose = () =>{
       console.log("socket disconnected...");
     }
-  }, [store]);
+  }, [session, store]);
 
   const handleSendPredefinedMessage = (message) => {
     const payload = {
       message: message,
       session_id: session?.id,
-      type: "message"
+      type: "message",
+      message_type: "objection"
     }
 
     if(ws.current && message.trim()){
@@ -323,7 +331,8 @@ export default function MessageScreen() {
     const payload = {
       message: message,
       session_id: session?.id,
-      type: "message"
+      type: "message",
+      message_type: (message.trim().toLowerCase() === "no" || message.trim().toLowerCase() == "yes")?"yes_no":"objection"
     }
     console.log(payload)
     if(ws.current && message.trim()){
@@ -406,8 +415,10 @@ export default function MessageScreen() {
           const payload = {
             message: res?.data?.transcript,
             session_id: session?.id,
-            type: "message"
+            type: "message",
+            message_type: "objection"
           }
+          console.log("t", payload)
           ws.current.send(JSON.stringify(payload))
           setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
           setAudio(null);
@@ -429,12 +440,7 @@ export default function MessageScreen() {
 
   };
 
-  const handleGoBack = () => {
-    setIsFeedback(true);
-    console.log("hello")
-  }
 
-  console.log("feed", isFeedback)
 
   useEffect(() => {
 
@@ -446,6 +452,9 @@ export default function MessageScreen() {
     }
 
   }, [doneOne, doneTwo])
+
+
+  console.log(isFeedback, "chag");
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
@@ -483,7 +492,8 @@ export default function MessageScreen() {
           >
             <Pressable
               onPress={() => {
-                setIsFeedback(true);
+                console.log("heelo")
+                setIsFeedback(prev => !prev);
               }}
             >
               <Image
@@ -522,7 +532,7 @@ export default function MessageScreen() {
         isTyping={isTyping}
       />
 
-      {isRating && <RatingMessage 
+      {/* {isRating && <RatingMessage 
         visible={isRating} 
         onClose={() => {
           setIsRating(false)
@@ -534,9 +544,9 @@ export default function MessageScreen() {
            setRating(res)
           navigation.goBack();
         }}
-      />}
+      />} */}
 
-      {<Feedback 
+      <Feedback 
         visible={isFeedback} 
         onClose={() => setIsFeedback(false)}
         feedback={feedback}
@@ -563,7 +573,7 @@ export default function MessageScreen() {
           }
           
         }}
-      />}
+      />
       
       {loading && <Indicator visible={loading} onClose={()=>setLoading(false)}>
         <ActivityIndicator size={"large"}/>

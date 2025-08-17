@@ -102,6 +102,7 @@ const MessageWrapper = ({
     const translateY = useRef(new Animated.Value(0)).current;
     const lockedRef = useRef(false);
     const isRecordingRef = useRef(false);
+    const holdPress = useRef(null)
     const THRESHOLD = -70;
 
     
@@ -123,6 +124,8 @@ const MessageWrapper = ({
       
       stopTimer();
       stopRecording();
+      clearTimeout(holdPress.current);
+      holdPress.current = null;
       // Reset lock state and animation
       
       Animated.spring(translateY, {
@@ -145,7 +148,9 @@ const MessageWrapper = ({
 
         onPanResponderGrant: () => {
           // This is called when the responder is granted
-          handleMicPressIn();
+          holdPress.current = setTimeout(() => {
+            handleMicPressIn();
+          }, 700)
         },
 
         onPanResponderMove: (_, g) => {
@@ -164,6 +169,7 @@ const MessageWrapper = ({
 
         onPanResponderRelease: () => {
           // Only stop recording if not locked
+          clearTimeout(holdPress.current);
           if (!lockedRef.current && isRecordingRef.current) {
             console.log("error2")
             lockedRef.current = false;

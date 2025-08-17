@@ -13,14 +13,15 @@ export default function HistoryStack() {
       }}
     >
       <Stack.Screen name="HistoryStack" component={HistoryScreen} />
-      <Stack.Screen 
+
+      {/* <Stack.Screen 
           name="MessageScreen" 
           component={MessageScreen} 
           options={{
             presentation: 'modal',
             headerBackTitleVisible: false
           }}
-        />
+        /> */}
     </Stack.Navigator>
   );
 }
