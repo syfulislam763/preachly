@@ -6,8 +6,9 @@ import AudioPlayerCard from './AudioPlayCard';
 import TypingIndicator from './TypingIndicator';
 
 
-const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound, isTyping}) => {
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound, isTyping, onPredefinedMsg=()=>{}}) => {
 
+  
   return (
     <View style={styles.container}>
       {/* User Message */}
@@ -86,17 +87,23 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
           </View>}
 
           {/* Follow-up Prompt */}
-          <View style={styles.promptContainer}>
-            <Text style={styles.promptText}>Need more clarity?</Text>
-            <View style={styles.promptButtons}>
-              <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={()=>{}}>
-                <Text style={{...styles.promptButtonText, color:'white'}}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.promptButton} onPress={()=>{}}>
-                <Text style={styles.promptButtonText}>No</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          {
+            (item?.message_type==="yes_no")?null: (
+              <View style={styles.promptContainer}>
+                <Text style={styles.promptText}>Need more clarity?</Text>
+                <View style={styles.promptButtons}>
+                  <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={()=>onPredefinedMsg("Yes")}>
+                    <Text style={{...styles.promptButtonText, color:'white'}}>Yes</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.promptButton} onPress={()=>onPredefinedMsg("No")}>
+                    <Text style={styles.promptButtonText}>No</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )
+          }
+
+
         </View>
       )}
     </View>

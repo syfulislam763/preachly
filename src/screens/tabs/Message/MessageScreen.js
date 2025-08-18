@@ -40,7 +40,8 @@ import { finish_share, finish_conversation, send_voice_message } from '../TabsAP
 import { useRoute } from '@react-navigation/native';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import MessageWrapper from './MessageWrapper';
-import { startRecording, stopRecording} from './voiceRecord_';
+import { startRecording, stopRecording,requestPermission} from './voiceRecord_';
+
 
 
 export default function MessageScreen() {
@@ -152,7 +153,7 @@ export default function MessageScreen() {
               type: 'bot',
               verseLink: "",
               message:  item?.content.substring(item?.content.indexOf("Scriptural Rebuttal"), item?.content.length),
-              bookmark:item.bookmark
+              bookmark:item.bookmark,
             }
           });
 
@@ -251,6 +252,7 @@ export default function MessageScreen() {
   const ws = useRef(null);
   useEffect(() =>{
     if(!session?.id)return () => {}
+    if(ws.current)return () => {}
 
     const wsURL = WEBSOCKET_URL+`/ws/chat/${session?.id}/?token=${store?.access}`;
     ws.current = new WebSocket(wsURL);
@@ -270,7 +272,8 @@ export default function MessageScreen() {
           verseLink: "",
           message: data?.content,
           bookmark:false,
-          summary: data?.summary || []
+          summary: data?.summary || [],
+          message_type: "",
         }
         if(data?.type === "typing" && data?.is_typing){
           setIsTyping(true);
@@ -278,10 +281,21 @@ export default function MessageScreen() {
           res.type = "wave";
           setMessages(prev => [...prev, res])
         }
-        if(data?.type === "preachly_response"){
+        if((data?.type === "exploration_options")){
+          res.message = data.message;
+          res.message_id = Date.now();
+          res.message_type="yes_no"
+          setIsTyping(false);
+          setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
+        }
+
+        if( (data?.type === "preachly_response") || (data?.type === "clarification_response")){
           let idx = res.message.indexOf("Scriptural Rebuttal");
           if(idx != -1){
             res.message = res.message.substring(idx, res.message.length);
+          }
+          if((data?.type === "clarification_response")){
+            res.message_type="yes_no"
           }
           setIsTyping(false);
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
@@ -298,14 +312,14 @@ export default function MessageScreen() {
     ws.current.onclose = () =>{
       console.log("socket disconnected...");
     }
-  }, [session, store]);
+  }, [ store, session]);
 
   const handleSendPredefinedMessage = (message) => {
     const payload = {
       message: message,
       session_id: session?.id,
       type: "message",
-      message_type: "objection"
+      message_type: (message.trim().toLowerCase() === "no" || message.trim().toLowerCase() == "yes")?"yes_no":"objection"
     }
 
     if(ws.current && message.trim()){
@@ -355,16 +369,16 @@ export default function MessageScreen() {
   }
 
 
-  useFocusEffect(
-    useCallback(() =>{
-      return () =>{
-        console.log("disconnecting")
-        if(ws.current){
-          ws.current?.close();
-        }
-      }
-    }, [])
-  )
+  // useFocusEffect(
+  //   useCallback(() =>{
+  //     return () =>{
+  //       console.log("disconnecting")
+  //       if(ws.current){
+  //         ws.current?.close();
+  //       }
+  //     }
+  //   }, [])
+  // )
 
   useEffect(() => {
     if (flatListRef.current) {
@@ -443,7 +457,7 @@ export default function MessageScreen() {
 
 
   useEffect(() => {
-
+    requestPermission();
     if(doneOne && doneTwo){
       console.log("yes i am ready")
       if( (session?.id) && (route.params?.question) && ws.current){
@@ -454,7 +468,6 @@ export default function MessageScreen() {
   }, [doneOne, doneTwo])
 
 
-  console.log(isFeedback, "chag");
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>

@@ -6,6 +6,20 @@ const formatDuration = (millis) => {
   return `${minutes}:${seconds.padStart(2, '0')}`;
 };
 
+
+export const requestPermission = async () => {
+      try {
+        const perm = await Audio.requestPermissionsAsync();
+        if (perm.status === "granted") {
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: true,
+            playsInSilentModeIOS: true,
+          });
+        }
+      } catch (err) {
+        console.log("Permission error:", err);
+      }
+    }
 export async function startRecording() {
     try {
       const perm = await Audio.requestPermissionsAsync();

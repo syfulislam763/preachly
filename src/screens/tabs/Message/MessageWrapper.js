@@ -251,6 +251,7 @@ const MessageWrapper = ({
                 playSound={playSound}
                 stopSound={stopSound}
                 isTyping={true}
+                onPredefinedMsg={onPredefinedMsg}
               />
           
             )}

@@ -85,7 +85,7 @@ export default function PersonalizationScreen() {
         
         <Content
           styles={styles}
-          data={store?.bible_familiarity_data[index]}
+          data={store?.bible_familiarity_data[index==-1?0:index]}
         />
         
 
