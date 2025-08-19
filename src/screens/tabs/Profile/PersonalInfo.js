@@ -32,6 +32,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
+import { set } from 'date-fns';
 
 
 //     "conversation" = Confidence Goal
@@ -85,10 +86,36 @@ const PersonalInfo = () => {
   const [depthAnsVisible, setDepthAnsVisible] = useState(false)
 
   const [name, setName] = useState('Alice');
-  const [dob, setDob] = useState('21.12.2001');
+  const [dob, setDob] = useState("");
   const [email, setEmail] = useState('example@gmail.com');
   const [img, setImg] = useState(null);
-  const [imageData, setImageData] = useState({})
+  const [imageData, setImageData] = useState({});
+
+  const handleDob = (val) => {
+    if(val.toString() == "."|| val.toString()=="-" || val.toString()==","){
+      setDob("")
+      return;
+    }
+    if(val=="Backspace" && dob){
+      setDob(dob.substring(0, dob.length-1))
+      return;
+    }
+
+
+    const temp = dob+val.toString();
+    
+    if(temp.length>10){
+
+    }
+    else if(temp.length == 7){
+      setDob(temp+"-")
+    }
+    else if(temp.length == 4){
+      setDob(temp+"-")
+    }else{
+      setDob(temp);
+    }
+  }
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
   const [selectedDenomination, setSelectedDenomination] = useState({});
@@ -341,7 +368,7 @@ const PersonalInfo = () => {
       <View style={styles.inputFieldCard}>
         <InfoRow label="Name" value={name} onChange={setName} isEditable={editMode} />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
-        <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={setDob} />
+        <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={handleDob} />
         <InfoRow isEditable={editMode} label="Email" value={email} onChange={setEmail} />
       </View>
 
@@ -498,11 +525,17 @@ const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
       style={styles.inputField}
       value={value}
       keyboardType={isDate?'numeric':'default'}
-      onChangeText={onChange}
+      onChangeText={isDate?()=>{}:onChange}
       placeholder={isDate?"year-month-day":`Enter ${label.toLowerCase()}`}
       textAlign="right"
       editable={isEditable}
       returnKeyType="done"
+      onKeyPress={({nativeEvent})=>{
+        console.log("key", nativeEvent.key)
+        if(isDate){
+          onChange(nativeEvent.key)
+        }
+      }}
     />
   </View>
 );
