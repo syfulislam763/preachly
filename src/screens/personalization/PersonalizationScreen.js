@@ -97,6 +97,19 @@ export default function PersonalizationScreen() {
             />
             
         </View>
+
+        {(id==-1) && <View style={{
+          display:'flex',
+          flexDirection:'row',
+          alignItems:'center',
+          justifyContent:'center',
+          height:"25%",
+          width:"100%"
+        }}>
+          <Text style={
+            {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'}
+          }>Select an option</Text>
+          </View>}
       </View>
 
       <CommonButton
