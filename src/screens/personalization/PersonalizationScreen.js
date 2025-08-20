@@ -21,7 +21,7 @@ export default function PersonalizationScreen() {
   const [cardOne, setCardOne] = useState(false)
   const [cardTwo, setCardTwo] = useState(false)
   const [loading, setLoading] = useState(false);
-  const [id, setId] = useState(store?.faith_journey_reasons[0]?.id)
+  const [id, setId] = useState(-1)
 
   const navigation = useNavigation();
 
@@ -107,7 +107,8 @@ export default function PersonalizationScreen() {
           txtColor={primaryText}
           handler={handleJourneyReason}
           bold='bold'
-          opacity={1}
+          opacity={id==-1?0.7:1}
+          disabled={id==-1?true:false}
       />
       {loading && <Indicator>
         <ActivityIndicator size="large" />

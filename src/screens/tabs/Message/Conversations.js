@@ -31,11 +31,14 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
 
       {type === 'bot' && (
         <View style={styles.botContainer}>
-          <View style={styles.botBubble}>
+          <View style={styles.botBubble}>~
             <Text style={styles.botText}>
               {message}
               {/* <Text style={styles.linkText}>{verseLink}</Text> */}
             </Text>
+
+            {item?.summary?.length>0 && <Text style={styles.botText}>{"\n"} Summary: </Text>}
+            {item?.summary && item?.summary.map((text, idx) => <Text key={idx} style={styles.botText}>{text}</Text>)}
           </View>
 
           {/* Icon Actions */}

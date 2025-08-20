@@ -85,7 +85,7 @@ export default function PersonalizationScreen() {
         
         <Content
           styles={styles}
-          data={store?.bible_familiarity_data[index==-1?0:index]}
+          data={store?.bible_familiarity_data[index]}
         />
         
 
@@ -101,7 +101,9 @@ export default function PersonalizationScreen() {
           handler={handleSubmit}
           txtColor={primaryText}
           bold='bold'
-          opacity={1}
+          opacity={index==-1?0.7:1}
+          disabled={index==-1?true:false}
+
       />
       {isLoading && <Indicator visible={isLoading} onClose={() => setIsLoading(false)}  ><ActivityIndicator size="large" /></Indicator>}
     </View>
@@ -114,6 +116,7 @@ const Content = ({styles, data}) => {
   return <View>
           <View style={styles.textContainer}>
               <Text style={styles.text}>{data?.text1}</Text>
+              {!data && <Text style={styles.text}>{"Select an option"}</Text>}
               <View style={{height:15}}></View>
               {data?.text2 && <Text style={styles.text}>{data?.text2}</Text>}
           </View>

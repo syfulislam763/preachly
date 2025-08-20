@@ -21,6 +21,24 @@ const lavel = {
   "share_faith": "Inspiration Goal"
 }
 
+const goal_description = {
+    conversation: {
+        text1: "Confidence",
+        text2: "Your Bold Flame is Growing!",
+        text3:"Leveling up your boldness! Every question you face adds fuel to your fire, making you braver and brighter in sharing God's truth."
+    },
+    scripture: {
+        text1: "Scripture Knowledge",
+        text2: "Your Faith IQ is Rising!",
+        text3:"Bible scholar in the making! Every verse sharpens your wisdom and fuels your faith, your spiritual library is stacking up strong."
+    },
+    share_faith: {
+        text1: "Inspiration",
+        text2: "Your Light is Reaching New Heights!",
+        text3:"Look at you, planting flags of hope! Every share is a mountaintop moment, inspiring hearts and sparking faith in ways you might not even see."
+    }
+}
+
 const images = {
     "conversation": conversation,
     "scripture": scripture,
@@ -63,11 +81,13 @@ const CurrentGoals = () => {
             <View style={{
                 alignContent:'center'
             }}>
-                <Text style={styles.title2}>Your {goals?.goal_display} is heating up!</Text>
-            
+                <Text style={styles.title2}>{goal_description[goals.goal_type]?.text1}</Text>
+                <View style={{height:14}}></View>
+                <Text style={{...styles.text1, fontSize: 17}}>{goal_description[goals.goal_type]?.text2}</Text>
+                <Text style={{...styles.text1, color:"#2B4752"}}>{goal_description[goals.goal_type]?.text3}</Text>
 
                 <Image style={{
-                    height: "60%",
+                    height: "40%",
                     width: "100%",
                     objectFit:"contain"
                 }} source={images[goals?.goal_type]}/>
@@ -82,21 +102,9 @@ const CurrentGoals = () => {
                 {/* {backgroundColor:"#53381E33"} */}
                 <ProgressBar filled={{}} container={{}} progress={`${goals.progress_percentage}`}/>
                 <View style={{height:20}}></View>
-                <Text style={{
-                    fontFamily:"NunitoSemiBold",
-                    fontSize:15,
-                    color:"#0B172A",
-                    marginBottom:10,
-                    textAlign:'center'
-                }}>{`${week_start} - ${week_end} ${current}`}{" "}</Text>
+                <Text style={styles.text1}>{`${week_start} - ${week_end} ${current}`}{" "}</Text>
 
-                <Text style={{
-                    fontFamily:"NunitoSemiBold",
-                    fontSize:15,
-                    color:"#0B172A",
-                    marginBottom:10,
-                    textAlign:'center'
-                }}>{`Remaining days ${item?.days_remaining}`}{" "}</Text>
+                <Text style={styles.text1}>{`Remaining days ${item?.days_remaining}`}{" "}</Text>
 
             </View>
             
@@ -260,5 +268,12 @@ const styles = StyleSheet.create({
         width: "30%", 
         backgroundColor:"#53381E",
         borderRadius:5
+    },
+    text1: {
+        fontFamily:"NunitoSemiBold",
+        fontSize:15,
+        color:"#0B172A",
+        marginBottom:10,
+        textAlign:'center'
     }
 })

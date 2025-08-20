@@ -126,14 +126,14 @@ export default function HistoryStack() {
       })} name="CurrentGoals" component={CurrentGoals} />
 
 
-      <Stack.Screen 
+      {/* <Stack.Screen 
         name="MessageScreen" 
         component={MessageScreen} 
         options={{
           presentation: 'modal',
           headerBackTitleVisible: false
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }
