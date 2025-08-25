@@ -12,7 +12,8 @@ import {
   StyleSheet,
   TextInput,
   ActivityIndicator,
-  Pressable
+  Pressable,
+  BackHandler
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
@@ -31,30 +32,85 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Share from 'react-native-share'
 import useLogout from '../../../hooks/useLogout';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
 // import { TextInput } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import { setIsAudioActiveAsync } from 'expo-audio';
+import { finish_share, finish_conversation, send_voice_message } from '../TabsAPI';
+import { useRoute } from '@react-navigation/native';
+import VoiceMessageBubble from './VoiceMessageBubble';
+import MessageWrapper from './MessageWrapper';
+import { startRecording, stopRecording,requestPermission} from './voiceRecord_';
 
-export default function MessageScreen({ navigation }) {
-  useLogout();
+
+
+export default function MessageScreen() {
+  //useLogout();
   const flatListRef = useRef(null);
+  const [isFeedback, setIsFeedback] = useState(false);
+  const [isRating, setIsRating] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(0)
   ///
-  const {store, updateStore} = useAuth();
+  const {store, updateStore, updateSession, session} = useAuth();
 
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("")
   const [prevMsg, setPrevMsg] = useState("")
-  const [session, setSession] = useState({});
+
+  const [isNewSession, setIsNewSession] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const [recordings, setRecordings] = useState(null);
+  const [audio, setAudio] = useState(null);
+  const [recordingState, setRecordingState] = useState(false);
+  
+
+  const [recordStartTime, setRecordStartTime] = useState(0)
+  const [isTest, setIsTest] = useState(false);
+
+  const [doneOne, setDoneOne] = useState(false);
+  const [doneTwo, setDoneTwo] = useState(false);
+
+  const [isTyping, setIsTyping] = useState(false);
 
 
-  const create_session = () =>{
+
+  const handleStopRecording = async () => {
+    if(recordings){
+      const data = await stopRecording(recordings, setRecordings);
+      setAudio(data);
+      setRecordingState(false);
+    }
+  }
+  const handleStartRecording = async () => {
+    if(recordings){
+      const data = await stopRecording(recordings, setRecordings);
+      setAudio(data);
+      setRecordingState(false);
+      return;
+    }
+    const res = await startRecording();
+    setRecordings(res.recording)
+    setRecordingState(true);
+    setAudio(null)
+  }
+
+  const create_session = (cb = ()=>{}) =>{
     setLoading(true);
     get_session_id((res,success)=>{
       if(success){
-        setSession(res?.data);
+        console.log("created new session")
+        //setSession(res?.data);
         setMessage("");
         setMessages([])
         setPrevMsg("");
-        updateStore({ session: res?.data})
+        setRecordings(null)
+        //setIsNewSession(true)
+        updateSession({ ...res.data, isNewSession: true})
+        setDoneOne(true)
+        cb();
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
@@ -63,33 +119,65 @@ export default function MessageScreen({ navigation }) {
       setLoading(false);
     })
   }
+  //console.log("***", JSON.stringify(store, null, 2))
 
   useEffect(() =>{
-    if(store?.session?.id){
+    console.log(session, "session")
+    
+    if((session?.id)){
       setLoading(true);
       
-      get_message_by_session_id(store?.session?.id, (res, success) => {
+      get_message_by_session_id(session?.id, (res, success) => {
         if(success){
-          const msgs = res?.data?.messages?.map(item => {
-            return item.is_user?{
+
+          let msgs = res?.data?.messages?.map(item => {
+            
+            return (item.is_user && !item.has_voice )?{
                 id: item?.id,
                 message_id: item?.id,
                 type: 'user',
                 verseLink: "",
                 message: item?.content
-              }:{
+              }: item.has_voice? 
+                {
+                  id: item?.id,
+                  message_id: item?.id,
+                  type: 'audio',
+                  verseLink: "",
+                  message: item?.content,
+                  uri: item.voice_file
+                }
+              : {
               id: item?.id,
               message_id: item?.id,
               type: 'bot',
               verseLink: "",
-              message: item?.content,
-              bookmark:item.bookmark
+              message:  item?.content.substring(item?.content.indexOf("Scriptural Rebuttal"), item?.content.length),
+              bookmark:item.bookmark,
             }
           });
 
-          setMessages(msgs);
-          setSession(store?.session);
+          let temp = []
+          for(let i=0;i<msgs.length;){
+            if(msgs[i].type == "audio"){
+              temp.push(msgs[i]);
+              i += 2;
+            }else{
+              temp.push(msgs[i]);
+              i++;
+            }
+            
+          }
+          
+
+          //console.log(JSON.stringify(res?.data, null, 2), "etm")
+
+          setMessages(temp);
+          //setSession(session);
           setLoading(false);
+          //setIsNewSession(false);
+          setDoneOne(true)
+          updateSession({isNewSession: false})
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
@@ -102,11 +190,14 @@ export default function MessageScreen({ navigation }) {
     }else{
       create_session();
     }
-    console.log("he")
+
+
+    return () =>{
+      
+    }
+
   },[]);
-  const predefinedMessage = (message)=>{
-    setMessage(message);
-  }
+  
   const handleCopy = async (message) =>{
     await Clipboard.setStringAsync(message);
     console.log("copy...");
@@ -139,32 +230,36 @@ export default function MessageScreen({ navigation }) {
     }
     try{
       await Share.open(options)
+      finish_share((res, success) => {
+        //console.log(res);
+      })
     }catch(e){
-      console.log("share error ", e);
+
     }
-    console.log("share...");
+
   }
   const handleRegenerate = () =>{
     const payload = {
       message: "Answer this question more deeply and precisely please " + prevMsg,
-      session_id: session.id,
+      session_id: session?.id,
       type: "message"
     }
     if(ws.current && prevMsg.trim()){
       ws.current.send(JSON.stringify(payload))
     }
-    console.log("regenerate...");
-  }
 
+  }
 
   const ws = useRef(null);
   useEffect(() =>{
-    if(!session.id)return;
+    if(!session?.id)return () => {}
+    if(ws.current)return () => {}
 
-    const wsURL = WEBSOCKET_URL+`/ws/chat/${session.id}/?token=${store?.access}`;
+    const wsURL = WEBSOCKET_URL+`/ws/chat/${session?.id}/?token=${store?.access}`;
     ws.current = new WebSocket(wsURL);
 
     ws.current.onopen = () => {
+      setDoneTwo(true)
       console.log("socket connected...");
     }
 
@@ -173,18 +268,37 @@ export default function MessageScreen({ navigation }) {
         const data = JSON.parse(e.data);
         const res = {
           id: Date.now(),
-          message_id: data.message_id,
+          message_id: data?.message_id,
           type: 'bot',
           verseLink: "",
-          message: data.content,
+          message: data?.content,
           bookmark:false,
+          summary: data?.summary || [],
+          message_type: "",
         }
-        if(data.type === "typing"){
+        if(data?.type === "typing" && data?.is_typing){
+          setIsTyping(true);
           res.message = "typing..."
+          res.type = "wave";
           setMessages(prev => [...prev, res])
         }
-        if(data.type === "message"){
-          
+        if((data?.type === "exploration_options")){
+          res.message = data.message;
+          res.message_id = Date.now();
+          res.message_type="yes_no"
+          setIsTyping(false);
+          setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
+        }
+
+        if( (data?.type === "preachly_response") || (data?.type === "clarification_response")){
+          let idx = res.message.indexOf("Scriptural Rebuttal");
+          if(idx != -1){
+            res.message = res.message.substring(idx, res.message.length);
+          }
+          if((data?.type === "clarification_response")){
+            res.message_type="yes_no"
+          }
+          setIsTyping(false);
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
         }
@@ -193,23 +307,47 @@ export default function MessageScreen({ navigation }) {
         console.log("message err", err)
       }
     }
-
     ws.current.onerror = (e) =>{
       console.log("socket error ->", e.message);
     }
-
-
     ws.current.onclose = () =>{
       console.log("socket disconnected...");
     }
+  }, [ store, session]);
 
-  }, [messages, session]);
+  const handleSendPredefinedMessage = (message) => {
+    const payload = {
+      message: message,
+      session_id: session?.id,
+      type: "message",
+      message_type: (message.trim().toLowerCase() === "no" || message.trim().toLowerCase() == "yes")?"yes_no":"objection"
+    }
 
+    if(ws.current && message.trim()){
+      ws.current.send(JSON.stringify(payload));
+      const res = {
+        id: new Date().getTime(),
+        message_id: "",
+        type: 'user',
+        verseLink: "",
+        message: message
+      }
+
+      setMessages(prev => [...prev, res]);
+      setPrevMsg(message);
+      setMessage("")
+      setRecordings(null);
+    }else{
+      
+    }
+  }
+ 
   const sendMessage = () =>{
     const payload = {
       message: message,
-      session_id: session.id,
-      type: "message"
+      session_id: session?.id,
+      type: "message",
+      message_type: (message.trim().toLowerCase() === "no" || message.trim().toLowerCase() == "yes")?"yes_no":"objection"
     }
     console.log(payload)
     if(ws.current && message.trim()){
@@ -224,42 +362,122 @@ export default function MessageScreen({ navigation }) {
       setMessages(prev => [...prev, res]);
       setPrevMsg(message);
       setMessage("")
+      setRecordings(null);
     }else{
-      console.log("problem..");
+      
     }
     
   }
 
- 
 
-  useFocusEffect(
-    useCallback(() =>{
-      return () =>{
-        console.log("disconnecting")
-        ws.current?.close();
-      }
-    }, [])
-  )
-  // console.log("msg = ", JSON.stringify(messages, null, 2))
-  // console.log("session->", JSON.stringify(session, null, 2))
-  // Auto-scroll when new message is added
+  // useFocusEffect(
+  //   useCallback(() =>{
+  //     return () =>{
+  //       console.log("disconnecting")
+  //       if(ws.current){
+  //         ws.current?.close();
+  //       }
+  //     }
+  //   }, [])
+  // )
+
   useEffect(() => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
+     flatListRef.current.scrollToEnd({ animated: true });
     }
-
+    
+    return ()=>{
+     
+    }
   }, [messages]);
 
   const handleSendMessage = (newMessage) => {
-    console.log("message", newMessage);
-    sendMessage()
-    // setMessages((prev) => [...prev, newMessage]);
+    if(audio){
+      const payload = new FormData();
+      const temp = audio.file.split("/")
+      const voice_file = {
+        uri: audio.file,
+        name: audio.name,
+        type: 'audio/'+ temp[temp.length-1].split(".")[1]
+      }
+      payload.append("voice_file", voice_file)
+      payload.append("session_id", session?.id)
+
+
+      const res = {
+        id: Date.now(),
+        message_id: Date.now(),
+        type: 'user',
+        verseLink: "",
+        message: "",
+        bookmark:false,
+      }
+      res.message = "sending..."
+      setMessages(prev => [...prev, res])
+     
+      
+      send_voice_message(payload, (res, success) => {
+        if(success){
+          const data = {
+            id: Date.now(),
+            message_id: res?.data.message_id,
+            type: 'audio',
+            verseLink: "",
+            message: res?.data?.transcript,
+            bookmark:false,
+            uri: res?.data?.voice_url
+          }
+          const payload = {
+            message: res?.data?.transcript,
+            session_id: session?.id,
+            type: "message",
+            message_type: "objection"
+          }
+          console.log("t", payload)
+          ws.current.send(JSON.stringify(payload))
+          setMessages(prev => [...prev.filter(item=> item.message != "sending..."), data])
+          setAudio(null);
+          setMessage("")
+        }else{
+          setMessages(prev => [...prev.filter(item=> item.message != "sending...")])
+          setAudio(null);
+          setMessage("")
+          console.log("err ", JSON.stringify(res, null, 2));
+        }
+      })
+  
+
+    }else{
+      sendMessage()
+    }
+
+    
+
   };
+
+
+
+  useEffect(() => {
+    requestPermission();
+    if(doneOne && doneTwo){
+      console.log("yes i am ready")
+      if( (session?.id) && (route.params?.question) && ws.current){
+        handleSendPredefinedMessage(route.params?.question)
+      }
+    }
+
+  }, [doneOne, doneTwo])
+
+
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: 'white' }}>
       <ReusableNavigation
-        leftComponent={() => <BackButton navigation={navigation} />}
+        leftComponent={() => <BackButton navigation={navigation} 
+            cb={() => {
+              navigation.goBack();
+            }}
+         />}
         middleComponent={() => (
           <View style={{ alignItems: 'center' }}>
             <Image
@@ -287,7 +505,10 @@ export default function MessageScreen({ navigation }) {
             }}
           >
             <Pressable
-              onPress={() => create_session()}
+              onPress={() => {
+                console.log("heelo")
+                setIsFeedback(prev => !prev);
+              }}
             >
               <Image
                 source={require('../../../../assets/img/newChat.png')}
@@ -296,16 +517,9 @@ export default function MessageScreen({ navigation }) {
             </Pressable>
           </View>
         )}
-        backgroundStyle={{ backgroundColor: '#fff' }}
+        backgroundStyle={{ backgroundColor: '#fff',height: 65 }}
       />
-      {/* <Feedback
-        visible={true}
-        onClose={() => {}}
-      /> */}
-      {/* <RatingMessage
-        visible={true}
-        onClose={() => {}}
-      /> */}
+     
       {/* <LostConnection/> */}
 
       <MessageWrapper 
@@ -313,12 +527,65 @@ export default function MessageScreen({ navigation }) {
         flatListRef={flatListRef}
         handleSendMessage={handleSendMessage}
         onChange={(text) => setMessage(text)}
+        onPredefinedMsg={handleSendPredefinedMessage}
         message={message}
         methods = {{
           handleBookmark,
           handleCopy,
           handleRegenerate,
           handleShare
+        }}
+        recorderState={recordingState}
+        setRecordingState={setRecordingState}
+        startRocording = {handleStartRecording}
+        stopRecording={handleStopRecording}
+        recordings={audio}
+        setRecordings={setAudio}
+        isTest={isTest}
+        setIsTest={setIsTest}
+        isTyping={isTyping}
+      />
+
+      {/* {isRating && <RatingMessage 
+        visible={isRating} 
+        onClose={() => {
+          setIsRating(false)
+          
+        }}
+
+        rating={rating}
+        setRatting={(res) =>{
+           setRating(res)
+          navigation.goBack();
+        }}
+      />} */}
+
+      <Feedback 
+        visible={isFeedback} 
+        onClose={() => setIsFeedback(false)}
+        feedback={feedback}
+        setFeedback={res => {
+          if(res){
+            finish_conversation((res, success) => {
+              console.log(res, "feedback");
+              if(success){
+                create_session(() => {
+                  setFeedback(res)
+                  setIsFeedback(false);
+                })
+              }else{
+                setIsFeedback(false);
+              }
+            })
+          }else{
+            
+            create_session(() => {
+              setFeedback(res);
+              setIsFeedback(false);
+            })
+            
+          }
+          
         }}
       />
       
@@ -328,154 +595,3 @@ export default function MessageScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-
-const MessageWrapper = ({flatListRef, messages,onChange, handleSendMessage, message, methods}) => {
-  return <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Conversations
-                type={item.type}
-                message={item.message}
-                verseLink={item.verseLink}
-                methods={methods}
-                message_id={item.message_id}
-                item={item}
-              />
-          
-            )}
-            contentContainerStyle={{
-              paddingTop: 15,
-              paddingHorizontal: 12,
-              paddingBottom: 100, // leave space for input
-            }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            onContentSizeChange={() =>
-              flatListRef.current?.scrollToEnd({ animated: true })
-            }
-            
-          />
-
-          {/* Pass handler to ChatInput for sending */}
-          {/* <ChatInput onSendMessage={handleSendMessage} /> */}
-          {messages.length<=0 && <View style={{
-            // height: 200,
-            width:"100%",
-            backgroundColor:'#fff',
-            padding:20,
-            alignItems: 'center',
-            // shadowColor: '#000',
-            // shadowOffset: { width: 0, height: 3 },
-            // shadowOpacity: 1,
-            // elevation: 5, 
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10
-          }}>
-            <Text style={{
-              color:"#0B172A",
-              fontFamily:'NunitoBold',
-              fontSize: 18,
-              paddingVertical: 20,
-            }}>What do you want to ask?</Text>
-            <View style={{
-              
-            }}>
-              <Pressable onPress={()=>onChange("Why does God allow suffering and evil in the world?")}>
-                <Text style={styles.commonQuestion}>Why does God allow suffering and evil in the world?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange("How can we trust the Bible when it’s written by humans?")}>
-                <Text style={styles.commonQuestion}>How can we trust the Bible when it’s written by humans?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange("How can Jesus be both fully God and fully man?")}>
-                <Text style={styles.commonQuestion}>How can Jesus be both fully God and fully man?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange(`Can’t people be good without believing in God?`)}>
-                <Text style={styles.commonQuestion}>Can’t people be good without believing in God?</Text>
-              </Pressable>
-              <Pressable onPress={() => onChange(`How can I trust the church when it’s full of scandalsand corruption?`)}>
-                <Text style={styles.commonQuestion}>How can I trust the church when it’s full of scandalsand corruption?</Text>
-              </Pressable>
-            </View>
-          </View>}
-          <View style={styles.inputContainer}>
-              {/* <Image
-                source={require("../../../../assets/img/24-addfile.png")}
-                style={styles.inputIcon}
-              /> */}
-              <TextInput
-                style={styles.inputField}
-                multiline={true}
-                numberOfLines={2}
-                value={message}
-                onChangeText={e=>onChange(e)}
-                placeholder={"what's on your heart? Ask anything - lets find and inspired answer.."}
-                placeholderTextColor={'#607373'}
-              />
-              
-              <Pressable 
-                onPress={()=>console.log("recording")}
-              >
-                <Image
-                  source={require("../../../../assets/img/24-microphone.png")}
-                  style={styles.inputIcon}
-                />
-              </Pressable>
-              <Pressable 
-                onPress={()=>handleSendMessage(message)}
-              >
-                <Image
-                  //source={require("../../../../assets/img/24-microphone.png")}
-                  source={require("../../../../assets/img/send_message.png")}
-                  style={styles.inputIcon}
-                />
-              </Pressable>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-}
-
-
-const styles = StyleSheet.create({
-  commonQuestion:{
-    color:'#0B172A',
-    fontFamily:'NunitoSemiBold',
-    fontSize: 15,
-    backgroundColor:'#FDF2D8',
-    paddingVertical:5,
-    paddingHorizontal:10,
-    marginBottom:10,
-    borderRadius: 20,
-  },
-  inputContainer:{
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    paddingHorizontal:20,
-    paddingVertical:10
-  },
-  inputField: {
-    borderWidth:1,
-    width: '75%',
-    borderColor:'#ACC6C5',
-    borderRadius: 30,
-    paddingVertical:10,
-    paddingHorizontal: 20
-  },
-  inputIcon:{
-    height:30,
-    width:30,
-    objectFit:'contain'
-  },
-})

@@ -29,7 +29,7 @@ const baseStyle =  StyleSheet.create({
     alignItems:'center',
     backgroundColor:'#F3F8F8',
     padding: 15,
-    borderRadius: 20
+    borderRadius: 20,
   },
   caretRight:{
     width:20,

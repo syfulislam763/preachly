@@ -18,7 +18,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import CommonButton from '../../../components/CommonButton';
 import { deepGreen, lightgreen1 } from '../../../components/Constant';
 import { useNavigation } from '@react-navigation/native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import {widthPercentageToDP as wp, heightPercentageToDP as hp, widthPercentageToDP} from 'react-native-responsive-screen'
 import {get_profile_info, update_profile_info} from '../../auth/AuthAPI'
 import { 
   post_onboarding_user_data
@@ -32,8 +32,17 @@ import {
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
+import { set } from 'date-fns';
 
 
+//     "conversation" = Confidence Goal
+// "scripture" = Scripture Knowledge
+// "share_faith" = Inspiration Goal
+const goals = {
+  "conversation":"Confidence Goal",
+  "scripture": "Scripture Knowledge",
+  "share_faith": "Inspiration Goal"
+}
 const PersonalInfo = () => {
   useLogout();
   const {store, updateStore} = useAuth()
@@ -42,8 +51,27 @@ const PersonalInfo = () => {
     bible_versions,
     tone_preference_data,
     faith_journey_reasons,
-    bible_familiarity_data
+    bible_familiarity_data,
+    faith_goal_questions
   } = store;
+
+  const faith_goal = [
+    {
+      id:1,
+      goal_type: "conversation",
+      name: "Confidence Goal"
+    },
+    {
+      id:2,
+      goal_type: "scripture",
+      name: "Scripture Knowledge"
+    },
+    {
+      id:3,
+      goal_type: "share_faith",
+      name: "Inspiration Goal"
+    },
+  ]
   
   const route = useRoute()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
@@ -58,17 +86,63 @@ const PersonalInfo = () => {
   const [depthAnsVisible, setDepthAnsVisible] = useState(false)
 
   const [name, setName] = useState('Alice');
-  const [dob, setDob] = useState('21.12.2001');
+  const [dob, setDob] = useState("");
   const [email, setEmail] = useState('example@gmail.com');
   const [img, setImg] = useState(null);
-  const [imageData, setImageData] = useState({})
+  const [imageData, setImageData] = useState({});
+
+  const handleDob = (val) => {
+    if(val.toString() == "."|| val.toString()=="-" || val.toString()==","){
+      setDob("")
+      return;
+    }
+    if(val=="Backspace" && dob){
+      setDob(dob.substring(0, dob.length-1))
+      return;
+    }
+
+
+    const temp = dob+val.toString();
+    
+    if(temp.length>10){
+
+    }
+    else if(temp.length == 7){
+      setDob(temp+"-")
+    }
+    else if(temp.length == 4){
+      setDob(temp+"-")
+    }else{
+      setDob(temp);
+    }
+  }
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
   const [selectedDenomination, setSelectedDenomination] = useState({});
   const [tone, setTone] = useState({});
   const [faithGoal, setFaithGoal] = useState({});
   const [Answer, setAnswer] = useState({});
-  const [loading, setLoading] = useState(false)
+  const [faithGoalQuestionOne, setFaithGoalQuestionOne] = useState({});
+  const [faithGoalQuestionTwo, setFaithGoalQuestionTwo] = useState({});
+  const [faithGoalQuestionThree, setFaithGoalQuestionThree] = useState({});
+  const [faithGoalQuestionOneVisible, setFaithGoalQuestionOneVisible] = useState(false);
+  const [faithGoalQuestionTwoVisible, setFaithGoalQuestionTwoVisible] = useState(false);
+  const [faithGoalQuestionThreeVisible, setFaithGoalQuestionThreeVisible] = useState(false);
+
+
+  const [loading, setLoading] = useState(false);
+  const handleFaithGoalQuestionOne = (option) => {
+    Keyboard.dismiss();
+    setFaithGoalQuestionOne(option)
+  }
+  const handleFaithGoalQuestionTwo = (option) => {
+    Keyboard.dismiss();
+    setFaithGoalQuestionTwo(option)
+  }
+  const handleFaithGoalQuestionThree = (option) => {
+    Keyboard.dismiss();
+    setFaithGoalQuestionThree(option)
+  }
 
   const handleSelect = (option) => {
     Keyboard.dismiss();
@@ -98,12 +172,28 @@ const PersonalInfo = () => {
   const handleSaveUserInfo = () => {
     //navigation.goBack()
     const payload  = {
-      journey_reason: {
-        "journey_reason": faithGoal?.id
-      },
+      // journey_reason: {
+      //   "journey_reason": faithGoal?.id
+      // },
       denomination: {
         "denomination_option": selectedDenomination?.id
       },
+      goal_preference: {
+        goal_type: faithGoal?.goal_type
+      },
+      // faith_goal: {
+      //   goals: [
+      //     {
+      //       faith_goal_option: faithGoalQuestionOne?.id
+      //     },
+      //     {
+      //       faith_goal_option: faithGoalQuestionTwo?.id
+      //     },
+      //     {
+      //       faith_goal_option: faithGoalQuestionThree?.id
+      //     }
+      //   ]
+      // },
       tone_preference: {
         "tone_preference_option": tone?.id
       },
@@ -114,20 +204,24 @@ const PersonalInfo = () => {
         "bible_version_option": selectedBibleVersion?.id
       }
     }
+
+    //console.log("test", JSON.stringify(payload, null, 2));
     const oldEmail = store?.profileSettingData?.userInfo?.email;
     const oldDOB = store?.profileSettingData?.userInfo?.date_of_birth;
     const oldName = store?.profileSettingData?.userInfo?.name;
     const oldImage = store?.profileSettingData.userInfo?.profile_picture;
 
-    const profileInfo_payload = new FormData();
+    let profileInfo_payload = new FormData();
 
     if(oldEmail != email)
       profileInfo_payload.append("email", email);
 
-    if(oldDOB != dob)
+    // if(oldDOB != dob)
+    if(dob)
       profileInfo_payload.append("date_of_birth", dob);
 
-    if(oldName != name)
+    // if(oldName != name)
+    if(name)
       profileInfo_payload.append("name", name);
     
     if(oldImage != img)
@@ -146,6 +240,9 @@ const PersonalInfo = () => {
 
 
     // return 0;
+
+      
+    console.log(payload)
  
     setLoading(true)
     post_onboarding_user_data(payload, (res, success) => {
@@ -157,29 +254,43 @@ const PersonalInfo = () => {
               denomination: selectedDenomination || {},
               bible_version: selectedBibleVersion || {},
               tone_preference: tone || {},
-              faith_reason: faithGoal || {},
+              goal_preference: faithGoal || {},
               bible_familiarity: Answer || {},
             }
+            // const faith_goal_questions = res?.data.faith_goal.map(item => {
+            //   return {
+            //     ...item,
+            //     options: item.options.map(op => {
+            //       return {
+            //         ...op,
+            //         name: op.option
+            //       }
+            //     })
+            //   }
+            // })
+            const faith_goal_questions = undefined
+
             const oldEmail = store?.profileSettingData?.userInfo?.email
             setLoading(false)
 
             if(oldEmail != email){
               profileSettingData['userInfo'] = {...response?.data?.profile, email: response?.data?.temp_email}
               
-              navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData})
+              navigation.navigate("ConfirmEmail", {email: email, change:true, profileSettingData,faith_goal_questions })
             }else{
           
-              updateStore({profileSettingData})
+              updateStore({profileSettingData, faith_goal_questions})
               navigation.goBack()
             }
 
           }else{
-        
+           
+            console.log(profileInfo_payload)
             setLoading(false)
           }
         })
       }else{
-        console.log("update onboarding -> ", res)
+   
         setLoading(false)
       }
     })
@@ -190,6 +301,8 @@ const PersonalInfo = () => {
 
 
   useEffect(() => {
+
+    console.log(JSON.stringify(store?.profileSettingData, null, 2), "heo")
     setName(store?.profileSettingData?.userInfo?.name)
     setDob(store?.profileSettingData?.userInfo?.date_of_birth)
     setEmail(store?.profileSettingData?.userInfo?.email)
@@ -197,10 +310,36 @@ const PersonalInfo = () => {
     setSelectedDenomination(store?.profileSettingData?.denomination)
     setSelectedBibleVersion(store?.profileSettingData?.bible_version)
     setTone(store?.profileSettingData?.tone_preference)
-    setFaithGoal(store?.profileSettingData?.faith_reason)
+    setFaithGoal(store?.profileSettingData?.goal_preference)
     setAnswer(store?.profileSettingData?.bible_familiarity)
+
+    if(faith_goal_questions){
+      const temp = []
+      faith_goal_questions[0].options.forEach(opt => {
+        if(opt.is_selected){
+          temp.push({...opt});
+        }
+      })
+      faith_goal_questions[1].options.forEach(opt => {
+        if(opt.is_selected){
+          temp.push({...opt})
+        }
+      })
+      faith_goal_questions[2].options.forEach(opt => {
+        if(opt.is_selected){
+          temp.push({...opt})
+        }
+      })
+      //console.log("faith_goal_questions *", JSON.stringify(faith_goal_questions, null, 2))
+      setFaithGoalQuestionOne(temp[0]);
+      setFaithGoalQuestionTwo(temp[1]);
+      setFaithGoalQuestionThree(temp[2]);
+
+    }
+
     
-  }, [store, route.params])
+    
+  }, [store, route.params, faith_goal_questions])
 
   useEffect(()=>{
     if(route.params?.editMode){
@@ -229,7 +368,7 @@ const PersonalInfo = () => {
       <View style={styles.inputFieldCard}>
         <InfoRow label="Name" value={name} onChange={setName} isEditable={editMode} />
         <View style={{height:1, backgroundColor:'#dce3e4'}}/>
-        <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={setDob} />
+        <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={handleDob} />
         <InfoRow isEditable={editMode} label="Email" value={email} onChange={setEmail} />
       </View>
 
@@ -266,6 +405,29 @@ const PersonalInfo = () => {
         />
       </View>
 
+      {/* <View style={styles.card}>
+        <DropdownRow
+          label={(faith_goal_questions && faith_goal_questions[0]?.question) || " "}
+          value={faithGoalQuestionOne?.name}
+          onPress={() => setFaithGoalQuestionOneVisible(editMode)}
+          rowStyle={{width:"100%", flexDirection:'column', alignItems:'flex-start', rowGap:10}}
+        />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <DropdownRow
+          label={(faith_goal_questions && faith_goal_questions[1]?.question) || " "}
+          value={faithGoalQuestionTwo?.name}
+          onPress={() => setFaithGoalQuestionTwoVisible(editMode)}
+          rowStyle={{width:"100%", flexDirection:'column', alignItems:'flex-start', rowGap:10}}
+        />
+        <View style={{height:1, backgroundColor:'#dce3e4'}}/>
+        <DropdownRow
+          label={(faith_goal_questions && faith_goal_questions[2]?.question) || " "}
+          value={faithGoalQuestionThree?.name}
+          onPress={() => setFaithGoalQuestionThreeVisible(editMode)}
+          rowStyle={{width:"100%", flexDirection:'column', alignItems:'flex-start', rowGap:10}}
+        />
+      </View> */}
+
       <View style={{margin:20}}>
         <CommonButton
           btnText={route.params?.editMode ?"Save Info":"Edit Info"}
@@ -286,6 +448,31 @@ const PersonalInfo = () => {
           opacity={1}
         />
       </View>
+
+
+
+      <DropdownModal
+        isVisible={faithGoalQuestionOneVisible}
+        onClose={() => setFaithGoalQuestionOneVisible(false)}
+        handleChage={handleFaithGoalQuestionOne}
+        options={faith_goal_questions && faith_goal_questions[0].options}
+        selectedItem={faithGoalQuestionOne}
+      />
+      <DropdownModal
+        isVisible={faithGoalQuestionTwoVisible}
+        onClose={() => setFaithGoalQuestionTwoVisible(false)}
+        handleChage={handleFaithGoalQuestionTwo}
+        options={faith_goal_questions && faith_goal_questions[1].options}
+        selectedItem={faithGoalQuestionTwo}
+      />
+
+      <DropdownModal
+        isVisible={faithGoalQuestionThreeVisible}
+        onClose={() => setFaithGoalQuestionThreeVisible(false)}
+        handleChage={handleFaithGoalQuestionThree}
+        options={faith_goal_questions && faith_goal_questions[2].options}
+        selectedItem={faithGoalQuestionThree}
+      />{""}
 
       <DropdownModal
         isVisible={modalVisible}
@@ -313,7 +500,7 @@ const PersonalInfo = () => {
         isVisible={faithGoalVisible}
         onClose={() => setFaithGoalVisible(false)}
         handleChage={handleFaithGoal}
-        options={faith_journey_reasons}
+        options={faith_goal}
         selectedItem={faithGoal}
       />
       <DropdownModal
@@ -338,17 +525,23 @@ const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
       style={styles.inputField}
       value={value}
       keyboardType={isDate?'numeric':'default'}
-      onChangeText={onChange}
-      placeholder={isDate?"dd.month.year":`Enter ${label.toLowerCase()}`}
+      onChangeText={isDate?()=>{}:onChange}
+      placeholder={isDate?"year-month-day":`Enter ${label.toLowerCase()}`}
       textAlign="right"
       editable={isEditable}
       returnKeyType="done"
+      onKeyPress={({nativeEvent})=>{
+        console.log("key", nativeEvent.key)
+        if(isDate){
+          onChange(nativeEvent.key)
+        }
+      }}
     />
   </View>
 );
 
-const DropdownRow = ({ label, value, onPress }) => (
-  <TouchableOpacity style={styles.row} onPress={() => {
+const DropdownRow = ({ label, value, onPress, rowStyle={} }) => (
+  <TouchableOpacity style={{...styles.row, ...rowStyle}} onPress={() => {
     onPress();
     Keyboard.dismiss();
   }}>

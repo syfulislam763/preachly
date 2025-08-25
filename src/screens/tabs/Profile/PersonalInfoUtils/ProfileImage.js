@@ -23,7 +23,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
         if(!result.canceled){
            
             onChange(result.assets[0])
-            console.log("image ->", result.assets[0])
+         
         }else{
             onChange({})
         }
@@ -49,7 +49,7 @@ const ProfileImage = ({uri,disabled, onChange=()=>{}}) => {
                 overflow:'hidden'
             }}>
                 <Image 
-                    source={uri?{uri:uri}:require("../../../../../assets/img/avatar.png")}
+                    source={uri?{uri:uri}:require("../../../../../assets/img/user1.png")}
                     style={{
                         height: 110,
                         width:110,

@@ -7,7 +7,7 @@ import { deepGreen } from '../../components/Constant';
 const baseStyle = StyleSheet.create({
   container: {flex:1, backgroundColor:'#fff', justifyContent:'space-between', padding: 10, paddingBottom:30},
   title: {fontFamily:'DMSerifDisplay', fontSize:30, textAlign:'center', flexWrap:'wrap', paddingVertical: 40, paddingHorizontal: 40, color:'#0B172A', lineHeight:35},
-  subtitle: {fontFamily:'NunitoBold', fontSize: 25, color: deepGreen},
+  subtitle: {fontFamily:'NunitoBold', fontSize: 25, color: deepGreen, textAlign:'center'},
   text: {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'},
   semitext: {color:'#90B2B2', fontFamily:'NunitoRegular', fontSize:16, textAlign:'center', flexWrap:'wrap', paddingVertical:30},
   img: { height:130,width: 120, objectFit:'contain'},

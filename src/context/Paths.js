@@ -1,7 +1,8 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "http://top-q-bargain-marine.trycloudflare.com";
-export const WEBSOCKET_URL = "ws://top-q-bargain-marine.trycloudflare.com";
+export const BASE_URL = "https://focusing-good-proteins-internationally.trycloudflare.com";//changed
+export const WEBSOCKET_URL = "ws://focusing-good-proteins-internationally.trycloudflare.com";
+export const KEY = `pk_test_51RVMTHQU9tGM4LXBf8ZHLjC18DYzzWu4HnxSCojMGP58ZO8x1K2sFbNZ5xGLmIRt6KjZpo77V0RKs4m6dwoxoFLi00u06pnafX`
 
 export const URL_CATEGORY = "/api"
 export const ROOT_URL = BASE_URL+URL_CATEGORY
@@ -43,3 +44,13 @@ export const BIBLE_BIBLE_VERSIONS = "/bible/bible-versions/"
 
 //Chat
 export const SESSION_ID = "/chat/sessions/create/"
+
+//Home page
+export const RANDOM_VERSE = "/homepage/daily-verse/";
+
+//Weekly Check in
+export const CHECK_IN_HISTORY = "/checkin/weekly/history/";
+export const WEEKLY_CHECK_IN_QUESTIONS = "/checkin/weekly/questions/";
+export const SAVE_CHECK_IN = "/checkin/weekly/submit/"
+export const PROFILE_URL = "/checkin/dashboard/"
+export const ALL_GOAL = "/goals/stats/"

@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1.4,
     borderColor: '#b3c5c5',
-    borderRadius: 20,
+    borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 12,
     minHeight: 48,
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     color: '#607373',
     fontSize: 18,
     fontFamily:'NunitoSemiBold',
+    width:"90%"
   },
   icon: {
     fontSize: 16,
@@ -99,21 +100,24 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     backgroundColor: 'rgba(0,0,0,0.2)',
+    width:"100%",
   },
   dropdownList: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 25,
     paddingVertical: 10,
     maxHeight: 300,
     elevation: 5,
+    width:"100%",
   },
   dropdownItem: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth:0.5,
-    borderBottomColor: '#dddddd',
+    marginLeft:12,
+    //borderBottomWidth:0.5,
+    //borderBottomColor: '#005055',
   },
 });
 

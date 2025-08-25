@@ -3,10 +3,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 
 
-const BackButton = ({navigation}) => {
+const BackButton = ({navigation, cb}) => {
   return (
     <TouchableOpacity
-        onPress={() => navigation.goBack()}
+        onPress={cb?()=>cb():() => navigation.goBack()}
         style={styles.backButtonContainer}
         >
         <Ionicons name="arrow-back" size={20} color="#0b172A" />

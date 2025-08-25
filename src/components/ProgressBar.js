@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-const ProgressBar = ({ progress }) => {
+const ProgressBar = ({ progress, container={}, filled={} }) => {
   return (
-    <View style={styles.container}>
-      <View style={[styles.filled, { width: `${progress}%` }]} />
+    <View style={{...styles.container, ...container}}>
+      <View style={[styles.filled, { width: `${progress}%` }, filled]} />
     </View>
   );
 };

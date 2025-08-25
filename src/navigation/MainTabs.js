@@ -8,6 +8,7 @@ import ProfileStack from './tabs/ProfileStack';
 import { Image, View } from 'react-native';
 import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 import useLayoutDimention from '../hooks/useLayoutDimention';
+import MessageScreen from '../screens/tabs/Message/MessageScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -100,11 +101,14 @@ export default function MainTabs() {
         listeners={{
           tabPress: (e) => {
             e.preventDefault();
+            // navigation.navigate("Message", {
+            //   screen: "MessageScreen"
+            // });
             navigation.navigate("MessageScreen")
           }
         }}
         name="Message" 
-        component={NullComponent} 
+        component={MessageScreen} 
         
       />
      

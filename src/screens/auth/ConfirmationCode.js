@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Pressable, 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { deepGreen, lighgreen } from '../../components/Constant';
 import OTPInput from '../../components/OTPInput';
-import {verify_email, resentOTP, handleToast, verify_change_email} from './AuthAPI'
+import {verify_email, resentOTP, handleToast, verify_change_email,verify_forget_password} from './AuthAPI'
 import Indicator from '../../components/Indicator'
 import { useNavigation, useRoute , CommonActions} from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
@@ -12,15 +12,34 @@ const ConfirmationCode = ({ }) => {
   const [isLoading, setIsloading] = useState(false)
   const route = useRoute()
   const navigation = useNavigation()
-  const {email, change, profileSettingData} = route.params
+  const {email, change, profileSettingData, faith_goal_questions, type} = route.params
   const {updateStore} = useAuth()
+
+
+  const handleReset = (otp) => {
+    setIsloading(true);
+    const payload = {
+      email: email,
+      otp: otp,
+    }
+    verify_forget_password(payload, (res, success) => {
+
+
+      if(success){
+        navigation.navigate("CreatePassword", {...payload, type:"reset"})
+      }
+
+      setIsloading(false);
+    })
+
+  }
 
   const changeEmailVerify = (otp) => {
     setIsloading(true)
     verify_change_email({otp: otp}, (res, success) => {
       if(success){
       
-          updateStore({profileSettingData})
+          updateStore({profileSettingData, faith_goal_questions})
           handleToast("info", "Email Changed!",2000, () => {
               // navigation.navigate("SignUp", {resentOPT:true, ...route.params})
               navigation.dispatch(state => {
@@ -105,7 +124,11 @@ const ConfirmationCode = ({ }) => {
           onComplete={(otp) => {
             if(change){
               changeEmailVerify(otp)
-            }else{
+            }
+            else if(type == "reset"){
+              handleReset(otp)
+            }
+            else{
               handleComplete(otp)
             }
           }}

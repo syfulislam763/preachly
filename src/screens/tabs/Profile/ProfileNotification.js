@@ -1,90 +1,160 @@
-import { useNavigation } from '@react-navigation/native'
-import React, { useLayoutEffect } from 'react'
-import { View , Text, ScrollView, StyleSheet, FlatList} from 'react-native'
 
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from 'react-native';
+import { useAuth } from '../../../context/AuthContext';
+import { delete_notifications, get_notifications } from '../TabsAPI';
+import { Swipeable } from 'react-native-gesture-handler';
+import Indicator from '../../../components/Indicator';
 
+const trash = require('../../../../assets/img/Trash.png');
 
-const arr = [
-    {
-        title: "🔥Keep Your Streak Burning!",
-        text: "Your faith journey is on fire! You're at 3 days strong --keep it going! Check in today to grow deper and stay on track"
-    },
-    {
-        title: "🎉 Celebrate the Milestone!",
-        text: "You've hit 4 weekly check-ins in a row! Your consistency is building something powerful, Stay connected ans see what's next!"
-    },
-    {
-        title: "📖 Your Daily Verse Awaits",
-        text:  ` "Your word is a lamp to my feet and a light to my path." - Psalm 119:105. Open Preachly and let today's verse inspire you!`
-    },
-    {
-        title: "🔥Keep Your Streak Burning!",
-        text: "Your faith journey is on fire! You're at 3 days strong --keep it going! Check in today to grow deper and stay on track"
-    },
-    {
-        title: "🎉 Celebrate the Milestone!",
-        text: "You've hit 4 weekly check-ins in a row! Your consistency is building something powerful, Stay connected ans see what's next!"
-    },
-    {
-        title: "📖 Your Daily Verse Awaits",
-        text:  ` "Your word is a lamp to my feet and a light to my path." - Psalm 119:105. Open Preachly and let today's verse inspire you!`
-    }
-]
+function ProfileNotification() {
+  const navigation = useNavigation();
+  const { socket } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-function ProfileNotification (){
+  const swipeableRowRef = useRef(null); // Track the currently open swipeable
 
-    const navigation = useNavigation()
+  const handleDeleteNotification = (id) => {
+    // Close current swipeable if any
+    
 
-    // useLayoutEffect(()=>{
-    //     navigation.getParent()?.setOptions({
-    //         tabBarStyle: {display:'none'}
-    //     })
+    setLoading(true);
+    delete_notifications(id, (res, success) => {
+      if (success) {
+        if (swipeableRowRef.current) {
+            swipeableRowRef.current.close();
+            swipeableRowRef.current = null;
+        }
+        get_notifications((res, success) => {
+          setLoading(false);
+          if (success) {
+            setNotifications(res?.data);
+            socket.setNotifications(res?.data);
+          }
+        });
+      } else {
+        setLoading(false);
+   
+      }
+    });
+  };
 
-    //     return () => {
-    //         navigation.getParent()?.setOptions({
-    //             tabBarStyle: undefined
-    //         })
-    //     }
-    // },[navigation])
+  const renderRightActions = (progress, dragX, itemId) => (
+    <TouchableOpacity
+      onPress={() => handleDeleteNotification(itemId)}
+      style={styles.deleteButton}
+    >
+      <Image
+        source={trash}
+        style={{
+          width: 20,
+          height: 20,
+          resizeMode: 'contain',
+        }}
+      />
+    </TouchableOpacity>
+  );
 
+  const renderItem = ({ item }) => {
+    let localRef;
 
+    return (
+        <Swipeable
+            ref={(ref) => {
+            localRef = ref;
+            }}
+            onSwipeableOpen={() => {
+            if (
+                swipeableRowRef.current &&
+                swipeableRowRef.current !== localRef
+            ) {
+                swipeableRowRef.current.close();
+            }
+            swipeableRowRef.current = localRef;
+            }}
+            renderRightActions={(progress, dragX) =>
+            renderRightActions(progress, dragX, item.id)
+            }
+            
+        >
+            <View style={styles.notificationCard}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.message}>{item.message}</Text>
+            </View>
+        </Swipeable>
+    );
+  };
+
+  useEffect(() => {
+    setNotifications(socket.notifications);
+  }, [socket.notifications]);
 
   return (
     <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-            {arr.map((item, idx) => (
-                <View 
-                    key={idx.toString()}
-                    style={{
-                        marginBottom:20,
-                        backgroundColor:'#F3F8F8',
-                        borderRadius: 20,
-                        padding:20
-                    }}
-                >
-                    <Text 
-                    style={{
-                        fontSize: 20,
-                        fontFamily:'NunitoSemiBold',
-                        color:"#0B172A"
-                    }}
-                    >{item.title}</Text>
-                    <Text style={{
-                        fontFamily:'NunitoBold',
-                        fontSize: 14,
-                        color:'#2B4752',
-                        paddingTop: 15
-                    }}>{item.text}</Text>
-                </View>
-            ))}
-        </ScrollView>
+      <FlatList
+        data={notifications}
+        keyExtractor={(_, idx) => idx.toString()}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+        ItemSeparatorComponent={()=> <View style={{height:20}} />}
+      />
+      {loading && (
+        <Indicator onClose={() => setLoading(false)} visible={loading}>
+          <ActivityIndicator size="large" />
+        </Indicator>
+      )}
     </View>
-  )
+  );
 }
 
 export default ProfileNotification;
 
-
 const styles = StyleSheet.create({
-    container:{flex:1, backgroundColor:'#fff', paddingHorizontal:20,paddingTop: 20, paddingBottom: 10}
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  notificationCard: {
+    backgroundColor: '#f3f8f8',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    // marginBottom: 20,
+    overflow: 'hidden',
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: 'NunitoSemiBold',
+    color: '#0B172A',
+  },
+  message: {
+    fontFamily: 'NunitoBold',
+    fontSize: 14,
+    color: '#2B4752',
+    paddingTop: 15,
+  },
+  deleteButton: {
+    backgroundColor: '#e74c3c',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    // marginVertical: 10,
+  },
+});
+

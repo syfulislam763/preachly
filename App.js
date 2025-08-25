@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import FontLoader from './src/components/FontLoader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import { StatusBar } from 'react-native';
 
 export default function App() {
 
@@ -17,6 +18,7 @@ export default function App() {
         <NavigationContainer>
           <AuthProvider>
             <SafeAreaView style={{flex:1}} edges={['bottom',]}>
+              <StatusBar translucent={false} backgroundColor="#ffffff" barStyle="dark-content" />
               <RootNavigator />
             </SafeAreaView>
           </AuthProvider>

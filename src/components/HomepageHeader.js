@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons'; // Use `react-native-vector-icons` if not using Expo
+import { useAuth } from '../context/AuthContext';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { useNavigation } from '@react-navigation/native';
+import HomeModal from '../screens/tabs/Home/HomeModal';
 
 
-
-
-const HomepageHeader = () => {
-
-
-
+const HomepageHeader = ({userInfo, dashboard}) => {
+  const {store} = useAuth();
+  const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false)
 
 
   return (
@@ -16,20 +18,27 @@ const HomepageHeader = () => {
       {/* Left: Profile Picture and Greeting */}
       <View style={styles.leftSection}>
         <View>
+          {/* {userInfo?.profile_picture?
           <Image
-            source={require('../../assets/img/avatar.png')} 
+            source={{uri:userInfo?.profile_picture}} 
+            style={styles.avatar}
+          />:
+          <EvilIcons style={{...styles.avatar}} name="user" size={40} color="black" />
+          } */}
+          <Image
+            source={userInfo?.profile_picture?{uri:userInfo?.profile_picture}:require("../../assets/img/user1.png")} 
             style={styles.avatar}
           />
         </View>
         <View>
           <Text style={styles.welcome}>Welcome back,</Text>
-          <Text style={styles.welcome}>Alice!</Text>
+          <Text style={styles.welcome}>{userInfo?.name}</Text>
         </View>
       </View>
 
       {/* Right: Icons */}
       <View style={styles.rightSection}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("Calendar", {flag:true})} style={styles.iconButton}>
             <Image
                 source={require('../../assets/img/24-calendar.png')} 
                 style={{
@@ -40,7 +49,7 @@ const HomepageHeader = () => {
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.countButton}>
+        <TouchableOpacity onPress={()=>{setModalVisible(true)}} style={styles.countButton}>
             <Image
                 source={require('../../assets/img/Fire.png')} 
                 style={{
@@ -49,9 +58,12 @@ const HomepageHeader = () => {
                     objectFit:'contain'
                 }}
             />
-          <Text style={styles.countText}>0</Text>
+          <Text style={styles.countText}>{store?.profile_dashboard?.streak?.current_streak || "1"}</Text>
         </TouchableOpacity>
       </View>
+
+
+      <HomeModal setModalVisible={setModalVisible} current_streak={store?.profile_dashboard?.streak?.current_streak} modalVisible={modalVisible}/>
     </View>
   );
 };
@@ -78,7 +90,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   welcome: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#0B172A',
     fontFamily:'NunitoSemiBold'
   },

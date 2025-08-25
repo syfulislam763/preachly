@@ -12,10 +12,14 @@ import useLayoutDimention from '../../../hooks/useLayoutDimention';
 import { he } from 'date-fns/locale';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
 import { getStyles } from './ProfileFaithStyle';
+import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 const { width, height,} = Dimensions.get('window');
 
-const ProfileFaith = ({ navigation }) => {
+const ProfileFaith = () => {
+    const navigation = useNavigation();
+    const route = useRoute();
 
   const {completePersonalization} = useAuth()
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
@@ -46,8 +50,8 @@ const ProfileFaith = ({ navigation }) => {
                 btnText={"Find Answers"}
                 bgColor={deepGreen}
                 navigation={navigation}
-                route={"MainTabs"}
-                // handler={() => completePersonalization()}
+                route={""}//MainTabs
+                handler={() => navigation.navigate("WeeklyCheckIn_", {week_number: route.params.week_number, flag:true, title: route.params?.week_number+" Weekly Check-In"})}
                 txtColor={primaryText}
                 bold='bold'
                 opacity={1}

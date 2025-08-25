@@ -49,7 +49,8 @@ const FinishAuthentication = () => {
 
           const faith_goal_questions = [...res?.data?.faith_goal_questions];
           const temp = {...store,denominations, faith_goal_questions, faith_journey_reasons, bible_versions, bible_familiarity_data, tone_preference_data }
-          updateStore(temp)
+          updateStore(temp);
+          console.log(JSON.stringify(temp, null, 2), "test")
 
           setAuthToken(store?.access, store?.refresh, async () => {
             await AsyncStorage.setItem('store', JSON.stringify(temp));
@@ -75,7 +76,17 @@ const FinishAuthentication = () => {
       </View>
         <Image
             source={require('../../../assets/img/Preachly.png')}
-            style={styles.bg_image}
+            style={{
+                height:'100%', 
+                width:'100%', 
+                objectFit:'contain',
+                position:'absolute',
+                top: (height*17)/100,
+                left:0,
+                right:0,
+                bottom:0,
+                zIndex: 1
+            }}
         />
 
         <View style={styles.btnContainer}>

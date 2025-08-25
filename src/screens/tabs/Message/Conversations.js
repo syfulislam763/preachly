@@ -2,26 +2,43 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity ,Image, Pressable} from 'react-native';
 import { FontAwesome, MaterialIcons, Feather } from '@expo/vector-icons';
 import IconContainer from '../../../components/IconContainer';
+import AudioPlayerCard from './AudioPlayCard';
+import TypingIndicator from './TypingIndicator';
 
 
-const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item}) => {
+const Conversations = ({ type = 'user', message,message_id, verseLink, methods, item, currentId, playSound, stopSound, isTyping, onPredefinedMsg=()=>{}}) => {
+
+  
   return (
     <View style={styles.container}>
       {/* User Message */}
       {type === 'user' && (
         <View style={styles.userBubble}>
-          <Text style={styles.userText}>{message}</Text>
+          <Text style={{...styles.userText, color:"#ffffff"}}>{message}{" "}</Text>
+        </View>
+      )}
+
+      {type==="audio" && (
+        <View style={{
+          alignSelf:"flex-end"
+        }}>
+          <AudioPlayerCard currentId={currentId} playSound={playSound} stopSound={stopSound} item={item}/>
         </View>
       )}
 
       {/* Bot Message */}
+      {type==="wave" && <TypingIndicator isTyping={type==="wave"}/>}
+
       {type === 'bot' && (
         <View style={styles.botContainer}>
-          <View style={styles.botBubble}>
+          <View style={styles.botBubble}>~
             <Text style={styles.botText}>
               {message}
               {/* <Text style={styles.linkText}>{verseLink}</Text> */}
             </Text>
+
+            {item?.summary?.length>0 && <Text style={styles.botText}>{"\n"} Summary: </Text>}
+            {item?.summary && item?.summary.map((text, idx) => <Text key={idx} style={styles.botText}>{text}</Text>)}
           </View>
 
           {/* Icon Actions */}
@@ -73,17 +90,23 @@ const Conversations = ({ type = 'user', message,message_id, verseLink, methods, 
           </View>}
 
           {/* Follow-up Prompt */}
-          {/* <View style={styles.promptContainer}>
-            <Text style={styles.promptText}>Need more clarity?</Text>
-            <View style={styles.promptButtons}>
-              <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={onYes}>
-                <Text style={{...styles.promptButtonText, color:'white'}}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.promptButton} onPress={onNo}>
-                <Text style={styles.promptButtonText}>No</Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
+          {
+            (item?.message_type==="yes_no")?null: (
+              <View style={styles.promptContainer}>
+                <Text style={styles.promptText}>Need more clarity?</Text>
+                <View style={styles.promptButtons}>
+                  <TouchableOpacity style={{...styles.promptButton, backgroundColor:'#005A55',}} onPress={()=>onPredefinedMsg("Yes")}>
+                    <Text style={{...styles.promptButtonText, color:'white'}}>Yes</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.promptButton} onPress={()=>onPredefinedMsg("No")}>
+                    <Text style={styles.promptButtonText}>No</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )
+          }
+
+
         </View>
       )}
     </View>
@@ -101,7 +124,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomLeftRadius:16,
-    maxWidth: '80%',
+    maxWidth: '100%',
+    color:'white'
   },
   userText: { color: 'white', fontSize: 16 },
 

@@ -12,67 +12,101 @@ import CustomHeader from '../../components/CustomNavigation';
 import ParagraphIcon from '../../components/ParagraphIcon';
 import useLayoutDimention from '../../hooks/useLayoutDimention';
 import { getStyles } from './SubscriptionScreenStyle';
-
-
+import createPlan from '../tabs/Profile/payment/createPlan';
+import { useNavigation } from '@react-navigation/native';
+import { handleToast } from '../auth/AuthAPI';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import { KEY } from '../../context/Paths';
 
 const window = Dimensions.get("window")
 
-export default function SubscriptionScreen({ navigation }) {
-  const { login } = useAuth();
-  
+export default function SubscriptionScreen() {
+  const { login, completePersonalization } = useAuth();
+  const navigation = useNavigation();
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
 
+
+  const {
+    setSelectedPlanType,
+    selectedPlanType,
+    monthlyPlan,
+    yearlyPlan,
+    startFreeTrial
+  } = createPlan();
+
+
+  const hanldeSubscription =  () => {
+
+    startFreeTrial((res) => {
+      if(res=="active"){
+        completePersonalization();
+      }else if(res=="success"){
+        navigation.navigate("SubscriptionConfirmedScreen")
+      }else{
+        handleToast("error", "Try Again Please", 2000, () => {})
+      }
+    })
+    
+    
+  }
+
+
   return (
-    <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
+    <StripeProvider publishableKey={KEY}>
+      <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
          
           
          <ImageBackground
             source={require('../../../assets/img/bg_large2.png')}
             style={styles.background}
             resizeMode="cover" 
-        >
-            <Text style={styles.title}>Inspired Answers, When You're Lost for Words</Text>
-        </ImageBackground>
+          >
+              <Text style={styles.title}>Inspired Answers, When You're Lost for Words</Text>
+          </ImageBackground>
 
 
-        <View style={styles.content}>
+          <View style={styles.content}>
 
-            <ParagraphIcon
-              icon={require("../../../assets/img/24-sunset.png")}
-              text={"Build Confidence in Conversations About Faith"}
-            />
-            <ParagraphIcon
-              icon={require("../../../assets/img/bird.png")}
-              text={"Clarity and Ease When You Need It Most"}
-            />
-            <ParagraphIcon
-              icon={require("../../../assets/img/piramid.png")}
-              text={"Inspire and Strengthen Your Walk with God"}
-            />
+              <ParagraphIcon
+                icon={require("../../../assets/img/24-sunset.png")}
+                text={"Build Confidence in Conversations About Faith"}
+              />
+              <ParagraphIcon
+                icon={require("../../../assets/img/bird.png")}
+                text={"Clarity and Ease When You Need It Most"}
+              />
+              <ParagraphIcon
+                icon={require("../../../assets/img/piramid.png")}
+                text={"Inspire and Strengthen Your Walk with God"}
+              />
 
-            <View style={{height:20}}></View>
+              <View style={{height:20}}></View>
 
-            <PlanSelector/>
+              <PlanSelector 
+                plan={selectedPlanType}
+                setSelectedPlanType={setSelectedPlanType}
+              />
 
-            <View style={{height:30}}></View>
+              <View style={{height:30}}></View>
 
-            <CommonButton
-                btnText={"Try Free & Subscribe"}
-                bgColor={"#005A55"}
-                navigation={navigation}
-                route={"SubscriptionConfirmedScreen"}
-                txtColor={"#fff"}
-                opacity={1}
-            />
+              <CommonButton
+                  btnText={"Try Free & Subscribe"}
+                  bgColor={"#005A55"}
+                  navigation={navigation}
+                  route={""}
+                  handler={hanldeSubscription}
+                  txtColor={"#fff"}
+                  opacity={1}
+              />
 
-            <Text style={styles.footerText}>Cancel anytime. Subscription auto-renews.By subscribing, you agree to <Text style={styles.footerHighlighter}>Privacy Policy</Text> </Text>
-
-
-        </View>
+              <Text style={styles.footerText}>Cancel anytime. Subscription auto-renews.By subscribing, you agree to <Text style={styles.footerHighlighter}>Privacy Policy</Text> </Text>
 
 
-    </View>
+          </View>
+
+      </View>
+    </StripeProvider>
   );
 }
 

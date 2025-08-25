@@ -8,7 +8,7 @@ const baseStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    position:'relative'
+    position:'relative',
   },
   textContainer: {
     height: height * (1/5),
@@ -22,18 +22,19 @@ const baseStyle = StyleSheet.create({
         width:'100%', 
         objectFit:'contain',
         position:'absolute',
-        top: (height*16)/100,
+        top: (height*17)/100,
         left:0,
         right:0,
+        bottom:0,
         zIndex: 1
     },
   btnContainer:{
     paddingHorizontal: 20,
     position:'absolute',
-    bottom: (height*6)/100,
+    bottom:(height*6)/100,
     left:0,
     right:0,
-    zIndex: 1
+    zIndex: 5
   },
   successText: {
     fontSize: 32,

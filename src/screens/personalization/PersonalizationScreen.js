@@ -13,21 +13,27 @@ import { logoutUser } from '../../context/api';
 import { useAuth } from '../../context/AuthContext';
 import useStaticData from '../../hooks/useStaticData';
 
+
 export default function PersonalizationScreen() {
  
   const { logout, store } = useAuth();
 
-  const [cardOne, setCardOne] = useState(true)
+  const [cardOne, setCardOne] = useState(false)
   const [cardTwo, setCardTwo] = useState(false)
   const [loading, setLoading] = useState(false);
-  const [id, setId] = useState(store?.faith_journey_reasons[0].id)
+  const [id, setId] = useState(-1)
 
   const navigation = useNavigation();
 
 
-  const handleIsActive = (id) => {
-    setCardOne(!cardOne)
-    setCardTwo(!cardTwo)
+  const handleIsActive = (id, toggle) => {
+    if(toggle){
+      setCardOne(true);
+      setCardTwo(false);
+    }else{
+      setCardOne(false);
+      setCardTwo(true);
+    }
     setId(id)
   }
 
@@ -79,18 +85,31 @@ export default function PersonalizationScreen() {
         <View style={styles.imageContainer}>
             <PhotoCard
               isActive={cardOne}
-              setIsActive={() => handleIsActive(store?.faith_journey_reasons[0].id)}
+              setIsActive={() => handleIsActive(store?.faith_journey_reasons[0]?.id, true)}
               img={require("../../../assets/img/card_bg1.png")}
-              text={store?.faith_journey_reasons[0].name}
+              text={store?.faith_journey_reasons[0]?.name}
             />
             <PhotoCard
               isActive={cardTwo}
-              setIsActive={() => handleIsActive(store?.faith_journey_reasons[1].id)}
+              setIsActive={() => handleIsActive(store?.faith_journey_reasons[1]?.id, false)}
               img={require("../../../assets/img/card_bg2.png")}
-              text={store?.faith_journey_reasons[1].name}
+              text={store?.faith_journey_reasons[1]?.name}
             />
             
         </View>
+
+        {(id==-1) && <View style={{
+          display:'flex',
+          flexDirection:'row',
+          alignItems:'center',
+          justifyContent:'center',
+          height:"25%",
+          width:"100%"
+        }}>
+          <Text style={
+            {fontFamily:'NunitoSemiBold', fontSize:18, color: '#2B4752', textAlign:'center', flexWrap:'wrap'}
+          }>Select an option</Text>
+          </View>}
       </View>
 
       <CommonButton
@@ -101,7 +120,8 @@ export default function PersonalizationScreen() {
           txtColor={primaryText}
           handler={handleJourneyReason}
           bold='bold'
-          opacity={1}
+          opacity={id==-1?0.7:1}
+          disabled={id==-1?true:false}
       />
       {loading && <Indicator>
         <ActivityIndicator size="large" />

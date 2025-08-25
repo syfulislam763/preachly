@@ -27,115 +27,175 @@ const Stack = createNativeStackNavigator();
 
 export default function PersonalizationStack() {
 
+  
   const {store} = useAuth()
   
+  const isMainTab = (store?.onboarding_completed) && (store?.payment?.is_active);
+  const isPaymentTab = (store?.onboarding_completed)
+
+
+  //console.log("auth test ->", JSON.stringify(store, null, 2))
+
   return (
     <Stack.Navigator>
 
-      {store?.onboarding_completed ?<Stack.Screen 
-         options={({ navigation }) => ({
-          headerShown:false
-        })} 
-        name="MainTabs" 
-        component={store?.onboarding_completed?MainTabs:NotFound} 
-      /> : <Stack.Screen 
-        options={()=> ({
-          headerShown: false
-        })}
-        name="Personalization" 
-        component={PersonalizationScreen} 
-      />
+      {isMainTab ?<>
+        <Stack.Screen 
+          options={({ navigation }) => ({
+            headerShown:false
+          })} 
+          name="MainTabs" 
+          component={MainTabs} 
+        />
+        <Stack.Screen 
+            options={({ navigation }) => ({
+              headerShown:false,
+              presentation:'modal'
+            })} 
+            name="MessageScreen" 
+            component={MessageScreen} 
+          /> 
+      
+      </>: isPaymentTab? <>
+          <Stack.Screen 
+            options={({ navigation }) => ({
+              title: "Subscription",
+              headerTitleAlign: "center",
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontFamily: 'NunitoSemiBold',
+                color: '#0b172A',
+                fontSize: 18
+              },
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: '#ffebc2',
+              },
+            })} 
+            name="SubscriptionScreen" 
+            component={SubscriptionScreen} 
+          />
+          
+          <Stack.Screen 
+            options={({ navigation }) => ({
+              title: "Subscription",
+              headerTitleAlign: "center",
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontFamily: 'NunitoSemiBold',
+                color: '#0b172A',
+                fontSize: 18
+              },
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: '#fff',
+              },
+            })} 
+            name="SubscriptionConfirmedScreen" 
+            component={SubscriptionConfirmedScreen} 
+          />
+  
+      </> :
+        <>
+          <Stack.Screen 
+            options={()=> ({
+              headerShown: false
+            })}
+            name="Personalization" 
+            component={PersonalizationScreen} 
+          />
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization1" 
+            component={PersonalizationScreen1} 
+          />
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization2" 
+            component={PersonalizationScreen2} 
+          />
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization3" 
+            component={PersonalizationScreen3} 
+          />
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization4" 
+            component={PersonalizationScreen4} 
+          />
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization5" 
+            component={PersonalizationScreen5} 
+          />
+
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Personalization6" 
+            component={PersonalizationScreen6} 
+          />
+
+          <Stack.Screen 
+            options={commonNavigationOptions}
+            name="Notification" 
+            component={Notification} 
+          />
+
+          <Stack.Screen 
+            options={({ navigation }) => ({
+              title: "Subscription",
+              headerTitleAlign: "center",
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontFamily: 'NunitoSemiBold',
+                color: '#0b172A',
+                fontSize: 18
+              },
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: '#ffebc2',
+              },
+            })} 
+            name="SubscriptionScreen" 
+            component={SubscriptionScreen} 
+          />
+
+          <Stack.Screen 
+            options={({ navigation }) => ({
+              title: "Subscription",
+              headerTitleAlign: "center",
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontFamily: 'NunitoSemiBold',
+                color: '#0b172A',
+                fontSize: 18
+              },
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: '#fff',
+              },
+            })} 
+            name="SubscriptionConfirmedScreen" 
+            component={SubscriptionConfirmedScreen} 
+          />
+
+
+          
+
+
+        
+        </>
       }
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization1" 
-        component={PersonalizationScreen1} 
-      />
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization2" 
-        component={PersonalizationScreen2} 
-      />
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization3" 
-        component={PersonalizationScreen3} 
-      />
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization4" 
-        component={PersonalizationScreen4} 
-      />
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization5" 
-        component={PersonalizationScreen5} 
-      />
-
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Personalization6" 
-        component={PersonalizationScreen6} 
-      />
-
-      <Stack.Screen 
-        options={commonNavigationOptions}
-        name="Notification" 
-        component={Notification} 
-      />
-
-{/*  */}
-      <Stack.Screen 
-         options={({ navigation }) => ({
-          title: "Subscription",
-          headerTitleAlign: "center",
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'NunitoSemiBold',
-            color: '#0b172A',
-            fontSize: 18
-          },
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            backgroundColor: '#ffebc2',
-          },
-        })} 
-        name="SubscriptionScreen" 
-        component={SubscriptionScreen} 
-      />
-
-      <Stack.Screen 
-        options={({ navigation }) => ({
-          title: "Subscription",
-          headerTitleAlign: "center",
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'NunitoSemiBold',
-            color: '#0b172A',
-            fontSize: 18
-          },
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            backgroundColor: '#fff',
-          },
-        })} 
-        name="SubscriptionConfirmedScreen" 
-        component={SubscriptionConfirmedScreen} 
-      />
-
-
-      <Stack.Screen 
-         options={({ navigation }) => ({
-          headerShown:false,
-          presentation:'modal'
-        })} 
-        name="MessageScreen" 
-        component={MessageScreen} 
-      />
+      
 
 
     </Stack.Navigator>
