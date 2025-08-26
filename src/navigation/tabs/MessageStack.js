@@ -15,7 +15,7 @@ export default function MessageStack() {
         name="MessageScreen" 
         component={MessageScreen} 
         options={{
-          presentation: 'modal',
+          //presentation: 'modal',
           headerBackTitleVisible: false
         }}
       />

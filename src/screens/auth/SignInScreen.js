@@ -87,7 +87,11 @@ export default function SignInScreen () {
 
               
                     if(store?.onboarding_completed){
-
+                      context.completePersonalization(true);
+                      if(payment?.data?.is_active){
+                        context.completeSubscription(payment?.data?.is_active)
+                      }
+      
                       context.updateStore(store)
                       setAuthToken(store?.access, store?.refresh, async () => {
                         await AsyncStorage.setItem('store', JSON.stringify(store));

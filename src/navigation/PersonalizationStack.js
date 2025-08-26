@@ -28,11 +28,12 @@ const Stack = createNativeStackNavigator();
 export default function PersonalizationStack() {
 
   
-  const {store} = useAuth()
+  const {store, completePersonalization, isPersonalized, isSubscribed} = useAuth()
   
-  const isMainTab = (store?.onboarding_completed) && (store?.payment?.is_active);
-  const isPaymentTab = (store?.onboarding_completed)
+  const isMainTab = (isPersonalized) && (isSubscribed);
+  const isPaymentTab = (isPersonalized)
 
+  
 
   //console.log("auth test ->", JSON.stringify(store, null, 2))
 
@@ -50,7 +51,6 @@ export default function PersonalizationStack() {
         <Stack.Screen 
             options={({ navigation }) => ({
               headerShown:false,
-              presentation:'modal'
             })} 
             name="MessageScreen" 
             component={MessageScreen} 

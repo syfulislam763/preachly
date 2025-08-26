@@ -133,7 +133,7 @@ export default function HomeScreen() {
                     })
                   }
                 })
-                console.log(res?.data?.goal_preference, "goal")
+                
                 const goal_preference = {
                   ...res?.data?.goal_preference,
                   name: goals[res?.data?.goal_preference?.goal_type]
@@ -149,8 +149,7 @@ export default function HomeScreen() {
                   bible_familiarity: bible_familiarity[0] || {},
                   goal_preference: goal_preference || {}
                 }
-                //console.log(profileSettingData, "..")
-                //setLoading(false)
+                console.log(JSON.stringify(profileSettingData, null, 2), "tesintg phase")
                 updateStore({ profileSettingData, faith_goal_questions, profile_dashboard: dashboard?.data})
                 setProfileInfo(userInfo)
 
@@ -167,7 +166,7 @@ export default function HomeScreen() {
         })
       }else{
         //setLoading(false)
-        console.log("onboarding", res)
+        console.log("onboarding", JSON.stringify(res, null, 2))
       }
   })
   

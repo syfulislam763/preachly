@@ -14,7 +14,7 @@ export default function RootNavigator() {
 
 
 
-  return !isAuthenticated?<AuthStack/>:!isPersonalized?<PersonalizationStack/>:<MainTabs/>
+  return !isAuthenticated?<AuthStack/>:<PersonalizationStack/>
 
 
 }

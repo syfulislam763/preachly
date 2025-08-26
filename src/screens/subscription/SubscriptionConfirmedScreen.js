@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get('window');
 
 const SubscriptionConfirmedScreen = ({ navigation }) => {
 
-  const {completePersonalization} = useAuth()
+  const {completePersonalization , completeSubscription} = useAuth()
 
 
   return (
@@ -60,7 +60,10 @@ const SubscriptionConfirmedScreen = ({ navigation }) => {
                 bgColor={deepGreen}
                 navigation={navigation}
                 route={""} //MainTabs
-                handler={() => completePersonalization()}
+                handler={() => {
+                  completePersonalization(true);
+                  completeSubscription(true)
+                }}
                 txtColor={primaryText}
                 bold='bold'
                 opacity={1}

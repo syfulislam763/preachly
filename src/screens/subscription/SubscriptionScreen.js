@@ -21,7 +21,7 @@ import { KEY } from '../../context/Paths';
 const window = Dimensions.get("window")
 
 export default function SubscriptionScreen() {
-  const { login, completePersonalization } = useAuth();
+  const { login, completePersonalization , completeSubscription } = useAuth();
   const navigation = useNavigation();
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
@@ -40,7 +40,8 @@ export default function SubscriptionScreen() {
 
     startFreeTrial((res) => {
       if(res=="active"){
-        completePersonalization();
+        completeSubscription(true);
+        completePersonalization(true)
       }else if(res=="success"){
         navigation.navigate("SubscriptionConfirmedScreen")
       }else{
