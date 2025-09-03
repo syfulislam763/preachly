@@ -8,6 +8,7 @@ const PlanSelector = ({OtherPlan=null, setSelectedPlanType, plan}) => {
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold);
   const handlePlan = (label) => {
+    console.log("hello")
     if(label=="monthly"){
       setSelectedPlanType(label)
     }else{

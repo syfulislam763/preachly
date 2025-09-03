@@ -7,7 +7,7 @@ import { deepGreen } from '../../components/Constant';
 const baseStyle =  StyleSheet.create({
   footerHighlighter:{color:'black', textDecorationLine:'underline', fontFamily: 'NunitoExtraBold'},
 
-  footerText:{fontSize:16, color:'#90B2B2', paddingHorizontal: 16, paddingVertical:20, textAlign:'center', fontFamily:'NunitoSemiBold'},
+  footerText:{fontSize:16, color:'#90B2B2', paddingHorizontal: 16, paddingVertical:20, textAlign:'center', fontFamily:'NunitoSemiBold', paddingBottom:100},
 
   googleAppleAuth:{
       display:"flex",

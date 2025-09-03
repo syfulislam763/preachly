@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, Image, Dimensions} from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Image, Dimensions,ScrollView} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import {
   SafeAreaView
@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { handleToast } from '../auth/AuthAPI';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { KEY } from '../../context/Paths';
+import BackButton from '../../components/BackButton';
 
 const window = Dimensions.get("window")
 
@@ -55,6 +56,7 @@ export default function SubscriptionScreen() {
 
   return (
     <StripeProvider publishableKey={KEY}>
+      
       <View style={{position:'relative', flex:1, backgroundColor:'#fff'}}>
          
           
@@ -67,8 +69,8 @@ export default function SubscriptionScreen() {
           </ImageBackground>
 
 
-          <View style={styles.content}>
-
+          <View style={{...styles.content}}>
+              
               <ParagraphIcon
                 icon={require("../../../assets/img/24-sunset.png")}
                 text={"Build Confidence in Conversations About Faith"}
@@ -82,14 +84,13 @@ export default function SubscriptionScreen() {
                 text={"Inspire and Strengthen Your Walk with God"}
               />
 
-              <View style={{height:20}}></View>
+  
 
               <PlanSelector 
                 plan={selectedPlanType}
                 setSelectedPlanType={setSelectedPlanType}
               />
 
-              <View style={{height:30}}></View>
 
               <CommonButton
                   btnText={"Try Free & Subscribe"}
@@ -109,6 +110,35 @@ export default function SubscriptionScreen() {
       </View>
     </StripeProvider>
   );
+}
+
+
+const AppHeader = ({navigation}) => {
+
+  return <View style={{
+        backgroundColor:'#ffeac2',        
+        height:110,         
+        width:"100%",         
+        flexDirection:'row',         justifyContent:'space-between',         alignItems:'flex-end',         
+        padding:10      
+      }}>           
+        <View style={{height:40, backgroundColor:''}}>
+            <BackButton navigation={navigation} />           
+        </View>           
+        <View style={{             
+          height:40,              
+          justifyContent:'center',             
+          backgroundColor:""           
+        }}>             
+          <Text style={{               
+          fontFamily: 'NunitoSemiBold',               
+          color: '#0b172A',               
+          fontSize: 18             
+          }}>Subscription</Text>           
+        </View>           
+        <View style={{height:40, width:40, backgroundColor:''}}>            
+        </View>       
+      </View>
 }
 
 

@@ -17,7 +17,7 @@ import SubscriptionScreen from '../screens/subscription/SubscriptionScreen';
 import MainTabs from './MainTabs';
 import MessageScreen from '../screens/tabs/Message/MessageScreen';
 import { useAuth } from '../context/AuthContext';
-
+import BackButton from '../components/BackButton';
 
 const NotFound = () => <View>
   <Text>Not Found</Text>
@@ -58,8 +58,8 @@ export default function PersonalizationStack() {
       
       </>: isPaymentTab? <>
           <Stack.Screen 
-            options={({ navigation }) => ({
-              title: "Subscription",
+            options={({navigation}) => ({
+              title: 'Subscription',
               headerTitleAlign: "center",
               headerShadowVisible: false,
               headerTitleStyle: {
@@ -71,16 +71,17 @@ export default function PersonalizationStack() {
                 elevation: 0,
                 shadowOpacity: 0,
                 borderBottomWidth: 0,
-                backgroundColor: '#ffebc2',
+                backgroundColor: '#ffeac2',
               },
-            })} 
+              headerLeft: () => <BackButton navigation={navigation}/>
+            })}
             name="SubscriptionScreen" 
             component={SubscriptionScreen} 
           />
           
           <Stack.Screen 
-            options={({ navigation }) => ({
-              title: "Subscription",
+            options={({navigation}) => ({
+              title: 'Subscription',
               headerTitleAlign: "center",
               headerShadowVisible: false,
               headerTitleStyle: {
@@ -94,7 +95,8 @@ export default function PersonalizationStack() {
                 borderBottomWidth: 0,
                 backgroundColor: '#fff',
               },
-            })} 
+              headerLeft: () => <BackButton navigation={navigation}/>
+            })}
             name="SubscriptionConfirmedScreen" 
             component={SubscriptionConfirmedScreen} 
           />
@@ -147,8 +149,8 @@ export default function PersonalizationStack() {
           />
 
           <Stack.Screen 
-            options={({ navigation }) => ({
-              title: "Subscription",
+            options={({navigation}) => ({
+              title: 'Subscription',
               headerTitleAlign: "center",
               headerShadowVisible: false,
               headerTitleStyle: {
@@ -160,16 +162,17 @@ export default function PersonalizationStack() {
                 elevation: 0,
                 shadowOpacity: 0,
                 borderBottomWidth: 0,
-                backgroundColor: '#ffebc2',
+                backgroundColor: '#ffeac2',
               },
-            })} 
+              headerLeft: () => <BackButton navigation={navigation}/>
+            })}
             name="SubscriptionScreen" 
             component={SubscriptionScreen} 
           />
 
           <Stack.Screen 
-            options={({ navigation }) => ({
-              title: "Subscription",
+            options={({navigation}) => ({
+              title: 'Subscription',
               headerTitleAlign: "center",
               headerShadowVisible: false,
               headerTitleStyle: {
@@ -183,7 +186,8 @@ export default function PersonalizationStack() {
                 borderBottomWidth: 0,
                 backgroundColor: '#fff',
               },
-            })} 
+              headerLeft: () => <BackButton navigation={navigation}/>
+            })}
             name="SubscriptionConfirmedScreen" 
             component={SubscriptionConfirmedScreen} 
           />

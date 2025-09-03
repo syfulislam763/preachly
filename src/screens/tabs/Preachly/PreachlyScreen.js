@@ -259,7 +259,7 @@ export default function PreachlyScreen() {
         <View
           style={{
             ...styles.commonHeaderStyle,
-            marginBottom:20
+            marginBottom:15
           }}
         >
           <Pressable onPress={() =>  {
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     justifyContent:'space-between'
   },
   header:{
-    height:110,
+    height:"15%",
     elevation:5,
     shadowColor: '#00000080',
     shadowRadius: 10,

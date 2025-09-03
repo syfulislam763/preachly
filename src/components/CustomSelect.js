@@ -12,6 +12,7 @@ import {
 const CustomSelect = ({ items = [{"id": 0,"name": "Select Denomination","is_active": false}], onSelect, placeholder = "Denomination" }) => {
   const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState(false);
+  console.log("visi", visible)
 
   const handleSelect = (item) => {
     if(item.name === "None"){
@@ -42,7 +43,9 @@ const CustomSelect = ({ items = [{"id": 0,"name": "Select Denomination","is_acti
         />
       </TouchableOpacity>
 
-      <Modal statusBarTranslucent={true} visible={visible} transparent animationType="fade">
+      {
+        visible && 
+        <Modal statusBarTranslucent={true} visible={visible} transparent animationType="fade">
         <TouchableOpacity style={styles.modalOverlay} onPress={() => setVisible(false)}>
           <View style={styles.dropdownList}>
             <FlatList
@@ -64,6 +67,7 @@ const CustomSelect = ({ items = [{"id": 0,"name": "Select Denomination","is_acti
           </View>
         </TouchableOpacity>
       </Modal>
+      }
     </View>
   );
 };
