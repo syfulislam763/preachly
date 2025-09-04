@@ -165,7 +165,8 @@ export const AuthProvider = ({ children }) => {
       if (data.accessToken) {
         setIsAuthenticated(true);
         setStore(data.store || {});
-
+        completePersonalization(data.store.onboarding_completed);
+        completeSubscription(data.store?.payment?.is_active)
       } else {
         setIsAuthenticated(false);
         setStore({});

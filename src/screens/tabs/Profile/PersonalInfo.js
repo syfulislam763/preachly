@@ -32,7 +32,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
-import { set } from 'date-fns';
+import { handleToast } from '../../auth/AuthAPI';
 
 
 //     "conversation" = Confidence Goal
@@ -101,8 +101,18 @@ const PersonalInfo = () => {
       return;
     }
 
+    if(val=="Backspace"){
+      return;
+    }
 
-    const temp = dob+val.toString();
+    let dt = "";
+    if(!dob || dob == "Ba"){
+      dt = "";
+    }else{
+      dt = dob;
+    }
+
+    const temp = dt+val.toString();
     
     if(temp.length>10){
 
@@ -224,11 +234,11 @@ const PersonalInfo = () => {
     if(name)
       profileInfo_payload.append("name", name);
     
-    if(oldImage != img)
+    if(oldImage != img && img)
       profileInfo_payload.append("profile_picture", {
-        uri: imageData?.uri,
-        name: imageData?.fileName,
-        type: imageData?.mimeType
+        uri: imageData?.uri || " ",
+        name: imageData?.fileName || " ",
+        type: imageData?.mimeType || " "
       })
     
 
@@ -287,10 +297,12 @@ const PersonalInfo = () => {
            
             console.log(profileInfo_payload)
             setLoading(false)
+            handleToast("error", "Faild to update profile", 3000, ()=>{});
+            console.log("error man", JSON.stringify(response, null, 2))
           }
         })
       }else{
-   
+        handleToast("error", "Faild to onboarding data", 3000, ()=>{})
         setLoading(false)
       }
     })
@@ -371,6 +383,8 @@ const PersonalInfo = () => {
         <InfoRow isDate={true} isEditable={editMode} label="Date of birth" value={dob} onChange={handleDob} />
         <InfoRow isEditable={editMode} label="Email" value={email} onChange={setEmail} />
       </View>
+    
+          
 
       <View style={styles.card}>
         <DropdownRow

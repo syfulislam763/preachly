@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ROOT_URL, SIGNUP, VERIFY_EMAIL, RESEND_OTP, CREATE_PASS, LOGIN, SOCIAL_LOGIN , PROFILE_UPDATE, VERIFY_CHANGE_EMAIL} from "../../context/Paths";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //Google sign in
 // import {
 //   GoogleSignin,
@@ -9,6 +10,7 @@ import Toast from "react-native-toast-message";
 //   statusCodes,
 // } from '@react-native-google-signin/google-signin';
 import api from "../../context/api";
+
 
 // GoogleSignin.configure({
 
@@ -142,19 +144,47 @@ export const get_profile_info = async(cb) => {
         cb(res.data, true)
     }catch(e){cb(e, false)}
 }
+
+
 export const update_profile_info = async(payload, cb) => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
     try{
-        const res = await api.patch(PROFILE_UPDATE, payload, {
-            headers:{
-                Accept: '*/*',
-                "Content-Type": 'multipart/form-data',
-            }
-        })
-        cb(res.data, true)
+        const response = await fetch(`${ROOT_URL}${PROFILE_UPDATE}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                // Don't set Content-Type - let fetch handle it
+            },
+            body: payload // FormData
+        });
+        
+        const data = await response.json();
+
+        if (response.ok) {
+            cb(data, true);
+        } else {
+            cb(data, false);
+        }
     }catch(e){
-        console.log(e.message, e)
         cb(e, false)
     }
+
+
+    // try{
+    //     const res = await api.patch(PROFILE_UPDATE, payload, {
+    //         headers:{
+    //             Accept: '*/*',
+    //             "Content-Type": 'multipart/form-data',
+    //         },
+    //         transformRequest: (data, headers) => {
+    //             return data
+    //         }
+    //     })
+    //     cb(res.data, true)
+    // }catch(e){
+    //     console.log(e.message, e)
+    //     cb(e, false)
+    // }
 }
 
 export const verify_change_email = async(payload, cb) => {
