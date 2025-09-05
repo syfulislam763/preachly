@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.syful151.preachly"
+      "bundleIdentifier": "com.syful151.preachly",
+      "icon": "./assets/ios-icon.png"
     },
     "android": {
       "adaptiveIcon": {

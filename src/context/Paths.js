@@ -1,7 +1,7 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "https://kazakhstan-garbage-ranks-wondering.trycloudflare.com";//changed
-export const WEBSOCKET_URL = "ws://kazakhstan-garbage-ranks-wondering.trycloudflare.com";
+export const BASE_URL = "https://equivalent-educated-installation-dot.trycloudflare.com";//changed
+export const WEBSOCKET_URL = "ws://equivalent-educated-installation-dot.trycloudflare.com";
 export const KEY = `pk_test_51RVMTHQU9tGM4LXBf8ZHLjC18DYzzWu4HnxSCojMGP58ZO8x1K2sFbNZ5xGLmIRt6KjZpo77V0RKs4m6dwoxoFLi00u06pnafX`
 
 export const URL_CATEGORY = "/api"
