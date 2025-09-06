@@ -64,24 +64,62 @@ const MessageWrapper = ({
     const soundRef = useRef(null);
     const [currentId, setCurrentId] = useState(0);
 
-    const playSound = async (item) => {
+    // const playSound = async (item) => {
  
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync();
-        soundRef.current = null;
-      }
+    //   if (soundRef.current) {
+    //     await soundRef.current.unloadAsync();
+    //     soundRef.current = null;
+    //   }
 
-      const { sound } = await Audio.Sound.createAsync({ uri: item.uri }, {shouldPlay: true});
-      soundRef.current = sound;
+    //   const { sound } = await Audio.Sound.createAsync({ uri: item.uri }, {shouldPlay: true});
+    //   soundRef.current = sound;
 
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-            stopSound()
+    //   sound.setOnPlaybackStatusUpdate((status) => {
+    //     if (status.didJustFinish) {
+    //         stopSound()
+    //     }
+    //   });
+
+    //   setCurrentId(item.id);
+    // };
+
+    const playSound = async (item) => {
+      console.log("file audio->", item)
+      try {
+        // Set audio mode for iOS
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: false,
+          interruptionModeIOS:1, // Corrected
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: 1, // Corrected
+        });
+
+        if (soundRef.current) {
+          await soundRef.current.unloadAsync();
+          soundRef.current = null;
         }
-      });
 
-      setCurrentId(item.id);
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: item.uri },
+          { shouldPlay: true }
+        );
+
+        soundRef.current = sound;
+
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) {
+            stopSound();
+          }
+        });
+
+        setCurrentId(item.id);
+      } catch (error) {
+        console.log('Error playing sound:', error);
+      }
     };
+
 
     const stopSound = async () => {
       if (soundRef.current) {

@@ -57,10 +57,10 @@ const  VoiceMessageBubble = ({setRecordings, recordings, playSound, stopSound, c
         {/* Play Button */}
         {! (currentId == id) ? 
           <TouchableOpacity onPress={handlePlayStart}  style={styles.playButton}>
-            <FontAwesome name="play" size={15} color="#000" />
+            <FontAwesome name="play" size={25} color="#000" />
           </TouchableOpacity>:
-          <TouchableOpacity onPress={hanldePlayStop} style={styles.playButton}>
-            <FontAwesome name="pause" size={15} color="#000" />
+          <TouchableOpacity onPress={() => hanldePlayStop(false)} style={styles.playButton}>
+            <FontAwesome name="pause" size={25} color="#000" />
           </TouchableOpacity>
         }
 

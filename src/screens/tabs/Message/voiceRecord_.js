@@ -14,6 +14,7 @@ export const requestPermission = async () => {
           await Audio.setAudioModeAsync({
             allowsRecordingIOS: true,
             playsInSilentModeIOS: true,
+            staysActiveInBackground:false,
           });
         }
       } catch (err) {
@@ -27,6 +28,7 @@ export async function startRecording() {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
           playsInSilentModeIOS: true,
+          staysActiveInBackground:false,
         });
         const { recording } = await Audio.Recording.createAsync(
           Audio.RecordingOptionsPresets.HIGH_QUALITY

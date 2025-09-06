@@ -42,14 +42,35 @@ export default function AudioPlayerCard({item, currentId, playSound, stopSound})
     }
 
     const handleAudio = async () => {
-        const {sound:playbackSound} = await Audio.Sound.createAsync(
+        try{
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            staysActiveInBackground: false,
+            interruptionModeIOS:1, 
+            playsInSilentModeIOS: true,
+            shouldDuckAndroid: true,
+            interruptionModeAndroid: 1,
+          });
+          const {sound:playbackSound} = await Audio.Sound.createAsync(
             {uri:BASE_URL+item.uri}, {shouldPlay:false}
-        )
-        const status = await playbackSound.getStatusAsync();
+          )
+          // const status = await playbackSound.getStatusAsync();
 
-        setSound(playbackSound);
-        const seconds = formatDuration(status.durationMillis)
-        setDuration(seconds)
+          playbackSound.setOnPlaybackStatusUpdate((status) => {
+            if (status.isLoaded && status.durationMillis && !duration) {
+              const seconds = formatDuration(status.durationMillis);
+              setDuration(seconds);
+              // Remove the callback once we have the duration
+              playbackSound.setOnPlaybackStatusUpdate(null);
+            }
+          });
+
+          setSound(playbackSound);
+          // const seconds = formatDuration(status.durationMillis)
+          // setDuration(seconds)
+        }catch(e){
+
+        }
 
     }
 
