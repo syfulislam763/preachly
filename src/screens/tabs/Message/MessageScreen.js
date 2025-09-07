@@ -2,53 +2,32 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   Image,
-  Platform,
-  FlatList,
-  KeyboardAvoidingView,
-  Keyboard,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  TextInput,
   ActivityIndicator,
   Pressable,
-  BackHandler
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReusableNavigation from '../../../components/ReusabeNavigation';
 import BackButton from '../../../components/BackButton';
-import Conversations from './Conversations';
-// import ChatInput from './ChatInput';
-import LostConnection from './LostConnection';
-import CustomModal from '../../../components/CustomModal';
-import RatingMessage from './RatingMessage';
 import Feedback from './Feedback';
 import { get_session_id, bookmark_message, get_message_by_session_id } from '../TabsAPI';
 import Indicator from '../../../components/Indicator'
 import { WEBSOCKET_URL } from '../../../context/Paths';
 import {useAuth} from '../../../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Share from 'react-native-share'
-import useLogout from '../../../hooks/useLogout';
-import { heightPercentageToDP } from 'react-native-responsive-screen';
-// import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { setIsAudioActiveAsync } from 'expo-audio';
 import { finish_share, finish_conversation, send_voice_message } from '../TabsAPI';
 import { useRoute } from '@react-navigation/native';
-import VoiceMessageBubble from './VoiceMessageBubble';
 import MessageWrapper from './MessageWrapper';
 import { startRecording, stopRecording,requestPermission} from './voiceRecord_';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function MessageScreen() {
   //useLogout();
   const flatListRef = useRef(null);
   const [isFeedback, setIsFeedback] = useState(false);
-  const [isRating, setIsRating] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0)
   ///
@@ -58,16 +37,13 @@ export default function MessageScreen() {
   const [message, setMessage] = useState("")
   const [prevMsg, setPrevMsg] = useState("")
 
-  const [isNewSession, setIsNewSession] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const [recordings, setRecordings] = useState(null);
   const [audio, setAudio] = useState(null);
   const [recordingState, setRecordingState] = useState(false);
-  
-
-  const [recordStartTime, setRecordStartTime] = useState(0)
+ 
   const [isTest, setIsTest] = useState(false);
 
   const [doneOne, setDoneOne] = useState(false);
@@ -75,6 +51,8 @@ export default function MessageScreen() {
 
   const [isTyping, setIsTyping] = useState(false);
 
+  const [connectSocket, setConnctSocket] = useState(1);
+  const ws = useRef(null);
 
 
   const handleStopRecording = async () => {
@@ -97,23 +75,33 @@ export default function MessageScreen() {
     setAudio(null)
   }
 
-  const create_session = (cb = ()=>{}) =>{
+  const create_session = (feedback=false) =>{
     setLoading(true);
     get_session_id((res,success)=>{
       if(success){
         console.log("created new session")
-        //setSession(res?.data);
         setMessage("");
         setMessages([])
         setPrevMsg("");
-        setRecordings(null)
-        //setIsNewSession(true)
-        updateSession({ ...res.data, isNewSession: true})
+        setRecordings(null);
+        let temp = JSON.stringify({ ...res.data, isNewSession: true});
+        console.log(temp, 'session, str')
+        updateSession(JSON.parse(temp))
         setDoneOne(true)
-        cb();
+        setFeedback(true);
+        setIsFeedback(false);
+        
+        if(feedback){
+          ws.current?.close();
+          ws.current = null;
+        }
+        
+        
       }else{
         console.log("ss->", JSON.stringify(res.response.config, null, 2));
         console.log("code ->", res.status)
+        setFeedback(false);
+        setIsFeedback(false);
       }
       
       setLoading(false);
@@ -177,7 +165,7 @@ export default function MessageScreen() {
           setLoading(false);
           //setIsNewSession(false);
           setDoneOne(true)
-          updateSession({isNewSession: false})
+          updateSession({...session, isNewSession: false})
           //console.log("m ->", JSON.stringify(msgs, null, 2))
         }else{
           console.log("s error->", res);
@@ -250,7 +238,7 @@ export default function MessageScreen() {
 
   }
 
-  const ws = useRef(null);
+  
   useEffect(() =>{
     if(!session?.id)return () => {}
     if(ws.current)return () => {}
@@ -370,16 +358,17 @@ export default function MessageScreen() {
   }
 
 
-  // useFocusEffect(
-  //   useCallback(() =>{
-  //     return () =>{
-  //       console.log("disconnecting")
-  //       if(ws.current){
-  //         ws.current?.close();
-  //       }
-  //     }
-  //   }, [])
-  // )
+  useFocusEffect(
+    useCallback(() =>{
+      return () =>{
+        if(ws.current){
+          ws.current?.close();
+          ws.current = null;
+          console.log("disconnecting")
+        }
+      }
+    }, [])
+  )
 
   useEffect(() => {
     if (flatListRef.current) {
@@ -569,20 +558,14 @@ export default function MessageScreen() {
             finish_conversation((res, success) => {
               console.log(res, "feedback");
               if(success){
-                create_session(() => {
-                  setFeedback(res)
-                  setIsFeedback(false);
-                })
+                create_session(res)
               }else{
                 setIsFeedback(false);
               }
             })
           }else{
             
-            create_session(() => {
-              setFeedback(res);
-              setIsFeedback(false);
-            })
+            create_session(true)
             
           }
           

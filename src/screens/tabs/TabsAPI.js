@@ -225,8 +225,7 @@ export const finish_conversation = async(cb) => {
     const URL = `/goals/track/conversation/`;
     try{
         const res = await api.post(URL);
-        cb(res, true);
-        console.log(res)
+        cb(res.data, true);
     }catch(e){
         console.log(JSON.stringify(e, null, 2), "show")
         cb(e, false);

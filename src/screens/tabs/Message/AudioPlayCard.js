@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { BASE_URL } from '../../../context/Paths';
+import * as FileSystem from 'expo-file-system'
 
 export default function AudioPlayerCard({item, currentId, playSound, stopSound}) {
 
@@ -21,58 +22,95 @@ export default function AudioPlayerCard({item, currentId, playSound, stopSound})
     
     const handlePlayStart = async () => {
         playSound({id:item.id, uri: BASE_URL+item.uri })
-        // if(sound){
-        //     await sound.replayAsync();
-        // }
-        // setSound(sound);
-        
-        // sound.setOnPlaybackStatusUpdate((status) => {
-        //     if (status.didJustFinish) {
-        //         setPlay(false);
-        //         console.log('Playback finished');
-        //     }
-        // });
-
-        // setPlay(true);
+    
     }
     const hanldePlayStop = async () => {
         stopSound()
-        // setPlay(false);
-        // if(sound)sound.stopAsync();
     }
 
     const handleAudio = async () => {
-        try{
-          await Audio.setAudioModeAsync({
-            allowsRecordingIOS: false,
-            staysActiveInBackground: false,
-            interruptionModeIOS:1, 
-            playsInSilentModeIOS: true,
-            shouldDuckAndroid: true,
-            interruptionModeAndroid: 1,
-          });
-          const {sound:playbackSound} = await Audio.Sound.createAsync(
-            {uri:BASE_URL+item.uri}, {shouldPlay:false}
-          )
-          // const status = await playbackSound.getStatusAsync();
+      try {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: false,
+          interruptionModeIOS: 1, 
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: 1,
+        });
 
+        let audioUrl;
+        
+  
+        if (item.uri.startsWith('http')) {
+          audioUrl = item.uri;
+        } else if (item.uri.startsWith('file://')) {
+          audioUrl = item.uri;
+        } else {
+          const cleanBaseUrl = BASE_URL.endsWith('/') ? BASE_URL : BASE_URL + '/';
+          const cleanPath = item.uri.startsWith('/') ? item.uri.substring(1) : item.uri;
+          audioUrl = cleanBaseUrl + cleanPath;
+        }
+
+        console.log('Final audio URL:', audioUrl); 
+        if (audioUrl.startsWith('http')) {
+          const filename = `audio_${item.id}.m4a`;
+          const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+
+          try {
+            const fileInfo = await FileSystem.getInfoAsync(fileUri);
+            if (!fileInfo.exists) {
+              console.log('Downloading audio file from:', audioUrl);
+              
+              // Test if the URL is accessible first
+              const response = await fetch(audioUrl, { method: 'HEAD' });
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+              }
+              
+              await FileSystem.downloadAsync(audioUrl, fileUri);
+              console.log('Download completed to:', fileUri);
+            } else {
+              console.log('File already exists:', fileUri);
+            }
+            audioUrl = fileUri;
+          } catch (e) {
+            console.log('Download error:', e.message);
+            console.log('Using original URL as fallback');
+          }
+        }
+
+        const { sound: playbackSound } = await Audio.Sound.createAsync(
+          { uri: audioUrl }, 
+          { shouldPlay: true, positionMillis: 0 }
+        );
+
+        // Pause immediately
+        await playbackSound.pauseAsync();
+
+        // Get the status
+        const status = await playbackSound.getStatusAsync();
+        
+        setSound(playbackSound);
+        
+        if (status.isLoaded && status.durationMillis) {
+          const seconds = formatDuration(status.durationMillis);
+          setDuration(seconds);
+        } else {
+          // Fallback callback
           playbackSound.setOnPlaybackStatusUpdate((status) => {
             if (status.isLoaded && status.durationMillis && !duration) {
               const seconds = formatDuration(status.durationMillis);
               setDuration(seconds);
-              // Remove the callback once we have the duration
               playbackSound.setOnPlaybackStatusUpdate(null);
             }
           });
-
-          setSound(playbackSound);
-          // const seconds = formatDuration(status.durationMillis)
-          // setDuration(seconds)
-        }catch(e){
-
         }
 
-    }
+      } catch (e) {
+        console.log('Error in handleAudio:', e);
+      }
+    };
 
     useEffect(() => {
         handleAudio();

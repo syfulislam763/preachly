@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }) => {
   const [isOnboarding, setIsOnboarding] = useState(false);
 
   const updateSession = (sess) => {
-    setSession({...session, ...sess})
+    setSession(sess)
   }
 
   const updateStore = (data, control=true) => {

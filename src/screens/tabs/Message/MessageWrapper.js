@@ -19,6 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import VoiceMessageBubble from './VoiceMessageBubble';
 import { Audio } from 'expo-av';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system'
 
 const lock = require("../../../../assets/img/lock_voice.png");
 
@@ -101,8 +102,30 @@ const MessageWrapper = ({
           soundRef.current = null;
         }
 
+        let audioUri = item.uri;
+    
+        // If it's a URL, download it first
+        if (item.uri.startsWith('http')) {
+          const filename = `audio_${item.id}.m4a`;
+          const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+          
+          try {
+            // Check if file already exists
+            const fileInfo = await FileSystem.getInfoAsync(fileUri);
+            if (!fileInfo.exists) {
+              console.log('Downloading audio file...');
+              await FileSystem.downloadAsync(item.uri, fileUri);
+            }
+            audioUri = fileUri;
+          } catch (downloadError) {
+            console.log('Download failed, trying direct URL:', downloadError);
+            // Fallback to direct URL if download fails
+          }
+        }
+
+
         const { sound } = await Audio.Sound.createAsync(
-          { uri: item.uri },
+          { uri: audioUri },
           { shouldPlay: true }
         );
 
@@ -267,7 +290,7 @@ const MessageWrapper = ({
   return <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
       {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <View 
