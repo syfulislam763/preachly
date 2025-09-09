@@ -1,7 +1,7 @@
 
 // export const BASE_URL = "https://bibel-project.onrender.com"
-export const BASE_URL = "https://performed-realtors-kde-bosnia.trycloudflare.com";//changed
-export const WEBSOCKET_URL = "ws://performed-realtors-kde-bosnia.trycloudflare.com";
+export const BASE_URL = "https://epic-stand-controlled-llc.trycloudflare.com";//changed
+export const WEBSOCKET_URL = "ws://epic-stand-controlled-llc.trycloudflare.com";
 export const KEY = `pk_test_51RVMTHQU9tGM4LXBf8ZHLjC18DYzzWu4HnxSCojMGP58ZO8x1K2sFbNZ5xGLmIRt6KjZpo77V0RKs4m6dwoxoFLi00u06pnafX`
 
 export const URL_CATEGORY = "/api"

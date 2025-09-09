@@ -16,7 +16,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.syful151.preachly",
       "icon": "./assets/ios-icon.png",
-      "appleTeamId": "FVD5HHDVA3"
+      "appleTeamId": "FVD5HHDVA3",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": ["en", "es", "fr"]
+      }
     },
     "android": {
       "adaptiveIcon": {
