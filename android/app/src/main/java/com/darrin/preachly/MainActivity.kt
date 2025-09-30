@@ -1,4 +1,4 @@
-package com.syful151.preachly
+package com.darrin.preachly
 
 import android.os.Build
 import android.os.Bundle

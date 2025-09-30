@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.syful151.preachly'
+    namespace 'com.darrin.preachly'
     defaultConfig {
-        applicationId 'com.syful151.preachly'
+        applicationId 'com.darrin.preachly'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

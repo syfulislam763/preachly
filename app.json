@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.syful151.preachly",
+      "bundleIdentifier": "com.darrin.preachly",
       "icon": "./assets/ios-icon.png",
       "appleTeamId": "FVD5HHDVA3",
       "infoPlist": {
@@ -28,7 +28,7 @@
         "backgroundColor": "#005A55"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.syful151.preachly",
+      "package": "com.darrin.preachly",
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.RECORD_AUDIO",
