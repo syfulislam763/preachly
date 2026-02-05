@@ -16,7 +16,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.darrin.preachly",
       "icon": "./assets/ios-icon.png",
-      "appleTeamId": "FVD5HHDVA3",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
         "CFBundleLocalizations": ["en", "es", "fr"]

@@ -197,7 +197,7 @@ export const verify_change_email = async(payload, cb) => {
 }
 
 export const get_payment_status = async (token, cb) => {
-    const url = `/subscription/status/`;
+    const url = `/subscription/revenuecat/status/`;
     try{
         const res = await api.get(url,{
             headers: {

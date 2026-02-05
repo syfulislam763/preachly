@@ -81,6 +81,7 @@ export default function SignInScreen() {
       else{
         sign_up(payload, (res, isSuccess) => {
           if(isSuccess){
+            console.log(JSON.stringify(res, null, 2))
             const data = res?.data
             if(data?.is_sent){
               setIsLoading(false)
