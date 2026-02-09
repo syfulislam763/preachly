@@ -31,7 +31,7 @@ const HomepageHeader = ({userInfo, dashboard}) => {
           />
         </View>
         <View>
-          <Text style={styles.welcome}>Welcome back,</Text>
+          <Text style={styles.welcome}>Welcome</Text>
           <Text style={styles.welcome}>{userInfo?.name}</Text>
         </View>
       </View>

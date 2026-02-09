@@ -108,12 +108,12 @@ export default function AuthHome({}) {
             />
 
             <View style={styles.divider}>
-              <Divider text={"or"}/>
+              {/* <Divider text={"or"}/> */}
             </View>
 
             <View style={styles.googleAppleAuth}
             >
-                <Pressable>
+                {/* <Pressable>
                   <Image 
                     source={require("../../../assets/img/appleAuth.png")}
                     height={50}
@@ -128,7 +128,7 @@ export default function AuthHome({}) {
                     height={50}
                     width={50}
                   />
-                </Pressable>
+                </Pressable> */}
             </View>
         
             <Text style={styles.footerText}>By singing up, you agree to the app's <Text style={styles.footerHighlighter}>Terms of Use</Text> and <Text style={styles.footerHighlighter}>Privacy Policy</Text></Text>

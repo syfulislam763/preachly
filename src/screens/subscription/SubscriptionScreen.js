@@ -39,16 +39,8 @@ export default function SubscriptionScreen() {
 
   const hanldeSubscription =  () => {
 
-    startFreeTrial((res) => {
-      if(res=="active"){
-        completeSubscription(true);
-        completePersonalization(true)
-      }else if(res=="success"){
-        navigation.navigate("SubscriptionConfirmedScreen")
-      }else{
-        handleToast("error", "Try Again Please", 2000, () => {})
-      }
-    })
+    completeSubscription(true);
+    completePersonalization(true);
     
     
   }
