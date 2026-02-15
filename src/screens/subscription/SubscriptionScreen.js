@@ -33,7 +33,6 @@ export default function SubscriptionScreen() {
     selectedPlanType,
     monthlyPlan,
     yearlyPlan,
-    startFreeTrial
   } = createPlan();
 
 

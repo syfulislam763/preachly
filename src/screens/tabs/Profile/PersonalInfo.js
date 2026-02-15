@@ -10,8 +10,9 @@ import {
   Platform,
   Image,
   ActivityIndicator,
-  Keyboard
+  Keyboard,
 } from 'react-native';
+import DatePicker from './PersonalInfoUtils/DatePicker';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -33,7 +34,7 @@ import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../../../context/AuthContext';
 import Indicator from '../../../components/Indicator';
 import { handleToast } from '../../auth/AuthAPI';
-
+import dayjs from 'dayjs';
 
 //     "conversation" = Confidence Goal
 // "scripture" = Scripture Knowledge
@@ -92,39 +93,7 @@ const PersonalInfo = () => {
   const [imageData, setImageData] = useState({});
 
   const handleDob = (val) => {
-    if(val.toString() == "."|| val.toString()=="-" || val.toString()==","){
-      setDob("")
-      return;
-    }
-    if(val=="Backspace" && dob){
-      setDob(dob.substring(0, dob.length-1))
-      return;
-    }
-
-    if(val=="Backspace"){
-      return;
-    }
-
-    let dt = "";
-    if(!dob || dob == "Ba"){
-      dt = "";
-    }else{
-      dt = dob;
-    }
-
-    const temp = dt+val.toString();
-    
-    if(temp.length>10){
-
-    }
-    else if(temp.length == 7){
-      setDob(temp+"-")
-    }
-    else if(temp.length == 4){
-      setDob(temp+"-")
-    }else{
-      setDob(temp);
-    }
+    setDob(val)
   }
 
   const [selectedBibleVersion, setSelectedBibleVersion] = useState({});
@@ -180,30 +149,16 @@ const PersonalInfo = () => {
 
 
   const handleSaveUserInfo = () => {
-    //navigation.goBack()
+
     const payload  = {
-      // journey_reason: {
-      //   "journey_reason": faithGoal?.id
-      // },
+
       denomination: {
         "denomination_option": selectedDenomination?.id
       },
       goal_preference: {
         goal_type: faithGoal?.goal_type
       },
-      // faith_goal: {
-      //   goals: [
-      //     {
-      //       faith_goal_option: faithGoalQuestionOne?.id
-      //     },
-      //     {
-      //       faith_goal_option: faithGoalQuestionTwo?.id
-      //     },
-      //     {
-      //       faith_goal_option: faithGoalQuestionThree?.id
-      //     }
-      //   ]
-      // },
+    
       tone_preference: {
         "tone_preference_option": tone?.id
       },
@@ -215,7 +170,7 @@ const PersonalInfo = () => {
       }
     }
 
-    //console.log("test", JSON.stringify(payload, null, 2));
+
     const oldEmail = store?.profileSettingData?.userInfo?.email;
     const oldDOB = store?.profileSettingData?.userInfo?.date_of_birth;
     const oldName = store?.profileSettingData?.userInfo?.name;
@@ -226,11 +181,10 @@ const PersonalInfo = () => {
     if(oldEmail != email)
       profileInfo_payload.append("email", email);
 
-    // if(oldDOB != dob)
     if(dob)
       profileInfo_payload.append("date_of_birth", dob);
 
-    // if(oldName != name)
+
     if(name)
       profileInfo_payload.append("name", name);
     
@@ -242,15 +196,7 @@ const PersonalInfo = () => {
       })
     
 
-    // const profileInfo_payload = {
-    //   email: email,
-    //   name: name,
-    // }
-
-
-
-    // return 0;
-
+  
       
     console.log(payload)
  
@@ -267,17 +213,7 @@ const PersonalInfo = () => {
               goal_preference: faithGoal || {},
               bible_familiarity: Answer || {},
             }
-            // const faith_goal_questions = res?.data.faith_goal.map(item => {
-            //   return {
-            //     ...item,
-            //     options: item.options.map(op => {
-            //       return {
-            //         ...op,
-            //         name: op.option
-            //       }
-            //     })
-            //   }
-            // })
+         
             const faith_goal_questions = undefined
 
             const oldEmail = store?.profileSettingData?.userInfo?.email
@@ -318,6 +254,7 @@ const PersonalInfo = () => {
     setName(store?.profileSettingData?.userInfo?.name)
     setDob(store?.profileSettingData?.userInfo?.date_of_birth)
     setEmail(store?.profileSettingData?.userInfo?.email)
+    console.log(store?.profileSettingData?.userInfo?.email)
     setImg(store?.profileSettingData?.userInfo?.profile_picture)
     setSelectedDenomination(store?.profileSettingData?.denomination)
     setSelectedBibleVersion(store?.profileSettingData?.bible_version)
@@ -532,27 +469,51 @@ const PersonalInfo = () => {
   );
 };
 
-const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => (
-  <View style={styles.inputFieldRow}>
+const InfoRow = ({ label, value, onChange, isEditable=true,isDate=false}) => {
+
+  const [isOpen, setIsOpen] = useState(false);
+
+
+  return <View style={styles.inputFieldRow}>
     <Text style={styles.inputFieldLabel}>{label}</Text>
-    <TextInput
-      style={styles.inputField}
-      value={value}
-      keyboardType={isDate?'numeric':'default'}
-      onChangeText={isDate?()=>{}:onChange}
-      placeholder={isDate?"year-month-day":`Enter ${label.toLowerCase()}`}
-      textAlign="right"
-      editable={isEditable}
-      returnKeyType="done"
-      onKeyPress={({nativeEvent})=>{
-        console.log("key", nativeEvent.key)
-        if(isDate){
-          onChange(nativeEvent.key)
-        }
-      }}
-    />
+    {console.log("value", value)}
+    {isEditable?
+
+      isDate?
+        <DatePicker value={value} onChange={value => {
+          onChange(dayjs(value).format("YYYY-MM-DD"))
+        }} isOpen={isOpen} setIsOpen={setIsOpen}/>
+      :
+      <TextInput
+        style={styles.inputField}
+        value={value}
+        keyboardType={isDate?'numeric':'default'}
+        onChangeText={isDate?()=>{}:onChange}
+        placeholder={isDate?"year-month-day":`Enter ${label.toLowerCase()}`}
+        textAlign="right"
+        editable={isEditable}
+        returnKeyType="done"
+        onKeyPress={({nativeEvent})=>{
+          console.log("key", nativeEvent.key)
+          if(isDate){
+            onChange(nativeEvent.key)
+          }
+        }}
+      />
+    
+    :
+    
+    
+      <Text style={{...styles.inputField, width: '70%'}}>{value}</Text>
+    
+    }
+    
+
+
   </View>
-);
+
+
+};
 
 const DropdownRow = ({ label, value, onPress, rowStyle={} }) => (
   <TouchableOpacity style={{...styles.row, ...rowStyle}} onPress={() => {
@@ -603,13 +564,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0B172A',
     fontFamily:'NunitoBold',
-    flex: 1,
+    //flex: 1,
   },
   inputField: {
     fontSize: 16,
     color: '#2B4752',
     fontFamily:'NunitoBold',
-    flex: 1,
+    //flex: 1,
     padding: 8,
     textAlign: 'right',
   },

@@ -72,84 +72,12 @@ export default function createPlan() {
     }
   };
 
-  const startFreeTrial = async (cb=(a)=>{}) => {
-    const selectedPlan = plans.find((p) =>
-      selectedPlanType === 'yearly'
-        ? p.plan_type === 'explorer_yearly'
-        : p.plan_type === 'explorer_monthly'
-    );
-    if (!selectedPlan || loading) return;
-
-    setLoading(true);
-    try {
-      // 1. Check subscription status
-      const status = await api.get(`/subscription/status/`);
-      const active = status.data.data?.is_active || status.data.data?.is_trial_active;
-      if (active) {
-        cb("active");
-        //navigation.replace('Congratulation');
-        handleToast("info", "The selected plan has been activated", 3000, ()=>{})
-        console.log("go congratulations page")
-        return;
-      }
-
-      // 2. Create setup intent
-      const setup = await api.post(`/subscription/payment/setup-intent/`, {});
-      const secret = setup.data.data.client_secret;
-      setClientSecret(secret);
-      setSetupIntentId(setup.data.data.setup_intent_id);
-
-      // 3. Init and present payment sheet
-      const init = await initPaymentSheet({
-        setupIntentClientSecret: secret,
-        merchantDisplayName: 'Explorer Pro',
-      });
-      if (init.error) throw init.error;
-
-      const present = await presentPaymentSheet();
-      if (present.error) throw present.error;
-
-      // 4. Retrieve setup intent for payment method ID
-      const intent = await retrieveSetupIntent(secret);
-      console.log(intent, "intent")
-      const paymentMethodId = intent.setupIntent.paymentMethodId;
-      if (!paymentMethodId) throw new Error('Payment method ID not found');
-
-      // 5. Add payment method
-      await api.post(
-        `/subscription/payment/add-method/`,
-        { payment_method_id: paymentMethodId }
-      );
-
-      await api.post(
-        `/subscription/create/`,
-        {
-          plan_type: selectedPlan.plan_type,
-          payment_method_id: paymentMethodId,
-        }
-      );
-      cb("success")
-      console.log('Success', 'Free trial started!');
-      //navigation.replace('Congratulation');
-    } catch (e) {
-      console.error('Stripe error:', e);
-      cb("error")
-      if (e.message?.includes('canceled')) {
-        console.log('Cancelled', 'Payment was cancelled');
-      } else {
-        console.log('Error', e.message || 'Payment failed');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return {
     setSelectedPlanType,
     selectedPlanType,
     monthlyPlan,
     yearlyPlan,
-    startFreeTrial
   }
 
 }

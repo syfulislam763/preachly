@@ -1,91 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Image, Dimensions, TouchableOpacity} from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Image, Dimensions} from 'react-native';
 import { useAuth } from '../../../context/AuthContext';
-import {
-  SafeAreaView
-} from 'react-native-safe-area-context';
-import FooterBar from '../../../components/FooterBar';
-import CommonButton from '../../../components/CommonButton';
-import Divider from '../../../components/Divider'
-import PlanSelector from '../../../components/SubscriptionPlan';
-import CustomHeader from '../../../components/CustomNavigation';
-import ParagraphIcon from '../../../components/ParagraphIcon';
 
-import { StripeProvider } from '@stripe/stripe-react-native';
-import CustomModal from '../../../components/CustomModal';
-import PaymentScreen from './payment/PaymentScreen';
-import createPlan from './payment/createPlan';
-import { KEY } from '../../../context/Paths';
-import { useStripe } from '@stripe/stripe-react-native';
+import CommonButton from '../../../components/CommonButton';
+import PlanSelector from '../../../components/SubscriptionPlan';
+import ParagraphIcon from '../../../components/ParagraphIcon';
+import config from '../../../../config';
+
 //import GooglePayHandler from './payment/GooglePayHandler';
 
 const window = Dimensions.get("window")
 
 export default function ProfileSubscription({ navigation }) {
   const { login } = useAuth();
-  const {
-    setSelectedPlanType,
-    monthlyPlan,
-    yearlyPlan,
-    selectedPlanType,
-    startFreeTrial
-  } = createPlan();
-
-  const [openPayment, setOpenPayment] = useState(false);
-
-  const { 
-    isPlatformPaySupported,
-    confirmPlatformPayPayment,
-    createPlatformPayPaymentMethod 
-  } = useStripe();
-
-  const handleAppleGooglePay = async () => {
-    // 1. Check if supported
-    const isSupported = await isPlatformPaySupported();
-    if (!isSupported) {
-      alert('Apple Pay / Google Pay not supported');
-      return;
-    }
-
-    // 2. Create payment method
-    const { paymentMethod, error } = await createPlatformPayPaymentMethod({
-      applePay: {
-        cartItems: [
-          {
-            label: 'Your Product',
-            amount: '1000', // $10.00 in cents
-          }
-        ],
-        merchantCountryCode: 'US',
-        currencyCode: 'USD',
-      },
-      googlePay: {
-        merchantCountryCode: 'US',
-        currencyCode: 'USD',
-        testEnv: true, // Set to false for production
-      }
-    });
-
-    if (error) {
-      console.error('Error:', error);
-      return;
-    }
-
-    // 3. Confirm payment
-    const { error: confirmError } = await confirmPlatformPayPayment(
-      'your_client_secret_here',
-      {
-        paymentMethodType: 'Card',
-        paymentMethodData: paymentMethod,
-      }
-    );
-
-    if (confirmError) {
-      console.error('Payment failed:', confirmError);
-    } else {
-      console.log('Payment successful!');
-    }
-  };
+  const [selectedPlanType, setSelectedPlanType] = useState('yearly');
 
 
   useEffect(() => {
@@ -93,38 +21,8 @@ export default function ProfileSubscription({ navigation }) {
 
   }, [])
  
-  // const {isPlatformPaySupported} = usePlatformPay();
-
-  // useEffect(() => {
-  //   ( async function () {
-  //     if(!(await isPlatformPaySupported({googlePay: {testEnv:true}}))){
-  //       console.log("google pay support!")
-  //     }else{
-  //       console.log("google pay not support")
-  //     }
-  //   })()
-  // }, [])
-
-
-
-
-
-  return <StripeProvider publishableKey={KEY}>
-
-      <View>
-        <Text>Hello world</Text>
-      </View>
-
-      <TouchableOpacity onPress={handleAppleGooglePay}>
-        <Text>Pay with Apple Pay / Google Pay</Text>
-      </TouchableOpacity>
-
-
-  </StripeProvider>
-
 
   return (
-    <StripeProvider publishableKey={KEY}>
         <View style={{ flex:1, backgroundColor:'#fff', justifyContent:'space-between'}}>
           
 
@@ -164,8 +62,7 @@ export default function ProfileSubscription({ navigation }) {
                       paddingBottom: 15
                       }}>Other Plans</Text>
                   }
-                  monthlyPlan={monthlyPlan}
-                  yearlyPlan={yearlyPlan}
+              
                   plan={selectedPlanType}
                   setSelectedPlanType={setSelectedPlanType}
               />
@@ -174,7 +71,6 @@ export default function ProfileSubscription({ navigation }) {
 
           </View>
 
-          {/* <GooglePayHandler/> */}
 
           <View style={{
               padding:20
@@ -191,17 +87,8 @@ export default function ProfileSubscription({ navigation }) {
           </View>
 
          
-
-          {/* <CustomModal 
-            modalContainerStyle={{height:"auto"}} 
-            visible={openPayment} 
-            onClose={() => setOpenPayment(false)}
-            headerStyle={{paddingRight:10}}
-          >
-            <CreatePlan/>
-          </CustomModal> */}
       </View>
-    </StripeProvider>
+
   );
 }
 

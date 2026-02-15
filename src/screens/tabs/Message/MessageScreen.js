@@ -244,6 +244,7 @@ export default function MessageScreen() {
     if(ws.current)return () => {}
 
     const wsURL = WEBSOCKET_URL+`/ws/chat/${session?.id}/?token=${store?.access}`;
+    console.log(wsURL);
     ws.current = new WebSocket(wsURL);
 
     ws.current.onopen = () => {
@@ -289,6 +290,14 @@ export default function MessageScreen() {
           setIsTyping(false);
           setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
 
+        }
+
+        if( (data?.type == "error")) {
+          res.message = 'Something went wrong';
+          res.message_id = Date.now();
+          res.message_type="yes_no"
+          setIsTyping(false);
+          setMessages(prev => [...prev.filter(item=> item.message != "typing..."), res])
         }
       
       }catch(err){
