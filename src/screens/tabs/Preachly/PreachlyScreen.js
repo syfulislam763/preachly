@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState, version } from 'react';
-import { View, Text, Pressable, Modal, StyleSheet, Image, ActivityIndicator} from 'react-native';
+import { View, Text, Modal, StyleSheet, Image, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MediaControls from './MediaControls';
 import ChapterSheet from './ChapterSheet';
@@ -28,61 +28,81 @@ export default function PreachlyScreen() {
   const [bibleBook, setBibleBook] = useState({});
   const [loading, setLoading ] = useState(false);
   const [itemLoading, setItemLoading] = useState(false);
-  const [zoomText, setZoomText] = useState(14)
+  const [zoomText, setZoomText] = useState(14);
+  const [voices, setVoices] = useState([])
   
   const [chapters, setChapters] = useState([]);
-  const [expanded, setExpanded] = useState(''); // Currently opened
+  const [expanded, setExpanded] = useState('');
   const [selected, setSelected] = useState("");
   const [content, setContent] = useState([]);
-  const [isPaused, setIsPaused] =  useState(true);
+  const [isPaused, setIsPaused] = useState(true);
 
   const [chapter, setChapter] = useState({});
-
 
   const scrollRef = useRef();
   const intervalRef = useRef(null);
   const [contentHeight, setContentHeight] = useState(0);
-  const stopRef = useRef(false);
-  const count = useRef(0)
-  const stop_audio = () =>{
+  const stopRef = useRef(true);
+  const count = useRef(0);
+  const sessionRef = useRef(0);
+
+  const stop_audio = () => {
+    stopRef.current = true;
+    sessionRef.current += 1;
     Speech.stop();
     setIsPaused(true);
   }
 
+
+  const getVoices = async () => {
+    const voices = await Speech.getAvailableVoicesAsync();
+    setVoices(voices)
+  }
+
   const play_audio_script = (val) => {
-    setIsPaused(false);
-    
-    stopRef.current = false;
+  
+
+    stopRef.current = true;
+    sessionRef.current += 1;
     Speech.stop();
-    if(! (content[0]?.verses) ){
+
+    if (!(content[0]?.verses)) {
       setIsPaused(true);
       return;
     }
-    const arr = content[0].verses;
-    let len = (arr.length)*1.2;
-    const scrollBy = contentHeight / len;
-    let i = 0;
-    count.current = val<0?0:val>=len?len-1:val;
 
+    const arr = content[0].verses;
+    const len = arr.length * 1.2;
+    const scrollBy = contentHeight / len;
+
+    let startIndex = val < 0 ? 0 : val >= arr.length ? arr.length - 1 : val;
+    count.current = startIndex;
+
+    setIsPaused(false);
     setProgress((100 / len) * count.current);
-    scrollRef.current?.scrollTo({ y: count.current*scrollBy, animated: false });
+    scrollRef.current?.scrollTo({ y: count.current * scrollBy, animated: false });
+
+    const currentSession = sessionRef.current;
+    stopRef.current = false;
 
     const speakNext = () => {
-
-      if (stopRef.current || count.current >= len) {
+      if (sessionRef.current !== currentSession) return;
+      if (stopRef.current) {
         setIsPaused(true);
-        console.log(count.current, "--" )
         return;
       }
-      
-      if(count.current< arr.length){
+
+      if (count.current >= len) {
+        setIsPaused(true);
+        return;
+      }
+
+      if (count.current < arr.length) {
         const currentText = arr[count.current].text;
         Speech.speak(currentText, {
-          voice: "en-us-x-iol-local",
-          onStart: () => {
-            
-          },
+          voice: voices[1].identifier,
           onDone: () => {
+            if (sessionRef.current !== currentSession) return;
             scrollRef.current?.scrollTo({
               y: count.current * scrollBy,
               animated: true,
@@ -91,8 +111,15 @@ export default function PreachlyScreen() {
             setProgress((100 / len) * count.current);
             speakNext();
           },
+          onStopped: () => {
+          },
+          onError: () => {
+            if (sessionRef.current !== currentSession) return;
+            count.current++;
+            speakNext();
+          },
         });
-      }else{
+      } else {
         scrollRef.current?.scrollTo({
           y: count.current * scrollBy,
           animated: true,
@@ -101,41 +128,31 @@ export default function PreachlyScreen() {
         setProgress((100 / len) * count.current);
         speakNext();
       }
-      
     };
 
     speakNext();
   };
-
 
   const get_chapters = (item, bible_id, isDefault=false) => {
     const payload = {
       version_id: bible_id,
       book_id: item.id,
     }
-    
-    
- 
+
     setExpanded(item.name);
     setBibleBook(item)
-    //setItemLoading(true)
     setChapters([]);
-    get_bible_books_chapter(payload, (res, success) =>{
-
+    get_bible_books_chapter(payload, (res, success) => {
       if(success){
         setChapters(res?.data?.chapters);
         if(isDefault){
-  
           get_contents(res?.data?.chapters[0], bible_id, res?.data?.chapters[0]?.id)
         }
       }
-      //setItemLoading(false);
     })
-    
   }
 
-
-  const get_contents = (chapt, bible_id, chapter_id, isDefault=false) =>{
+  const get_contents = (chapt, bible_id, chapter_id, isDefault=false) => {
     if(!isDefault)
       setLoading(true);
 
@@ -146,58 +163,54 @@ export default function PreachlyScreen() {
 
     if(isDefault){
       setBibleBook(chapt);
-    }else{
+    } else {
       setChapter(chapt)
     }
-   
+
+    stop_audio();
+    count.current = 0;
+    setProgress(0);
+
     get_bible_chapter_content(payload, (res, success) => {
       if(success){
         setContent([res?.data?.chapter]);
-  
         setSelected(chapter_id.split(".")[1]);
-  
         setOpenChapterList(false);
       }
       setLoading(false)
     })
   }
 
-  const handleNextPrevious = (route) =>{
+  const handleNextPrevious = (route) => {
     const payload = {
       version_id: selectedBibleVersion?.api_bible_id,
-      chapter_id:chapter?.id,
+      chapter_id: chapter?.id,
       route: route
     }
 
+    stop_audio();
+    count.current = 0;
+    setProgress(0);
     setLoading(true);
-    next_previous(payload, (res, success) =>{
+
+    next_previous(payload, (res, success) => {
       if(success){
-     
-        if(res?.data?.chapter?.verses?.length>0){
+        if(res?.data?.chapter?.verses?.length > 0){
           setContent([res?.data?.chapter]);
           setSelected(res?.data?.chapter?.id?.split(".")[1]);
-          setChapter({id:res?.data?.chapter?.id, reference: res?.data?.chapter?.reference})
+          setChapter({id: res?.data?.chapter?.id, reference: res?.data?.chapter?.reference})
         }
-      }else{
-
       }
       setLoading(false);
     })
   }
-
 
   const get_bible_abbreviation = (item) => {
     let abbr = item?.title?.split(" ") || "";
     return abbr[abbr?.length-1] || " ";
   }
 
-
-
-  useEffect(()=>{
-    //setSelectedBibleVersion(store?.profileSettingData?.bible_version);
-  }, []);
-
-
+  useEffect(()=>{getVoices()}, []);
 
   useEffect(() => {
     const payload = {
@@ -205,38 +218,33 @@ export default function PreachlyScreen() {
     }
     if(Object.keys(selectedBibleVersion).length > 0){
       payload.version_id = selectedBibleVersion?.api_bible_id
-    }else{
+    } else {
       payload.version_id = store?.profileSettingData?.bible_version?.api_bible_id
     }
 
     console.log("bible issue", payload);
     setLoading(true)
     get_bible_books(payload, (res, success) => {
-
       if(success){
         setBibleBooks(res?.data);
         setOpenBibleVersion(false)
         if(Object.keys(selectedBibleVersion).length <= 0){
           setSelectedBibleVersion(store?.profileSettingData?.bible_version)
         }
-        
 
         const book = res?.data?.books[0];
         const bible_id = res?.data?.bible_id;
         get_chapters(book, bible_id, true)
-        
-      }else{
+      } else {
         setLoading(false)
       }
-      
     });
-    
   }, [selectedBibleVersion]);
 
   useFocusEffect(
-    useCallback(()=>{
+    useCallback(() => {
       setZoomText(14)
-      return () =>{
+      return () => {
         stop_audio()
       }
     }, [])
@@ -248,9 +256,8 @@ export default function PreachlyScreen() {
     }
   }
 
-
   return (
-    <View  style={{flex:1, backgroundColor:'#edf3f3'}}>
+    <View style={{flex:1, backgroundColor:'#edf3f3'}}>
 
       <View style={{
         ...styles.commonHeaderStyle,
@@ -262,34 +269,33 @@ export default function PreachlyScreen() {
             marginBottom:15
           }}
         >
-          <Pressable onPress={() =>  {
+          <TouchableOpacity onPress={() => {
             stop_audio();
             setOpenChapterList(true)
           }}>
             <Text style={styles.headerText1}>{expanded+" "+selected || "Joshua 19"}</Text>
-          </Pressable>
-          
+          </TouchableOpacity>
 
-          <Pressable onPress={()=>{
+          <TouchableOpacity onPress={() => {
             stop_audio();
             setOpenBibleVersion(true)
           }}>
             <Text style={styles.headerText2}>{get_bible_abbreviation(selectedBibleVersion)}</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <View style={{
           ...styles.commonHeaderStyle,
           marginBottom:20
         }}>
           
-          <Pressable onPress={handleZoom}>
+          <TouchableOpacity onPress={handleZoom}>
             <Image
               source={require("../../../../assets/img/24-smallcaps.png")}
               style={{...styles.icon, marginRight:20}}
             />
-          </Pressable>
+          </TouchableOpacity>
      
-          <Pressable onPress={() => {
+          <TouchableOpacity onPress={() => {
             stop_audio();
             setOpenSearch(true)
           }}>
@@ -297,64 +303,49 @@ export default function PreachlyScreen() {
               source={require("../../../../assets/img/24-search_.png")}
               style={styles.icon}
             />
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
 
-
-      <ScrollView onContentSizeChange={(width, height) => setContentHeight(height)}  ref={scrollRef} style={{
+      <ScrollView onContentSizeChange={(width, height) => setContentHeight(height)} ref={scrollRef} style={{
         flexGrow:1,
         padding:20,
-        
       }}>
 
         {content.length == 0 && 
         <View style={{height:400, alignItems:'center', justifyContent:'center'}}>
-
-          <Text 
-            style={{
-              color:'#966F44',
-              fontFamily:'NunitoBold'
-            }}
-          >
-          No Content Found!
+          <Text style={{
+            color:'#966F44',
+            fontFamily:'NunitoBold'
+          }}>
+            No Content Found!
           </Text>
-
-
         </View>}
 
-        {content.map((chapter,i) => <View 
-          key={i.toString()}
-        >
+        {content.map((chapter,i) => <View key={i.toString()}>
+          <Text style={{
+            fontFamily:'NunitoBold',
+            fontSize: 24,
+            color:'#0B172A'
+          }}>{chapter?.title}</Text>
 
+          {(chapter?.verses?.length) ? chapter.verses.map((item,idx) => <Text
+            key={idx.toString()}
+            style={{
+              fontFamily: 'NunitoSemiBold',
+              fontSize: zoomText,
+              color:'#0B172A',
+              marginTop:20
+            }}
+          >
             <Text style={{
-              fontFamily:'NunitoBold',
-              fontSize: 24,
-              color:'#0B172A'
-            }}>{chapter?.title}</Text>
-
-            {(chapter?.verses?.length)? chapter.verses.map((item,idx) => <Text
-              key={idx.toString()}
-              style={{
-                fontFamily: 'NunitoSemiBold',
-                fontSize: zoomText,
-                color:'#0B172A',
-                marginTop:20
-              }}
-            >
-              <Text style={{
-                color:'#966F44',
-                fontFamily:'NunitoBold'
-              }}>{item?.number+ " "}</Text>
-              {item?.text}
-            </Text>): null
-
-
-          }
-
+              color:'#966F44',
+              fontFamily:'NunitoBold'
+            }}>{item?.number+ " "}</Text>
+            {item?.text}
+          </Text>) : null}
         </View>)}
 
-        
         <View style={{
           flexDirection:'row',
           alignItems: 'center',
@@ -362,7 +353,7 @@ export default function PreachlyScreen() {
           paddingVertical: 30,
           marginBottom:20
         }}>
-          <Pressable 
+          <TouchableOpacity 
             onPress={() => {
               finish_scripture((res, success) => {
                 handleNextPrevious("previous")
@@ -379,23 +370,22 @@ export default function PreachlyScreen() {
                 style={styles.icon}
               />
             </View>
-          </Pressable>
-          <Pressable 
-          onPress={() => {
-            finish_scripture((res, success) => {
-              handleNextPrevious("next")
-            })
-          }}
-          style={{
-            backgroundColor:'#005A55',
-            flexDirection:'row',
-            alignItems:'center',
-            justifyContent:"center",
-            paddingVertical: 10,
-            paddingHorizontal:20,
-            borderRadius: 50
-          }}
-          
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => {
+              finish_scripture((res, success) => {
+                handleNextPrevious("next")
+              })
+            }}
+            style={{
+              backgroundColor:'#005A55',
+              flexDirection:'row',
+              alignItems:'center',
+              justifyContent:"center",
+              paddingVertical: 10,
+              paddingHorizontal:20,
+              borderRadius: 50
+            }}
           >
             <Text style={{
               color:'#fff',
@@ -407,61 +397,50 @@ export default function PreachlyScreen() {
               source={require("../../../../assets/img/ArrowRight.png")}
               style={styles.icon}
             />
-          </Pressable>
+          </TouchableOpacity>
         </View>
-
-
 
       </ScrollView>
 
-
       <View style={styles.footerContainer}>
-        <View
-          style={styles.playButtons}
-        >
-            <Pressable
-               onPress={() => play_audio_script(count.current-1)}
-            >
-              <Image
-                source={require("../../../../assets/img/CaretDoubleLeft.png")}
-                style={styles.icon}
-              />
-            </Pressable>
+        <View style={styles.playButtons}>
+          <TouchableOpacity onPress={() => play_audio_script(count.current - 1)}>
+            <Image
+              source={require("../../../../assets/img/CaretDoubleLeft.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
 
-            {isPaused?
-              <Pressable onPress={() => play_audio_script(0)}>
-                <Image
-                  source={require("../../../../assets/img/Play.png")}
-                  style={styles.icon}
-                />
-              </Pressable>:
-              <Pressable  onPress={() => {
-                clearInterval(intervalRef.current);
-                stopRef.current = true;
-                stop_audio();
-              }}>
-                <FontAwesome name="pause" size={24} color="black" />
-              </Pressable>
-            }
-            
-            
-            <Pressable 
-              onPress={() => play_audio_script(count.current+1)}
-            >
+          {isPaused ?
+            <TouchableOpacity onPress={() => play_audio_script(count.current)}>
               <Image
-                source={require("../../../../assets/img/CaretDoubleRight.png")}
+                source={require("../../../../assets/img/Play.png")}
                 style={styles.icon}
               />
-            </Pressable>
+            </TouchableOpacity> :
+            <TouchableOpacity onPress={() => {
+              stopRef.current = true;
+              sessionRef.current += 1;
+              Speech.stop();
+              setIsPaused(true);
+            }}>
+              <FontAwesome name="pause" size={24} color="black" />
+            </TouchableOpacity>
+          }
+
+          <TouchableOpacity onPress={() => play_audio_script(count.current + 1)}>
+            <Image
+              source={require("../../../../assets/img/CaretDoubleRight.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.progressContainer}>
           <View style={{...styles.progress, width: `${progress}%`}}/>
           <View style={styles.progressDot}/>
         </View>
-
       </View>
-      
 
       <CustomModal
         visible={openChapterList}
@@ -499,7 +478,6 @@ export default function PreachlyScreen() {
           title={get_bible_abbreviation(selectedBibleVersion)}
         />
       </CustomModal>
-      
 
       {loading && <Indicator visible={loading} onClose={() => setLoading(false)}>
         <ActivityIndicator size={"large"}/>
@@ -507,8 +485,6 @@ export default function PreachlyScreen() {
     </View>
   );
 }
-
-
 
 const CustomModal = ({animationType="slide", visible, onClose, children }) => {
   return (
@@ -522,12 +498,13 @@ const CustomModal = ({animationType="slide", visible, onClose, children }) => {
     >
       <View style={{...styles.overlay}}>
         <View style={{...styles.modalContainer}}>
-            {children}
+          {children}
         </View>
       </View>
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -536,7 +513,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding:0,
     height:'100%'
-    // backgroundColor:'#fff'
   },
   modalContainer: {
     height:"95%",
@@ -545,7 +521,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingVertical: 0,
-    // height:'100%',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -619,7 +594,6 @@ const styles = StyleSheet.create({
     width:"100%",
     flexDirection:'row',
     alignItems:'center',
-    // overflow:'hidden',
     borderRadius: 5,
   },
   progress:{

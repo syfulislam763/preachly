@@ -7,7 +7,6 @@ import PlanSelector from '../../../components/SubscriptionPlan';
 import ParagraphIcon from '../../../components/ParagraphIcon';
 import config from '../../../../config';
 
-//import GooglePayHandler from './payment/GooglePayHandler';
 
 const window = Dimensions.get("window")
 
@@ -80,7 +79,7 @@ export default function ProfileSubscription({ navigation }) {
                   bgColor={"#005A55"}
                   navigation={navigation}
                   route={""}//"SubscriptionConfirmedScreen"
-                  handler={() => startFreeTrial()}
+                  handler={() => {}}
                   txtColor={"#fff"}
                   opacity={1}
               />

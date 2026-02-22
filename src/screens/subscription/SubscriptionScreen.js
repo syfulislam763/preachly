@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ImageBackground, StyleSheet, Image, Dimensions,ScrollView} from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -26,14 +26,8 @@ export default function SubscriptionScreen() {
   const navigation = useNavigation();
   const {isSmall, isMedium, isLarge, isFold} = useLayoutDimention()
   const styles = getStyles(isSmall, isMedium, isLarge, isFold)
+  const [selectedPlanType, setSelectedPlanType] = useState('yearly');
 
-
-  const {
-    setSelectedPlanType,
-    selectedPlanType,
-    monthlyPlan,
-    yearlyPlan,
-  } = createPlan();
 
 
   const hanldeSubscription =  () => {

@@ -31,8 +31,6 @@ export default function createPlan() {
     fetchPlans();
   }, []);
 
-  // console.log("plans: ", plans);
-  // console.log("selected* ", selectedPlanType)
 
   const fetchPlans = async () => {
     setLoading(true);

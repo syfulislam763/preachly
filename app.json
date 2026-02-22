@@ -18,7 +18,11 @@
       "icon": "./assets/ios-icon.png",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["en", "es", "fr"]
+        "CFBundleLocalizations": [
+          "en",
+          "es",
+          "fr"
+        ]
       }
     },
     "android": {
@@ -47,6 +51,12 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5e6a2b01-3873-40cc-89a6-a6594a0f667e"
+      }
+    },
+    "owner": "bdcalling"
   }
 }

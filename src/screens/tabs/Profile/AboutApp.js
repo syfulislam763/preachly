@@ -4,8 +4,6 @@ import { View, Text, Image, StyleSheet, Pressable} from 'react-native'
 
 const AboutApp = () => {
 
- 
-
 
   return (
     <View style={{
