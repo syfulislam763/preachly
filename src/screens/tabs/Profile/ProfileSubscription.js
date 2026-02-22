@@ -6,7 +6,7 @@ import CommonButton from '../../../components/CommonButton';
 import PlanSelector from '../../../components/SubscriptionPlan';
 import ParagraphIcon from '../../../components/ParagraphIcon';
 import config from '../../../../config';
-
+import Purchases from 'react-native-purchases';
 
 const window = Dimensions.get("window")
 
@@ -14,9 +14,19 @@ export default function ProfileSubscription({ navigation }) {
   const { login } = useAuth();
   const [selectedPlanType, setSelectedPlanType] = useState('yearly');
 
+  const revenue_cat_test = async () => {
+
+    const customerInfo = await Purchases.getCustomerInfo();
+
+    const offerings = await Purchases.getOfferings();
+
+    console.log("customer info", JSON.stringify(customerInfo, null, 2))
+    console.log("offerings ", JSON.stringify(offerings, null, 2))
+  }
 
   useEffect(() => {
-    
+    Purchases.configure({apiKey: config.REVENUECAT_IOS_API_KEY})
+    revenue_cat_test();
 
   }, [])
  

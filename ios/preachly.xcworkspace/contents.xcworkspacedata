@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../Downloads/app13bdb76339.storekit">
+   </FileRef>
+   <FileRef
       location = "group:preachly.xcodeproj">
    </FileRef>
    <FileRef
